@@ -1,0 +1,1805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Yulu · MechanicOps v3</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#13151f;--sur:#111827;--sur2:#1a2236;--bdr:#1e2d45;--acc:#00e5a0;--acc2:#0ea5e9;--warn:#f59e0b;--dng:#ef4444;--pur:#a78bfa;--pnk:#f472b6;--txt:#f0f4ff;--mut:#6b7fa3;--r:14px}
+body.light{--bg:#f2f4f7;--sur:#fafafa;--sur2:#eef2f8;--bdr:#dbe2ec;--acc:#059669;--acc2:#0284c7;--warn:#d97706;--dng:#dc2626;--pur:#7c3aed;--pnk:#db2777;--txt:#0a0e1a;--mut:#64748b}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden;transition:background .3s,color .3s}
+body::before{content:'';position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 80% 50% at 20% 0%,rgba(0,229,160,.06),transparent 60%),radial-gradient(ellipse 60% 40% at 80% 100%,rgba(14,165,233,.05),transparent 60%);pointer-events:none}
+body.light::before{opacity:.35}
+#app{position:relative;z-index:1}
+header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--bdr);background:var(--sur);position:sticky;top:0;z-index:100;gap:10px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:10px;font-family:'Space Mono',monospace;font-size:15px;font-weight:700}
+.hdr-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.live-badge{display:flex;align-items:center;gap:6px;background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.25);border-radius:20px;padding:4px 10px;font-size:11px;color:var(--acc);font-family:'Space Mono',monospace}
+.pulse{width:6px;height:6px;border-radius:50%;background:var(--acc);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.4)}}
+.mode-btn{background:var(--sur2);border:1px solid var(--bdr);color:var(--mut);padding:5px 10px;border-radius:8px;cursor:pointer;font-size:13px}
+.mode-btn:hover{color:var(--acc);border-color:var(--acc)}
+.fbar{padding:12px 20px;display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;border-bottom:1px solid var(--bdr);background:var(--sur)}
+.fg{display:flex;flex-direction:column;gap:3px;flex:1;min-width:120px}
+.fl{font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.8px;font-family:'Space Mono',monospace}
+select,input[type=date]{background:var(--sur2);border:1px solid var(--bdr);color:var(--txt);border-radius:8px;padding:7px 10px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;cursor:pointer;width:100%;appearance:none;-webkit-appearance:none}
+select:focus,input[type=date]:focus{border-color:var(--acc)}
+.tog{display:inline-flex;gap:3px;background:var(--sur2);border:1px solid var(--bdr);border-radius:8px;padding:3px}
+.tbtn{border:none;background:none;color:var(--mut);font-size:12px;font-weight:600;padding:5px 11px;border-radius:6px;cursor:pointer;white-space:nowrap}
+.tbtn.on{background:var(--acc);color:#fff}
+body.light .tbtn.on{color:#fff}
+.bc{display:flex;align-items:center;gap:6px;padding:10px 20px 0;flex-wrap:wrap}
+.bci{cursor:pointer;color:var(--acc2);font-family:'Space Mono',monospace;font-size:11px}
+.bci:hover{color:var(--acc)}.bci.a{color:var(--txt);cursor:default}.bcs{color:var(--bdr);font-size:14px}
+.slbl{padding:12px 20px 5px;font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:var(--mut);font-family:'Space Mono',monospace;display:flex;justify-content:space-between;align-items:center}
+.sbdg{font-size:9px;padding:2px 8px;border-radius:8px;background:var(--sur2);color:var(--acc)}
+.kg{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;padding:0 20px}
+@media(min-width:600px){.kg{grid-template-columns:repeat(4,1fr)}}
+@media(min-width:1000px){.kg.c3{grid-template-columns:repeat(3,1fr)}}
+.kpi{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);padding:14px;position:relative;overflow:hidden;transition:transform .2s,border-color .2s}
+.kpi:hover{transform:translateY(-2px);border-color:var(--acc)}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.kpi.g::before{background:var(--acc)}.kpi.b::before{background:var(--acc2)}.kpi.w::before{background:var(--warn)}.kpi.d::before{background:var(--dng)}.kpi.p::before{background:var(--pur)}.kpi.k::before{background:var(--pnk)}.kpi.x::before{background:var(--mut)}
+.klbl{font-size:11px;color:var(--txt);opacity:.75;text-transform:uppercase;letter-spacing:.5px;font-family:'Space Mono',monospace;margin-bottom:5px;font-weight:600}
+.kval{font-family:'Space Mono',monospace;font-size:22px;font-weight:700;line-height:1;margin-bottom:3px}
+.ksub{font-size:11px;color:var(--mut);font-family:'Space Mono',monospace}
+.kpi.g .kval{color:var(--acc)}.kpi.b .kval{color:var(--acc2)}.kpi.w .kval{color:var(--warn)}.kpi.d .kval{color:var(--dng)}.kpi.p .kval{color:var(--pur)}.kpi.k .kval{color:var(--pnk)}.kpi.x .kval{color:#94a3b8}
+.con{padding:0 20px 24px;display:flex;flex-direction:column;gap:14px}
+.row{display:grid;gap:14px;grid-template-columns:1fr}
+@media(min-width:760px){.row.two{grid-template-columns:1fr 1fr}}
+.card{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);padding:16px;overflow:hidden}
+.ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:8px;flex-wrap:wrap}
+.ct{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--mut);font-family:'Space Mono',monospace;font-weight:700}
+.cb{font-size:10px;padding:3px 8px;border-radius:10px;background:rgba(0,229,160,.1);color:var(--acc);border:1px solid rgba(0,229,160,.2);font-family:'Space Mono',monospace}
+canvas{max-height:230px}
+.rrow{display:flex;align-items:center;gap:8px;padding:5px 0}
+.rdot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.rname{flex:0 0 82px;font-family:'Space Mono',monospace;font-size:10px;color:var(--mut)}
+.rbg{flex:1;height:8px;background:var(--sur2);border-radius:4px;overflow:hidden}
+.rfill{height:100%;border-radius:4px}
+.rval{font-family:'Space Mono',monospace;font-size:11px;font-weight:700;min-width:95px;text-align:right}
+.crow{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid rgba(30,45,69,.4);font-size:12px}
+.crank{font-family:'Space Mono',monospace;font-size:11px;color:var(--mut);width:18px}
+.cname{flex:0 0 100px;font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cbg{flex:1;height:16px;background:var(--sur2);border-radius:4px;overflow:hidden}
+.cfill{height:100%;background:linear-gradient(90deg,var(--acc),var(--acc2));border-radius:4px}
+.cval{font-family:'Space Mono',monospace;font-size:12px;font-weight:700;min-width:58px;text-align:right}
+.dg{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:9px}
+.dc{background:var(--sur2);border:1px solid var(--bdr);border-radius:10px;padding:13px;cursor:pointer;transition:all .2s;position:relative}
+.dc:hover{border-color:var(--acc);transform:translateY(-2px)}
+.dn{font-size:13px;font-weight:600;margin-bottom:6px;line-height:1.3;display:flex;justify-content:space-between;gap:5px;align-items:center}
+.ds{font-family:'Space Mono',monospace;font-size:20px;font-weight:700;color:var(--acc);margin-bottom:2px}
+.dl{font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.5px}
+.dsub{display:flex;gap:7px;margin-top:7px;font-size:10px;flex-wrap:wrap}
+.dcats{display:flex;gap:5px;margin-top:5px;font-size:9px;color:var(--mut);font-family:'Space Mono',monospace;flex-wrap:wrap}
+.ttag{font-size:9px;padding:1px 5px;border-radius:4px;font-family:'Space Mono',monospace;font-weight:600;white-space:nowrap}
+.ttag.n{background:rgba(14,165,233,.15);color:var(--acc2)}.ttag.m{background:rgba(245,158,11,.15);color:var(--warn)}.ttag.o{background:rgba(0,229,160,.15);color:var(--acc)}.ttag.u{background:rgba(107,127,163,.15);color:var(--mut)}
+.tw{overflow:auto;max-height:430px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+thead th{position:sticky;top:0;background:var(--sur2);color:var(--mut);text-transform:uppercase;letter-spacing:.5px;font-family:'Space Mono',monospace;font-size:10px;padding:9px 11px;text-align:left;border-bottom:1px solid var(--bdr);white-space:nowrap;cursor:pointer;user-select:none;z-index:10}
+thead th:hover{color:var(--acc)}
+tbody tr{border-bottom:1px solid rgba(30,45,69,.5);cursor:pointer}
+tbody tr:hover{background:var(--sur2)}
+td{padding:8px 11px;white-space:nowrap}
+.pill{display:inline-flex;align-items:center;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600;font-family:'Space Mono',monospace}
+.pill.g{background:rgba(0,229,160,.12);color:var(--acc)}.pill.w{background:rgba(245,158,11,.12);color:var(--warn)}.pill.d{background:rgba(239,68,68,.12);color:var(--dng)}.pill.b{background:rgba(14,165,233,.12);color:var(--acc2)}.pill.x{background:rgba(107,127,163,.12);color:var(--mut)}
+.lrow{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid rgba(30,45,69,.4);cursor:pointer}
+.lrow:hover{background:rgba(0,229,160,.04)}
+.lnum{font-family:'Space Mono',monospace;color:var(--mut);width:22px;font-size:14px}
+.linf{flex:1;min-width:0}
+.lname{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lmeta{font-size:10px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lbar{height:5px;background:var(--sur2);border-radius:3px;margin-top:3px;overflow:hidden}
+.lfill{height:100%;border-radius:3px}
+.lval{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:var(--acc);min-width:52px;text-align:right}
+.arow{display:flex;align-items:flex-start;gap:9px;padding:9px 11px;border-radius:8px;margin-bottom:5px;border-left:3px solid;font-size:12px;cursor:pointer;line-height:1.4}
+.arow.d{background:rgba(239,68,68,.08);border-color:var(--dng)}.arow.w{background:rgba(245,158,11,.08);border-color:var(--warn)}.arow.i{background:rgba(14,165,233,.08);border-color:var(--acc2)}
+.aico{font-size:13px;flex-shrink:0}
+.aset{background:var(--sur2);border-radius:8px;padding:11px;margin-bottom:11px;display:none;max-height:280px;overflow-y:auto}
+.aset.open{display:block}
+.atog{display:flex;align-items:center;justify-content:space-between;padding:7px 0;font-size:12px;border-bottom:1px solid var(--bdr);gap:9px}
+.atog:last-child{border:none}
+.ath{display:flex;align-items:center;gap:5px;font-family:'Space Mono',monospace;font-size:10px;color:var(--mut)}
+.ath input{width:50px;padding:2px 4px;font-size:10px;background:var(--bg);color:var(--txt);border:1px solid var(--bdr);border-radius:4px}
+.sw{position:relative;width:32px;height:17px;background:var(--bdr);border-radius:9px;cursor:pointer;flex-shrink:0}
+.sw.on{background:var(--acc)}
+.sw::after{content:'';position:absolute;top:2px;left:2px;width:13px;height:13px;background:#fff;border-radius:50%;transition:left .2s}
+.sw.on::after{left:17px}
+.gbtn{background:var(--sur2);border:1px solid var(--bdr);color:var(--mut);padding:4px 9px;border-radius:6px;cursor:pointer;font-size:11px;font-family:'Space Mono',monospace}
+.gbtn:hover{color:var(--acc);border-color:var(--acc)}
+.srch{background:var(--sur2);border:1px solid var(--bdr);border-radius:8px;padding:7px 11px;color:var(--txt);font-size:13px;outline:none}
+.srch:focus{border-color:var(--acc)}
+.empty{text-align:center;padding:28px;color:var(--mut);font-size:13px}
+.oth-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(30,45,69,.3);font-size:12px}
+.oth-row:last-child{border:none}.oth-name{color:var(--txt);font-weight:500}.oth-val{font-family:'Space Mono',monospace;color:var(--acc);font-weight:700}
+.loading-overlay{display:none;position:fixed;inset:0;background:rgba(19,21,31,.7);z-index:999;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
+.loading-overlay.show{display:flex}
+.spinner{width:48px;height:48px;border:4px solid var(--bdr);border-top-color:var(--acc);border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-msg{color:var(--txt);font-family:'Space Mono',monospace;font-size:13px;margin-top:14px;text-align:center}
+::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:3px}
+@media(max-width:480px){header,.fbar{padding:11px 13px}.kg,.con{padding-left:13px;padding-right:13px}.bc,.slbl{padding-left:13px;padding-right:13px}.kval{font-size:18px}canvas{max-height:190px}}
+#detail{display:none}#detail.show{display:block}#app.hide{display:none}
+.det-hdr{padding:18px 20px;border-bottom:1px solid var(--bdr);background:var(--sur);position:sticky;top:0;z-index:99}
+.back-btn{background:var(--sur2);border:1px solid var(--bdr);color:var(--txt);padding:6px 14px;border-radius:8px;cursor:pointer;font-size:12px;font-family:'Space Mono',monospace;display:inline-flex;align-items:center;gap:6px;margin-bottom:12px}
+.back-btn:hover{border-color:var(--acc);color:var(--acc)}
+.det-name{font-size:24px;font-weight:700;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.det-meta{font-size:13px;color:var(--mut);margin-top:5px;font-family:'Space Mono',monospace}
+.det-tabs{display:flex;gap:4px;background:var(--sur);border-bottom:1px solid var(--bdr);padding:0 20px;overflow-x:auto;position:sticky;top:0;z-index:90}
+.dtab{padding:14px 18px;background:none;border:none;color:var(--mut);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s}
+.dtab:hover{color:var(--txt)}.dtab.on{color:var(--acc);border-bottom-color:var(--acc)}
+.dpanel{display:none;padding:18px 20px}.dpanel.on{display:block}
+.peer-row{display:flex;align-items:center;gap:10px;padding:8px 0;font-size:12px}
+.peer-lbl{flex:0 0 130px;font-size:11px;color:var(--mut);font-family:'Space Mono',monospace}
+.peer-bar{flex:1;height:24px;background:var(--sur2);border-radius:4px;position:relative;overflow:hidden}
+.peer-fill{height:100%;background:var(--acc);border-radius:4px;display:flex;align-items:center;justify-content:flex-end;padding-right:6px;font-size:10px;font-family:'Space Mono',monospace;font-weight:700;color:#fff;min-width:30px}
+.peer-fill.b{background:var(--acc2)}.peer-fill.x{background:var(--mut)}
+.peer-vals{display:flex;gap:14px;margin-top:6px;font-size:10px;color:var(--mut);font-family:'Space Mono',monospace}
+.bike-tag{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:6px;font-family:'Space Mono',monospace;font-size:11px;background:var(--sur2);margin:2px 4px 2px 0;cursor:default;border:1px solid transparent}
+.bike-tag.fresh{border-color:rgba(0,229,160,.4)}.bike-tag.recent{border-color:rgba(245,158,11,.4)}.bike-tag.stale{border-color:rgba(249,115,22,.4)}.bike-tag.old{border-color:rgba(239,68,68,.4)}
+.bike-rnt{color:var(--mut);font-size:10px}
+.day-hdr{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:var(--sur2);border-radius:8px;margin-top:10px;cursor:pointer;font-size:12px}
+.day-hdr:hover{background:var(--bdr)}
+.day-name{font-family:'Space Mono',monospace;font-weight:700;font-size:13px}
+.day-meta{color:var(--mut);font-size:11px;font-family:'Space Mono',monospace}
+.day-content{padding:10px 4px 10px 4px;display:none}.day-content.open{display:block}
+.cal-week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;width:100%}
+.cal-dow{text-align:center;font-size:8px;font-family:'Space Mono',monospace;color:var(--mut);padding:2px 0 3px;font-weight:700;text-transform:uppercase}
+.cal-cell{aspect-ratio:1;border-radius:3px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:default;position:relative;min-height:0;max-height:36px}
+.cal-cell.p{background:rgba(0,229,160,.75);color:#0a0e1a}
+.cal-cell.a{background:rgba(239,68,68,.2);color:var(--mut)}
+.cal-cell.future{background:var(--sur2);opacity:.2}
+.cal-day-num{font-size:9px;font-family:'Space Mono',monospace;font-weight:700;line-height:1}
+.cal-month{font-size:6px;font-family:'Space Mono',monospace;color:inherit;opacity:.7;line-height:1;margin-top:1px}
+.cal-cell.p .cal-month{color:#0a0e1a}
+.cal-cell:hover{transform:scale(1.2);z-index:10}
+.repeat-row{display:flex;justify-content:space-between;padding:8px 12px;border-bottom:1px solid var(--bdr);font-size:12px;align-items:center}.repeat-row:last-child{border:none}
+.repeat-bike{font-family:'Space Mono',monospace;font-weight:700}
+.repeat-visits{font-family:'Space Mono',monospace;color:var(--warn);font-weight:700}
+.repeat-dates{font-size:10px;color:var(--mut);font-family:'Space Mono',monospace}
+.tnr-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:4px}
+.tnr-table th{background:var(--sur2);color:var(--mut);font-family:'Space Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.5px;padding:8px 12px;text-align:left;border-bottom:1px solid var(--bdr)}
+.tnr-table td{padding:9px 12px;border-bottom:1px solid rgba(30,45,69,.3);vertical-align:middle}
+.tnr-table tr:last-child td{border:none}.tnr-table tr:hover td{background:var(--sur2)}
+.tnr-new{color:var(--acc2);font-weight:700;font-family:'Space Mono',monospace}
+.tnr-mod{color:var(--warn);font-weight:700;font-family:'Space Mono',monospace}
+.tnr-old{color:var(--acc);font-weight:700;font-family:'Space Mono',monospace}
+.tnr-you{color:var(--pnk);font-weight:700;font-family:'Space Mono',monospace}
+.tnr-lbl{font-size:12px;font-weight:600}.tnr-cnt{font-size:10px;color:var(--mut);font-family:'Space Mono',monospace}
+.delta-up{color:var(--acc);font-size:10px;font-family:'Space Mono',monospace}
+.delta-dn{color:var(--dng);font-size:10px;font-family:'Space Mono',monospace}
+.kpct{height:3px;background:var(--sur2);border-radius:2px;margin-top:8px;overflow:hidden}
+.kpct-fill{height:100%;border-radius:2px}
+.khint{font-size:10px;color:var(--mut);line-height:1.5;margin-top:7px;padding-top:7px;border-top:1px solid var(--bdr)}
+</style>
+</head>
+<body>
+<div class="loading-overlay" id="loadingOverlay">
+<div style="text-align:center"><div class="spinner"></div><div class="loading-msg" id="loadingMsg">Loading live data...</div></div>
+</div>
+
+<div id="app">
+<header style="position:relative;">
+<div style="display:flex;align-items:center;gap:10px;flex-shrink:0"><span style="font-size:22px;font-weight:900;color:#00B0FF;font-family:'Space Mono',monospace;letter-spacing:-1px">yulu</span></div>
+<div class="logo" style="font-size:17px;text-align:center;flex:1;justify-content:center;position:absolute;left:50%;transform:translateX(-50%)">Yulu R&amp;M Dashboard</div>
+<div class="hdr-right">
+<div class="live-badge"><div class="pulse"></div><span id="dataBadge">JFMA 2026</span></div>
+<div class="tog">
+<button class="tbtn on" id="gd" onclick="setG('daily',event)">D</button>
+<button class="tbtn" id="gw" onclick="setG('weekly',event)">W</button>
+<button class="tbtn" id="gm" onclick="setG('monthly',event)">M</button>
+</div>
+<button class="mode-btn" onclick="toggleMode()" id="modeBtn">🌙</button>
+</div>
+</header>
+
+<div class="fbar">
+<div class="fg"><div class="fl">City</div><select id="fc" onchange="onCity()"><option value="">All Cities</option></select></div>
+<div class="fg"><div class="fl">Cluster</div><select id="fcl" onchange="onCluster()"><option value="">All Clusters</option></select></div>
+<div class="fg"><div class="fl">Mechanic</div><select id="fm" onchange="render()"><option value="">All Mechanics</option></select></div>
+<div class="fg"><div class="fl">From</div><input type="date" id="ff" ></div>
+<div class="fg"><div class="fl">To</div><input type="date" id="ft" ></div>
+<div style="display:flex;flex-direction:column;gap:3px;flex:0;min-width:65px">
+<div class="fl">&nbsp;</div>
+<button onclick="onDateChange()" style="background:var(--acc);border:none;color:#0a0e1a;border-radius:8px;padding:8px 10px;font-size:13px;font-weight:800;cursor:pointer;font-family:'Space Mono',monospace;white-space:nowrap">▶ GO</button>
+</div>
+</div>
+
+<div style="padding:6px 20px;display:flex;gap:6px;flex-wrap:wrap;background:var(--sur);border-bottom:1px solid var(--bdr)">
+<span style="font-size:10px;color:var(--mut);font-family:'Space Mono',monospace;align-self:center;margin-right:4px">QUICK:</span>
+<button class="tbtn" onclick="setQuick(7)">7d</button>
+<button class="tbtn on" id="q30" onclick="setQuick(30)">30d</button>
+<button class="tbtn" onclick="setQuick('month')">This Month</button>
+<button class="tbtn" onclick="setQuick(90)">3M</button>
+<button class="tbtn" onclick="setQuick(180)">6M</button>
+</div>
+
+<div id="bc" class="bc"></div>
+
+<div class="slbl">📦 Volume <span class="sbdg" id="vbdg">—</span></div>
+<div class="kg" style="grid-template-columns:repeat(2,1fr)">
+<div class="kpi g"><div class="klbl">Total Tasks</div><div class="kval" id="ktasks">–</div><div class="ksub">by mechanics</div></div>
+<div class="kpi k"><div class="klbl">Active Mechanics</div><div class="kval" id="kmechs">–</div><div class="ksub" id="ktpdsub">—</div></div>
+</div>
+<div class="kg" style="margin-top:8px">
+<div class="kpi b"><div class="klbl">Repair Tasks</div><div class="kval" id="krep">–</div><div class="ksub" id="krepsub">—</div></div>
+<div class="kpi p"><div class="klbl">Non-Repair Tasks</div><div class="kval" id="knon">–</div><div class="ksub" id="knonsub">—</div></div>
+<div class="kpi b" style="border-top-color:var(--acc)"><div class="klbl">Avg Tasks / Day</div><div class="kval" id="ktpd" style="color:var(--acc)">–</div><div class="ksub">per mechanic-day</div></div>
+<div class="kpi p" style="border-top-color:var(--pur)"><div class="klbl">Avg Repair Tasks / Day</div><div class="kval" id="ktpdr" style="color:var(--pur)">–</div><div class="ksub">per mechanic-day</div></div>
+</div>
+
+<div class="slbl">⚡ Repair Breakdown — Live vs Regular</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 20px;margin-bottom:8px">
+<div class="kpi b">
+  <div class="klbl" style="color:#34d399">Live Repair</div>
+  <div class="kval" id="klive" style="color:#34d399">–</div>
+  <div class="ksub" id="klivesub">—</div>
+  <div class="kpct" style="margin-top:8px"><div class="kpct-fill" id="klive-bar" style="background:#34d399;width:0%"></div></div>
+  <div style="margin-top:10px;display:flex;gap:0;border-top:1px solid var(--bdr);padding-top:10px">
+    <div style="flex:1">
+      <div class="ksub">avg time</div>
+      <div id="klivetime" style="font-size:17px;font-weight:700;color:#34d399;margin-top:2px;font-family:'Space Mono',monospace">—</div>
+    </div>
+    <div style="width:1px;background:var(--bdr);margin:0 12px"></div>
+    <div style="flex:1">
+      <div class="ksub">avg / mech-day</div>
+      <div id="klive-permech" style="font-size:17px;font-weight:700;color:#34d399;margin-top:2px;font-family:'Space Mono',monospace">—</div>
+    </div>
+  </div>
+</div>
+<div class="kpi p">
+  <div class="klbl" style="color:var(--pnk)">Regular Repair</div>
+  <div class="kval" id="knonlive" style="color:var(--pnk)">–</div>
+  <div class="ksub" id="knonlivesub">—</div>
+  <div class="kpct" style="margin-top:8px"><div class="kpct-fill" id="kreg-bar" style="background:var(--pnk);width:0%"></div></div>
+  <div style="margin-top:10px;display:flex;gap:0;border-top:1px solid var(--bdr);padding-top:10px">
+    <div style="flex:1">
+      <div class="ksub">avg time</div>
+      <div id="knonlivetime" style="font-size:17px;font-weight:700;color:var(--pnk);margin-top:2px;font-family:'Space Mono',monospace">—</div>
+    </div>
+    <div style="width:1px;background:var(--bdr);margin:0 12px"></div>
+    <div style="flex:1">
+      <div class="ksub">avg / mech-day</div>
+      <div id="kreg-permech" style="font-size:17px;font-weight:700;color:var(--pnk);margin-top:2px;font-family:'Space Mono',monospace">—</div>
+    </div>
+  </div>
+</div>
+</div>
+<!-- hidden compat -->
+<div style="display:none"><span id="ktpdn">0</span></div>
+
+<div class="slbl">✓ Quality</div>
+<div class="kg c3">
+<div class="kpi g"><div class="klbl">Fully Fixed</div><div class="kval" id="kfix">–</div><div class="ksub" id="kfixsub">—</div></div>
+<div class="kpi d"><div class="klbl">Not Fully Fixed</div><div class="kval" id="knfix">–</div><div class="ksub" id="knfixsub">—</div></div>
+<div class="kpi w"><div class="klbl">QC Pass Rate</div><div class="kval" id="kqc">–</div><div class="ksub" id="kqcsub">—</div></div>
+</div>
+
+<div class="slbl">🕐 Time &amp; Shift</div>
+<div class="kg" style="margin-bottom:20px">
+<div class="kpi b"><div class="klbl">Avg Repair Task Time</div><div class="kval" id="kavgrep">–</div><div class="ksub">avg per task</div></div>
+<div class="kpi p"><div class="klbl">Avg Non-Repair Task Time</div><div class="kval" id="kavgnon">–</div><div class="ksub">avg per task</div></div>
+<div class="kpi w"><div class="klbl">Avg Idle Time / Day</div><div class="kval" id="kidle">–</div><div class="ksub">gaps between tasks · per present day</div></div>
+<div class="kpi x"><div class="klbl">Avg Active Span / Day</div><div class="kval" id="kshift">–</div><div class="ksub">first task start → last task end</div></div>
+</div>
+<!-- hidden elements kept for JS compatibility -->
+<div style="display:none"><span id="krep">0</span><span id="krepsub"></span><span id="knon">0</span><span id="knonsub"></span></div>
+
+<div class="con">
+<div class="row two">
+<div class="card">
+<div class="ch"><span class="ct">🔧 Repair Aging — RNT Distribution</span><span class="cb" id="rntbdg">—</span></div>
+<div id="rntbars"></div>
+<div style="margin-top:11px;padding:9px;background:var(--sur2);border-radius:8px;font-size:11px;color:var(--mut);line-height:1.5"><b style="color:var(--txt)">RNT</b> = days bike sat un-ridden before repair. Higher buckets = older backlog cleared.</div>
+</div>
+<div class="card" id="cmpcard">
+<div class="ch">
+<span class="ct">📊 Comparison <span id="cmpctx" style="color:var(--acc2);text-transform:none;font-size:11px"></span></span>
+<select id="cmpmet" onchange="renderCmp()" style="max-width:190px;font-size:11px;padding:4px 8px">
+<option value="tasks">By Tasks</option><option value="qc_rate">By QC Rate %</option><option value="fix_rate">By Fix Rate %</option>
+<option value="avg_repair_time">By Avg Repair Time</option><option value="backlog_pct">By Old Bikes (&gt;14d) %</option><option value="avg_tpd">By Avg Tasks / Day</option>
+</select>
+</div>
+<div id="cmplist"></div>
+</div>
+</div>
+
+<div class="card" id="tenure-card">
+<div class="ch"><span class="ct">👷 New vs Moderate vs Old — Productivity Comparison</span><span class="cb" id="tenure-bdg">—</span></div>
+<div style="font-size:11px;color:var(--mut);line-height:1.6;margin-bottom:10px;padding:9px;background:var(--sur2);border-radius:8px">
+  Mechanics are grouped by how long they had been working <b style="color:var(--txt)">at the start of the selected date range</b> — not their current tenure today.
+  <span style="color:var(--acc2)">New = &lt;30 days</span> · <span style="color:var(--warn)">Moderate = 30–90 days</span> · <span style="color:var(--acc)">Old = 90+ days</span>.
+  Minimum task thresholds apply per metric to avoid misleading averages from mechanics with very few tasks.
+</div>
+<div id="tenure-table"></div>
+</div>
+
+<div class="slbl" style="padding-top:0"><span>🎯 Drill-down — tap any card to go deeper</span><span class="sbdg" id="drlcnt">—</span></div>
+<div class="card">
+<div class="ch"><span class="ct" id="drltitle">All Cities</span><span class="cb" id="drlbdg">—</span></div>
+<div class="dg" id="drlgrid"></div>
+</div>
+
+<div class="card" id="othcard">
+<div class="ch"><span class="ct">🧰 Repairs by Other Profiles</span><span class="cb" id="othbdg">—</span></div>
+<div id="othbody"></div>
+<div style="margin-top:11px;padding:9px;background:var(--sur2);border-radius:8px;font-size:11px;color:var(--mut);line-height:1.5">Non-Maintenance roles (Yulu Captain, Biker, QA, etc.) and blank roles that also did tasks.</div>
+</div>
+
+<div class="row two">
+<div class="card"><div class="ch"><span class="ct">📈 Tasks Over Time</span><span class="cb" id="trendbdg">Daily</span></div><canvas id="charttrend"></canvas></div>
+<div class="card"><div class="ch"><span class="ct">🥧 QC Pass vs Fail</span></div><canvas id="chartqc"></canvas></div>
+</div>
+
+<div class="row two">
+<div class="card">
+<div class="ch">
+<span class="ct">🏆 Leaderboard</span>
+<select id="lbmet" onchange="renderLB()" style="max-width:185px;font-size:11px;padding:4px 8px">
+<option value="tasks">Most Tasks</option><option value="backlog">Backlog Heroes (&gt;14d)</option><option value="qc">Best QC Rate</option><option value="speed">Fastest Repair</option>
+</select>
+</div>
+<div class="tog" style="margin-bottom:9px">
+<button class="tbtn on" id="lb7" onclick="setLBW(7,event)">7d</button>
+<button class="tbtn" id="lb30" onclick="setLBW(30,event)">30d</button>
+<button class="tbtn" id="lball" onclick="setLBW('all',event)">Filter range</button>
+</div>
+<div id="lb"></div>
+</div>
+
+<div class="card">
+<div class="ch">
+<span class="ct">⚠️ Alerts</span>
+<div style="display:flex;gap:6px;align-items:center"><span class="cb" id="alcnt">—</span><button class="gbtn" onclick="toggleASet()">⚙ Customize</button></div>
+</div>
+<div class="aset" id="aset"><div style="font-size:10px;color:var(--mut);margin-bottom:8px;font-family:'Space Mono',monospace;letter-spacing:.8px">CONFIGURE THRESHOLDS & TOGGLES</div><div id="acfg"></div></div>
+<div class="tog" style="margin-bottom:9px">
+<button class="tbtn on" id="al7" onclick="setALW(7,event)">7d</button>
+<button class="tbtn" id="al30" onclick="setALW(30,event)">30d</button>
+<button class="tbtn" id="alall" onclick="setALW('all',event)">Filter range</button>
+</div>
+<div id="allist"></div>
+</div>
+</div>
+
+<div class="card">
+<div class="ch"><span class="ct">👷 All Mechanics</span><input class="srch" id="srch" placeholder="Search name / city…" oninput="renderTable()" style="max-width:195px"></div>
+<div class="tw">
+<table>
+<thead><tr>
+<th onclick="srt('username')">Name ↕</th><th onclick="srt('city')">City ↕</th><th onclick="srt('cluster')">Cluster ↕</th>
+<th onclick="srt('yc')">YC ↕</th><th onclick="srt('tasks')">Tasks ↕</th>
+<th onclick="srt('live_repair')" style="color:#34d399">Live R ↕</th>
+<th onclick="srt('regular_repair')" style="color:var(--pnk)">Reg R ↕</th>
+<th onclick="srt('non_repair_tasks')">Non-Rep ↕</th><th onclick="srt('avg_repair_time')">Avg Time ↕</th>
+<th onclick="srt('qc_rate')">QC % ↕</th><th onclick="srt('fix_rate')">Fix % ↕</th>
+<th onclick="srt('backlog_pct')">Old &gt;14d ↕</th><th>Tenure</th><th>Productivity</th>
+</tr></thead>
+<tbody id="tbody"></tbody>
+</table>
+</div>
+</div>
+</div>
+</div><!-- /app -->
+
+<!-- MECHANIC DETAIL PAGE -->
+<div id="detail">
+<div class="det-hdr">
+<button class="back-btn" onclick="closeDetail()">← Back to Dashboard</button>
+<div class="det-name" id="dname"></div>
+<div class="det-meta" id="dmeta"></div>
+<div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;align-items:flex-end">
+<div class="fg" style="min-width:130px"><div class="fl">Detail From</div><input type="date" id="df-from" ></div>
+<div class="fg" style="min-width:130px"><div class="fl">Detail To</div><input type="date" id="df-to" ></div>
+<button onclick="renderDetail()" style="background:var(--acc);border:none;color:#0a0e1a;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:800;cursor:pointer;font-family:'Space Mono',monospace">▶ GO</button>
+<button class="back-btn" style="margin:0" onclick="syncMainDates()">↻ Sync with main filter</button>
+</div>
+</div>
+
+<div class="det-tabs">
+<button class="dtab on" id="tab-ov" onclick="switchTab('ov')">Overview</button>
+<button class="dtab" id="tab-bk" onclick="switchTab('bk')">🚲 Bikes</button>
+</div>
+
+<div class="dpanel on" id="panel-ov">
+<div class="slbl" style="padding-left:0">📦 Volume <span class="sbdg" id="d-kbdg">—</span></div>
+<div class="kg" style="padding:0;grid-template-columns:repeat(2,1fr)">
+<div class="kpi g"><div class="klbl">Total Tasks</div><div class="kval" id="d-k1">–</div><div class="ksub" id="d-k1s">—</div></div>
+<div class="kpi k"><div class="klbl">Active Days</div><div class="kval" id="d-k4">–</div><div class="ksub" id="d-k4s">—</div></div>
+</div>
+<div class="kg" style="padding:0;margin-top:8px">
+<div class="kpi b"><div class="klbl">Repair Tasks</div><div class="kval" id="d-k2">–</div><div class="ksub" id="d-k2s">—</div></div>
+<div class="kpi p"><div class="klbl">Non-Repair Tasks</div><div class="kval" id="d-k3">–</div><div class="ksub" id="d-k3s">—</div></div>
+<div class="kpi b" style="border-top-color:var(--acc)"><div class="klbl">Avg Tasks / Day</div><div class="kval" id="d-k8" style="color:var(--acc)">–</div><div class="ksub">per present day</div></div>
+<div class="kpi p" style="border-top-color:var(--pur)"><div class="klbl">Avg Repair Tasks / Day</div><div class="kval" id="d-k8r" style="color:var(--pur)">–</div><div class="ksub">per present day</div></div>
+</div>
+
+<div class="slbl" style="padding-left:0">⚡ Repair Breakdown — Live vs Regular</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+<div class="kpi b">
+  <div class="klbl" style="color:#34d399">Live Repair</div>
+  <div class="kval" id="d-klive" style="color:#34d399">–</div>
+  <div class="ksub" id="d-klivesub">—</div>
+  <div class="kpct" style="margin-top:8px"><div class="kpct-fill" id="d-klive-bar" style="background:#34d399;width:0%"></div></div>
+  <div style="margin-top:10px;display:flex;gap:0;border-top:1px solid var(--bdr);padding-top:10px">
+    <div style="flex:1">
+      <div class="ksub">avg time</div>
+      <div id="d-klivetime" style="font-size:17px;font-weight:700;color:#34d399;margin-top:2px;font-family:'Space Mono',monospace">—</div>
+    </div>
+    <div style="width:1px;background:var(--bdr);margin:0 12px"></div>
+    <div style="flex:1">
+      <div class="ksub">avg / day</div>
+      <div id="d-klive-perday" style="font-size:17px;font-weight:700;color:#34d399;margin-top:2px;font-family:'Space Mono',monospace">—</div>
+    </div>
+  </div>
+</div>
+<div class="kpi p">
+  <div class="klbl" style="color:var(--pnk)">Regular Repair</div>
+  <div class="kval" id="d-kregular" style="color:var(--pnk)">–</div>
+  <div class="ksub" id="d-kregularsub">—</div>
+  <div class="kpct" style="margin-top:8px"><div class="kpct-fill" id="d-kreg-bar" style="background:var(--pnk);width:0%"></div></div>
+  <div style="margin-top:10px;display:flex;gap:0;border-top:1px solid var(--bdr);padding-top:10px">
+    <div style="flex:1">
+      <div class="ksub">avg time</div>
+      <div id="d-kregtime" style="font-size:17px;font-weight:700;color:var(--pnk);margin-top:2px;font-family:'Space Mono',monospace">—</div>
+    </div>
+    <div style="width:1px;background:var(--bdr);margin:0 12px"></div>
+    <div style="flex:1">
+      <div class="ksub">avg / day</div>
+      <div id="d-kreg-perday" style="font-size:17px;font-weight:700;color:var(--pnk);margin-top:2px;font-family:'Space Mono',monospace">—</div>
+    </div>
+  </div>
+</div>
+</div>
+<!-- hidden compat -->
+<div style="display:none"><span id="d-k8n">0</span></div>
+
+<div class="slbl" style="padding-left:0">✓ Quality</div>
+<div class="kg c3" style="padding:0;margin-bottom:4px">
+<div class="kpi g"><div class="klbl">Fully Fixed %</div><div class="kval" id="d-k5">–</div><div class="ksub" id="d-k5s">—</div></div>
+<div class="kpi d"><div class="klbl">Not Fixed %</div><div class="kval" id="d-k6">–</div><div class="ksub" id="d-k6s">—</div></div>
+<div class="kpi w"><div class="klbl">QC Pass Rate</div><div class="kval" id="d-k7">–</div><div class="ksub" id="d-k7s">—</div></div>
+</div>
+
+<div class="slbl" style="padding-left:0">🕐 Time &amp; Shift</div>
+<div class="kg" style="padding:0;margin-bottom:20px">
+<div class="kpi b"><div class="klbl">Avg Repair Task Time</div><div class="kval" id="d-k9">–</div><div class="ksub">avg per task</div></div>
+<div class="kpi p"><div class="klbl">Avg Non-Repair Task Time</div><div class="kval" id="d-k10">–</div><div class="ksub">avg per task</div></div>
+<div class="kpi w"><div class="klbl">Avg Idle Time / Day</div><div class="kval" id="d-kidle">–</div><div class="ksub">gaps between tasks · per present day</div></div>
+<div class="kpi x"><div class="klbl">Avg Active Span / Day</div><div class="kval" id="d-kshift">–</div><div class="ksub">first task start → last task end</div></div>
+</div>
+<!-- hidden compat -->
+<div style="display:none"><span id="d-k4b">0</span><span id="d-k11">0</span></div>
+
+<div class="row two" style="margin-top:14px">
+<div class="card">
+<div class="ch"><span class="ct">🆚 Performance vs Peers</span><span class="cb" id="d-rank">—</span></div>
+<div id="peerbars"></div>
+<div id="peer-table" style="margin-top:14px;overflow-x:auto"></div>
+<div style="margin-top:11px;padding:9px;background:var(--sur2);border-radius:8px;font-size:11px;color:var(--mut);line-height:1.5">Comparing against <b style="color:var(--acc)">cluster avg</b>, <b style="color:var(--acc2)">city avg</b> and <b style="color:var(--pur)">PAN India avg</b>.</div>
+</div>
+<div class="card"><div class="ch"><span class="ct">🔧 RNT Distribution</span><span class="cb" id="d-rntbdg">—</span></div><div id="d-rntbars"></div></div>
+</div>
+
+<div class="row two" style="margin-top:14px">
+<div class="card"><div class="ch"><span class="ct">📈 Daily Tasks</span></div><canvas id="dchart"></canvas></div>
+<div class="card">
+<div class="ch"><span class="ct">📅 Attendance</span><span class="cb" id="d-att-bdg">—</span></div>
+<div id="d-cal"></div>
+<div style="margin-top:10px;display:flex;gap:14px;font-size:11px;color:var(--mut);align-items:center;font-family:'Space Mono',monospace">
+<span><span style="display:inline-block;width:14px;height:14px;background:rgba(0,229,160,.8);border-radius:3px;margin-right:5px;vertical-align:middle"></span>Present</span>
+<span><span style="display:inline-block;width:14px;height:14px;background:rgba(239,68,68,.25);border-radius:3px;margin-right:5px;vertical-align:middle"></span>Absent</span>
+<span style="color:var(--mut);font-size:10px">· Columns = Mon→Sun</span>
+</div>
+</div>
+</div>
+</div><!-- /panel-ov -->
+
+<div class="dpanel" id="panel-bk">
+<div class="slbl" style="padding-left:0">🚲 Bike Stats</div>
+<div class="kg">
+<div class="kpi g"><div class="klbl">Total Unique Bikes (day-level)</div><div class="kval" id="d-bk1">–</div><div class="ksub" id="d-bk1s">—</div></div>
+<div class="kpi b"><div class="klbl">Avg Bikes / Day</div><div class="kval" id="d-bk2">–</div><div class="ksub" id="d-bk2s">—</div></div>
+<div class="kpi p"><div class="klbl">Bike Categories</div><div class="kval" id="d-bk3" style="font-size:14px;line-height:1.3">–</div><div class="ksub" id="d-bk3s">total tasks</div></div>
+<div class="kpi w"><div class="klbl">Repeat Bikes (≥3 visits)</div><div class="kval" id="d-bk4">–</div><div class="ksub" id="d-bk4s">unique bikes</div></div>
+</div>
+<div class="card" id="d-repeatcard" style="margin-top:14px;display:none">
+<div class="ch"><span class="ct" style="color:var(--warn)">🚨 Repeat Bike Pattern Detected</span><span class="cb" id="d-repeatbdg" style="background:rgba(245,158,11,.15);color:var(--warn);border-color:rgba(245,158,11,.3)">—</span></div>
+<div style="font-size:11px;color:var(--mut);margin-bottom:10px;line-height:1.5">Multiple bikes returned 3+ times in this window — possible quality issue.</div>
+<div id="d-repeatlist"></div>
+</div>
+<div class="card" style="margin-top:14px">
+<div class="ch"><span class="ct">📋 Bikes Worked Per Day</span><span class="cb" id="d-bkdaybdg">—</span></div>
+<div id="d-bkdays"></div>
+</div>
+</div><!-- /panel-bk -->
+</div><!-- /detail -->
+
+<script>
+// ============================================================
+//  SUPABASE CONFIG
+// ============================================================
+const SUPABASE_URL = 'https://ajlingowsubkqduglbtn.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFqbGluZ293c3Via3FkdWdsYnRuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgwNzAwNDgsImV4cCI6MjA5MzY0NjA0OH0.GFinoyc-4FK96qt_4Wka9UAmtZVM6RgNNZ6XBNfcUM8';
+
+// ============================================================
+//  GLOBAL STATE
+// ============================================================
+const RAW = [];   // mechanic daily rows (normalised)
+const OTHER = []; // other-role rows
+
+let G='daily', SC='tasks', SD=-1, tChart=null, qChart=null, LBW=7, ALW=7;
+let CURRENT_UID = null;
+let dChart = null;
+
+const ACFG = {
+  low_prod:  {on:true, v:6,  lbl:'Low productivity — avg tasks/day below',   op:'<'},
+  low_qc:    {on:true, v:70, lbl:'Low QC pass rate (%) below',               op:'<'},
+  low_fix:   {on:true, v:80, lbl:'Low fix rate (%) below',                   op:'<'},
+  slow_rep:  {on:true, v:60, lbl:'Slow repair — avg minutes above',          op:'>'},
+  inactive:  {on:true, v:3,  lbl:'Inactive — days gap above',                op:'>'},
+  attend:    {on:true, v:4,  lbl:'Low attendance — active days below',       op:'<'},
+  qc_cluster:{on:true, v:3,  lbl:'QC fail cluster — fails in window above',  op:'>='},
+  cherry:    {on:true, v:50, lbl:'Cherry-picking — mech old% below cluster', op:'<'},
+  no_old:    {on:false,v:0,  lbl:'Avoiding old bikes entirely',              op:'='}
+};
+
+// ============================================================
+//  SUPABASE FETCH (auto-paginated)
+// ============================================================
+async function sbFetch(table, select, filters, pageSize=1000) {
+  let all=[], from=0;
+  while(true) {
+    const qs = [
+      `select=${encodeURIComponent(select)}`,
+      filters||'',
+      `limit=${pageSize}`,
+      `offset=${from}`
+    ].filter(Boolean).join('&');
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${qs}`, {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer '+SUPABASE_KEY }
+    });
+    if (!res.ok) throw new Error(`[${table}] ${res.status}: ${await res.text()}`);
+    const rows = await res.json();
+    all = all.concat(rows);
+    if (rows.length < pageSize) break;
+    from += pageSize;
+  }
+  return all;
+}
+
+// ============================================================
+//  DATA NORMALISATION
+// ============================================================
+function mapNCR(city) {
+  if (!city) return '';
+  if (['DEL','NOI','GGN'].includes(city)) return 'NCR';
+  if (/^south\s*delhi/i.test(city.trim())) return 'South Delhi';
+  return city;
+}
+
+// Merge cluster name variants
+function mapCluster(cluster) {
+  if (!cluster) return '';
+  const c = cluster.trim();
+  // South Delhi 2, South Delhi 3 → South Delhi
+  if (/^south\s*delhi\s*[23]/i.test(c)) return 'South Delhi';
+  return c;
+}
+
+function tenureBucket(days) {
+  if (days < 0)  return 'Unknown';
+  if (days < 30) return 'New';
+  if (days < 90) return 'Moderate';
+  return 'Old';
+}
+
+function calcTenureDays(doj) {
+  if (!doj) return -1;
+  const ref = new Date();
+  return Math.round((ref - new Date(doj)) / 864e5);
+}
+
+// Map one mech_agg DB row → internal RAW format
+// Key differences: times stored as seconds, lowercase bc_ cols, cluster = start_cluster
+function normMechRow(r) {
+  const tenureDays = calcTenureDays(r.date_of_joining);
+  // Times stored as SECONDS in DB → convert to minutes (div by 60)
+  // But some DBs may already be minutes - detect by value range
+  const rawRepTime = parseFloat(r.avg_repair_time_sec) || 0;
+  const rawNonTime = parseFloat(r.avg_nonrepair_time_sec) || 0;
+  // If values are suspiciously large (>600 min) they're seconds, convert
+  const avgRepMin  = rawRepTime  > 600 ? rawRepTime  / 60 : rawRepTime;
+  const avgNonMin  = rawNonTime  > 600 ? rawNonTime  / 60 : rawNonTime;
+  return {
+    user_id:             parseInt(r.user_id)||0,
+    username:            r.username||'',
+    city:                mapNCR(r.city||''),
+    cluster:             mapCluster(r.start_cluster||''),
+    party:               r.party_name||'',
+    tenure:              tenureBucket(tenureDays),
+    tenure_days:         tenureDays,
+    yc:                  mapCluster(r.start_cluster||''),
+    date:                r.task_date||'',
+    tasks:               parseInt(r.tasks)||0,
+    repair_tasks:        parseInt(r.repair_tasks)||0,
+    non_repair_tasks:    parseInt(r.non_repair_tasks)||0,
+    fully_fixed:         parseInt(r.fully_fixed)||0,
+    not_fixed:           parseInt(r.not_fixed)||0,
+    qc_pass:             parseInt(r.qc_pass)||0,
+    qc_fail:             parseInt(r.qc_fail)||0,
+    qc_total:            parseInt(r.qc_total)||0,
+    avg_repair_time:     Math.round(avgRepMin),
+    avg_nonrepair_time:  Math.round(avgNonMin),
+    rnt_0_1:             parseInt(r.rnt_0_1)||0,
+    rnt_1_5:             parseInt(r.rnt_1_5)||0,
+    rnt_5_7:             parseInt(r.rnt_5_7)||0,
+    rnt_7_14:            parseInt(r.rnt_7_14)||0,
+    rnt_14_28:           parseInt(r.rnt_14_28)||0,
+    rnt_28_90:           parseInt(r.rnt_28_90)||0,
+    rnt_90p:             parseInt(r.rnt_90p)||0,
+    bc_Dex:              parseInt(r.bc_dex)||0,
+    bc_Express:          parseInt(r.bc_express)||0,
+    bc_Miracle:          parseInt(r.bc_miracle)||0,
+    bc_Wynn:             parseInt(r.bc_wynn)||0,
+    live_repair:         parseInt(r.live_repair)||0,
+    live_repair_time:    0,
+    regular_repair_time: 0,
+    shift_dur_min:       parseFloat(r.total_shift_min)||0,
+    idle_time_min:       0,
+  };
+}
+
+// ============================================================
+//  MAIN DATA LOAD  (replaces old loadLiveData + JFM block)
+// ============================================================
+async function loadLiveData() {
+  document.getElementById('loadingOverlay').classList.add('show');
+  document.getElementById('loadingMsg').textContent = 'Connecting to Supabase...';
+
+  let fromVal = document.getElementById('ff').value;
+  let toVal   = document.getElementById('ft').value;
+
+  // Default: last 30 days, excluding today
+  if (!fromVal || !toVal) {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yStr = yesterday.toISOString().slice(0,10);
+    const from30 = new Date(yesterday);
+    from30.setDate(from30.getDate() - 29);
+    toVal   = yStr;
+    fromVal = from30.toISOString().slice(0,10);
+    document.getElementById('ff').value = fromVal;
+    document.getElementById('ft').value = toVal;
+  }
+
+  try {
+    // ── 1. Mechanic rows from mech_agg ──
+    document.getElementById('loadingMsg').textContent = 'Loading mechanic data...';
+    const mechFilters = [
+      'primary_role=in.(Maintenance,Refurb Mechanic)',
+      fromVal ? `task_date=gte.${fromVal}` : '',
+      toVal   ? `task_date=lte.${toVal}`   : ''
+    ].filter(Boolean).join('&');
+
+    const mechRows = await sbFetch('mech_agg', '*', mechFilters);
+    RAW.length = 0;
+    mechRows.forEach(r => RAW.push(normMechRow(r)));
+
+    // ── Backfill missing city/cluster/party/yc from each mechanic's latest task ──
+    // Build a "best known" profile per user_id using their most recent row
+    const latestByUser = {};
+    RAW.forEach(r => {
+      if (!latestByUser[r.user_id] || r.date > latestByUser[r.user_id].date) {
+        latestByUser[r.user_id] = r;
+      }
+    });
+    RAW.forEach(r => {
+      const latest = latestByUser[r.user_id];
+      if (!r.city    || r.city    === '') r.city    = latest.city    || '';
+      if (!r.cluster || r.cluster === '') r.cluster = latest.cluster || '';
+      if (!r.party   || r.party   === '') r.party   = latest.party   || '';
+      if (!r.yc      || r.yc      === '') r.yc      = latest.cluster || '';
+    });
+
+    // ── 2. Enrich with avg times + idle/shift from raw_tasks ──
+    document.getElementById('loadingMsg').textContent = 'Loading task times...';
+    try {
+      const allUids = [...new Set(RAW.map(r=>r.user_id))];
+      // Fetch in chunks of 50 uids to avoid URL length limits
+      const CHUNK = 50;
+      const parseTimeMin = (s) => {
+        if (!s) return null;
+        // Handle "M/D/YYYY H:MM" or "M/D/YYYY HH:MM" — extract time portion after the space
+        const timePart = s.includes(' ') ? s.split(' ')[1] : s;
+        const p = timePart.split(':').map(Number);
+        return (!isNaN(p[0]) && p.length>=2) ? p[0]*60 + p[1] + (p[2]||0)/60 : null;
+      };
+      const timeMap = {}; // uid → {repSum,repN,nonSum,nonN,liveSum,liveN,regSum,regN,shiftByKey:{}}
+      for (let i=0; i<allUids.length; i+=CHUNK) {
+        const chunk = allUids.slice(i, i+CHUNK);
+        const tFilters = [
+          `user_id=in.(${chunk.join(',')})`,
+          'task_time_taken=gt.0',
+          fromVal ? `day_start_dt=gte.${fromVal}` : '',
+          toVal   ? `day_start_dt=lte.${toVal}`   : ''
+        ].filter(Boolean).join('&');
+        const rows = await sbFetch('raw_tasks',
+          'user_id,task_type,task_time_taken,live_repair_flag,day_start_dt,day_start_time,day_end_time,user_shift_id',
+          tFilters, 2000
+        );
+        rows.forEach(r => {
+          const uid = parseInt(r.user_id); if (!uid) return;
+          const secs = parseFloat(r.task_time_taken)||0;
+          if (secs<=0 || secs>86400) return;
+          const mins = secs/60;
+          if (!timeMap[uid]) timeMap[uid]={repSum:0,repN:0,nonSum:0,nonN:0,liveSum:0,liveN:0,regSum:0,regN:0,shiftByKey:{}};
+          const tm = timeMap[uid];
+          const isLive = parseInt(r.live_repair_flag)===1;
+          const isRep  = r.task_type==='repair_task';
+          if (isRep)  { tm.repSum+=mins; tm.repN++; }
+          else        { tm.nonSum+=mins; tm.nonN++; }
+          if (isRep && isLive)  { tm.liveSum+=mins; tm.liveN++; }
+          if (isRep && !isLive) { tm.regSum+=mins;  tm.regN++;  }
+          // Per-shift grouping for idle
+          const sk = r.user_shift_id || (r.day_start_dt+r.day_start_time);
+          if (!tm.shiftByKey[sk]) tm.shiftByKey[sk]={start:r.day_start_time,end:r.day_end_time,taskSecs:0};
+          tm.shiftByKey[sk].taskSecs += secs;
+        });
+      }
+      // Compute idle/shift per user, apply to RAW
+      RAW.forEach(r => {
+        const tm = timeMap[r.user_id]; if (!tm) return;
+        if (tm.repN  > 0) r.avg_repair_time    = Math.round(tm.repSum  / tm.repN);
+        if (tm.nonN  > 0) r.avg_nonrepair_time  = Math.round(tm.nonSum  / tm.nonN);
+        r.live_repair_time    = tm.liveN > 0 ? Math.round(tm.liveSum / tm.liveN) : 0;
+        r.regular_repair_time = tm.regN  > 0 ? Math.round(tm.regSum  / tm.regN)  : 0;
+        // Idle + shift from shift map
+        const idles=[], durs=[];
+        Object.values(tm.shiftByKey).forEach(sh => {
+          const startMin = parseTimeMin(sh.start);
+          let   endMin   = parseTimeMin(sh.end);
+          if (startMin===null||endMin===null) return;
+          if (endMin<=startMin) endMin+=1440;
+          const durSec=(endMin-startMin)*60;
+          if (durSec<=0||durSec>86400) return;
+          const idleSec=durSec-sh.taskSecs;
+          durs.push(durSec/60); // always count shift duration
+          if (idleSec>=0) idles.push(idleSec/60); // skip idle if anomalous (tasks > shift)
+        });
+        if (idles.length) r.idle_time_min = Math.round(idles.reduce((a,b)=>a+b,0)/idles.length);
+        if (durs.length)  r.shift_dur_min = Math.round(durs.reduce((a,b)=>a+b,0)/durs.length);
+      });
+    } catch(e) { console.warn('Time enrichment failed:', e.message); }
+
+    // ── 3. Other profiles — fetch directly from raw_tasks (non-Maintenance roles) ──
+    document.getElementById('loadingMsg').textContent = 'Loading other profiles...';
+    try {
+      const otherFilters = [
+        'primary_role=not.in.(Maintenance,Refurb Mechanic)',
+        'primary_role=not.is.null',
+        fromVal ? `task_date=gte.${fromVal}` : '',
+        toVal   ? `task_date=lte.${toVal}`   : ''
+      ].filter(Boolean).join('&');
+      const otherRows = await sbFetch('raw_tasks',
+        'task_date,city,task_type,primary_role,user_id',
+        otherFilters, 5000
+      );
+      // Aggregate client-side: group by date+city+cluster+role
+      const otherMap = {};
+      otherRows.forEach(r => {
+        const key = `${r.task_date}|${r.city||''}|${r.primary_role||''}`;
+        if (!otherMap[key]) otherMap[key] = {
+          city: r.city||'', cluster: '', primary_role: r.primary_role||'Unknown',
+          date: r.task_date||'', tasks: 0, repair_tasks: 0
+        };
+        otherMap[key].tasks++;
+        if (r.task_type === 'repair_task') otherMap[key].repair_tasks++;
+      });
+      OTHER.length = 0;
+      Object.values(otherMap).forEach(r => OTHER.push({
+        city:         mapNCR(r.city),
+        cluster:      mapCluster(r.cluster),
+        primary_role: r.primary_role,
+        date:         r.date,
+        tasks:        r.tasks,
+        repair_tasks: r.repair_tasks,
+      }));
+    } catch(e) { console.warn('Other profiles load failed:', e.message); }
+
+    // ── 4. Rebuild city dropdown ──
+    const cs = document.getElementById('fc');
+    const prevCity = cs.value;
+    cs.innerHTML = '<option value="">All Cities</option>';
+    [...new Set(RAW.map(r=>r.city))].sort().forEach(c => {
+      const o = document.createElement('option');
+      o.value = c; o.textContent = c;
+      cs.appendChild(o);
+    });
+    if (prevCity) cs.value = prevCity;
+
+    // ── 4. Update badge ──
+    const dates = RAW.map(r=>r.date).sort();
+    if (dates.length) {
+      document.getElementById('dataBadge').textContent =
+        dates[0].slice(0,7) + ' → ' + dates[dates.length-1].slice(0,7);
+    }
+
+    document.getElementById('loadingOverlay').classList.remove('show');
+    showToast('✅ Loaded '+RAW.length.toLocaleString()+' records from Supabase');
+    render();
+
+  } catch(e) {
+    document.getElementById('loadingOverlay').classList.remove('show');
+    showToast('❌ Load failed: '+e.message);
+    console.error(e);
+  }
+}
+
+// ============================================================
+//  BIKE DATA LOAD  (Bikes tab — from raw_tasks)
+// ============================================================
+async function loadBikeDataForMech() {
+  if (!CURRENT_UID) return;
+  const f = document.getElementById('df-from').value;
+  const t = document.getElementById('df-to').value;
+  showToast('Loading bike data... 🚲');
+
+  try {
+    const filters = [
+      `user_id=eq.${CURRENT_UID}`,
+      f ? `task_date=gte.${f}` : '',
+      t ? `task_date=lte.${t}` : '',
+      'task_type=neq.null'
+    ].filter(Boolean).join('&');
+
+    const rows = await sbFetch('raw_tasks',
+      'task_date,bike_name,bike_category,task_type,task_time_taken,is_fully_fixed,no_of_days_rnt',
+      filters
+    );
+
+    window._bikeTasks = rows.map(r => ({
+      uid:   CURRENT_UID,
+      date:  r.task_date||'',
+      bike:  r.bike_name||'',
+      cat:   r.bike_category||'',
+      type:  r.task_type==='repair_task' ? 'r' : 'n',
+      time:  parseFloat(r.task_time_taken)||0,
+      fixed: parseInt(r.is_fully_fixed)||0,
+      qc:    '',  // not needed for bike tab display
+      rnt:   r.no_of_days_rnt!==null ? parseFloat(r.no_of_days_rnt) : null
+    }));
+
+    renderDetailBikes();
+  } catch(e) {
+    showToast('Bike load failed: '+e.message+' ❌');
+    console.error(e);
+  }
+}
+
+// ============================================================
+//  INIT
+// ============================================================
+function toggleMode(){
+  document.body.classList.toggle('light');
+  document.getElementById('modeBtn').textContent=document.body.classList.contains('light')?'☀️':'🌙';
+  if(tChart||qChart){setTimeout(()=>render(),50)}
+}
+
+function init(){
+  buildACFG();
+  document.getElementById('ktasks').textContent='...';
+  loadLiveData();
+}
+
+function buildACFG(){
+  document.getElementById('acfg').innerHTML=Object.entries(ACFG).map(([k,c])=>`
+    <div class="atog">
+      <span style="flex:1;font-size:11px">${c.lbl}</span>
+      <div class="ath">
+        <span>${c.op}</span>
+        <input type="number" value="${c.v}" onchange="ACFG['${k}'].v=+this.value;renderAL()">
+        <div class="sw ${c.on?'on':''}" onclick="toggleA('${k}',this)"></div>
+      </div>
+    </div>`).join('');
+}
+function toggleA(k,el){ACFG[k].on=!ACFG[k].on;el.classList.toggle('on');renderAL()}
+function toggleASet(){document.getElementById('aset').classList.toggle('open')}
+
+// ============================================================
+//  FILTER HELPERS
+// ============================================================
+function gf(){
+  const c=document.getElementById('fc').value,cl=document.getElementById('fcl').value;
+  const m=document.getElementById('fm').value,f=document.getElementById('ff').value,t=document.getElementById('ft').value;
+  return RAW.filter(r=>{
+    if(c&&r.city!==c)return false;if(cl&&r.cluster!==cl)return false;
+    if(m&&String(r.user_id)!==m)return false;
+    if(f&&r.date<f)return false;if(t&&r.date>t)return false;return true;
+  });
+}
+function gfOther(){
+  const c=document.getElementById('fc').value,cl=document.getElementById('fcl').value;
+  const f=document.getElementById('ff').value,t=document.getElementById('ft').value;
+  return OTHER.filter(r=>{
+    if(c&&r.city!==c)return false;if(cl&&r.cluster!==cl)return false;
+    if(f&&r.date<f)return false;if(t&&r.date>t)return false;return true;
+  });
+}
+
+function onCity(){
+  const c=document.getElementById('fc').value;
+  const el=document.getElementById('fcl');el.innerHTML='<option value="">All Clusters</option>';
+  if(c)[...new Set(RAW.filter(r=>r.city===c).map(r=>r.cluster))].sort().forEach(cl=>{
+    const o=document.createElement('option');o.value=cl;o.textContent=cl;el.appendChild(o);
+  });
+  onCluster();
+}
+function onCluster(){
+  const c=document.getElementById('fc').value,cl=document.getElementById('fcl').value;
+  const el=document.getElementById('fm');el.innerHTML='<option value="">All Mechanics</option>';
+  [...new Map(RAW.filter(r=>(!c||r.city===c)&&(!cl||r.cluster===cl)).map(r=>[r.user_id,r.username])).entries()]
+    .sort((a,b)=>a[1].localeCompare(b[1])).forEach(([id,n])=>{
+      const o=document.createElement('option');o.value=id;o.textContent=n;el.appendChild(o);
+    });
+  render();
+}
+
+function onDateChange(){
+  // Called only by GO button — enforce 6-month max then fetch
+  const f=new Date(document.getElementById('ff').value);
+  const t=new Date(document.getElementById('ft').value);
+  if(isNaN(f)||isNaN(t))return;
+  const diff=Math.round((t-f)/(864e5));
+  if(diff>183){
+    const nf=new Date(t);nf.setDate(nf.getDate()-183);
+    document.getElementById('ff').value=nf.toISOString().slice(0,10);
+    showToast('Max range is 6 months — adjusted');
+  }
+  loadLiveData();
+}
+
+function setQuick(v){
+  const yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);
+  const toStr=yesterday.toISOString().slice(0,10);
+  const to=new Date(toStr);
+  let from=new Date(to);
+  if(v==='month'){from=new Date(to.getFullYear(),to.getMonth(),1)}
+  else{from.setDate(to.getDate()-v+1)}
+  document.getElementById('ff').value=from.toISOString().slice(0,10);
+  document.getElementById('ft').value=toStr;
+  loadLiveData();
+}
+
+function getDataMaxDate(){
+  if(RAW.length)return RAW.reduce((m,r)=>r.date>m?r.date:m,'');
+  return new Date().toISOString().slice(0,10);
+}
+
+// ============================================================
+//  AGGREGATION HELPERS  (identical to v6)
+// ============================================================
+function aggMech(data){
+  const m={};
+  data.forEach(r=>{
+    if(!m[r.user_id])m[r.user_id]={
+      user_id:r.user_id,username:r.username,city:r.city,cluster:r.cluster,party:r.party,
+      tenure:r.tenure,tenure_days:r.tenure_days,yc:r.yc,
+      tasks:0,repair_tasks:0,non_repair_tasks:0,fully_fixed:0,not_fixed:0,
+      qp:0,qf:0,qt:0,live_repair:0,srep:0,nrep:0,snon:0,nnon:0,
+      sum_idle:0,n_idle:0,
+      r01:0,r15:0,r57:0,r714:0,r1428:0,r2890:0,r90:0,days:new Set(),
+      bc_Dex:0,bc_Express:0,bc_Miracle:0,bc_Wynn:0
+    };
+    const o=m[r.user_id];
+    o.tasks+=r.tasks;o.repair_tasks+=r.repair_tasks;o.non_repair_tasks+=r.non_repair_tasks;
+    o.fully_fixed+=r.fully_fixed;o.not_fixed+=r.not_fixed;
+    o.qp+=r.qc_pass;o.qf+=r.qc_fail;o.qt+=r.qc_total;
+    o.live_repair+=(r.live_repair||0);
+    if(r.repair_tasks){o.srep+=r.avg_repair_time*r.repair_tasks;o.nrep+=r.repair_tasks}
+    if(r.non_repair_tasks){o.snon+=r.avg_nonrepair_time*r.non_repair_tasks;o.nnon+=r.non_repair_tasks}
+    if(r.idle_time_min>0&&r.idle_time_min<800){o.sum_idle+=r.idle_time_min;o.n_idle++;}
+    o.r01+=r.rnt_0_1;o.r15+=r.rnt_1_5;o.r57+=r.rnt_5_7;o.r714+=r.rnt_7_14;
+    o.r1428+=r.rnt_14_28;o.r2890+=r.rnt_28_90;o.r90+=r.rnt_90p;
+    o.bc_Dex+=r.bc_Dex;o.bc_Express+=r.bc_Express;o.bc_Miracle+=r.bc_Miracle;o.bc_Wynn+=r.bc_Wynn;
+    o.days.add(r.date);
+  });
+  return Object.values(m).map(o=>{
+    const days=o.days.size||1;
+    const rt=o.r01+o.r15+o.r57+o.r714+o.r1428+o.r2890+o.r90;
+    const old=o.r1428+o.r2890+o.r90;
+    return{...o,days,
+      avg_tpd:+(o.tasks/days).toFixed(1),
+      avg_repair_time:o.nrep?Math.round(o.srep/o.nrep):0,
+      avg_nonrepair_time:o.nnon?Math.round(o.snon/o.nnon):0,
+      qc_rate:o.qt?Math.round(100*o.qp/o.qt):null,
+      fix_rate:o.tasks?Math.round(100*o.fully_fixed/o.tasks):null,
+      backlog_pct:rt?Math.round(100*old/rt):null,
+      live_repair_pct:o.repair_tasks?Math.round(100*o.live_repair/o.repair_tasks):null,
+      regular_repair:o.repair_tasks-(o.live_repair||0),
+      avg_idle:o.n_idle?Math.round(o.sum_idle/o.n_idle):null,
+      rnt_total:rt,rnt_old:old
+    };
+  });
+}
+
+function aggTot(data){
+  const t={tasks:0,repair_tasks:0,non_repair_tasks:0,fully_fixed:0,not_fixed:0,qp:0,qf:0,qt:0,
+    srep:0,nrep:0,snon:0,nnon:0,r01:0,r15:0,r57:0,r714:0,r1428:0,r2890:0,r90:0,
+    live_repair:0,sum_idle:0,n_idle:0,sum_shift:0,n_shift:0,
+    slive:0,nlive:0,sreg:0,nreg:0};
+  data.forEach(r=>{
+    t.tasks+=r.tasks;t.repair_tasks+=r.repair_tasks;t.non_repair_tasks+=r.non_repair_tasks;
+    t.fully_fixed+=r.fully_fixed;t.not_fixed+=r.not_fixed;
+    t.qp+=r.qc_pass;t.qf+=r.qc_fail;t.qt+=r.qc_total;
+    t.live_repair+=(r.live_repair||0);
+    if(r.repair_tasks>0 && r.avg_repair_time>0){t.srep+=r.avg_repair_time*r.repair_tasks;t.nrep+=r.repair_tasks}
+    if(r.non_repair_tasks>0 && r.avg_nonrepair_time>0){t.snon+=r.avg_nonrepair_time*r.non_repair_tasks;t.nnon+=r.non_repair_tasks}
+    // Live / regular repair time (stored per-row after enrichment)
+    const liveN = r.live_repair||0;
+    const regN  = r.repair_tasks - liveN;
+    if(r.live_repair_time>0 && liveN>0){t.slive+=r.live_repair_time*liveN; t.nlive+=liveN;}
+    if(r.regular_repair_time>0 && regN>0){t.sreg+=r.regular_repair_time*regN; t.nreg+=regN;}
+    t.r01+=r.rnt_0_1;t.r15+=r.rnt_1_5;t.r57+=r.rnt_5_7;t.r714+=r.rnt_7_14;
+    t.r1428+=r.rnt_14_28;t.r2890+=r.rnt_28_90;t.r90+=r.rnt_90p;
+    if(r.idle_time_min>0&&r.idle_time_min<800){t.sum_idle+=r.idle_time_min;t.n_idle++;}
+    if(r.shift_dur_min>0&&r.shift_dur_min<1440){t.sum_shift+=r.shift_dur_min;t.n_shift++;}
+  });
+  return t;
+}
+
+function countActiveMechDays(data){
+  const s=new Set();data.forEach(r=>s.add(r.user_id+'|'+r.date));return s.size;
+}
+
+function byPeriod(data,p){
+  const m={};
+  data.forEach(r=>{
+    let k;if(p==='daily')k=r.date;
+    else if(p==='weekly'){const d=new Date(r.date),dy=d.getDay(),di=d.getDate()-dy+(dy===0?-6:1);k=new Date(d.setDate(di)).toISOString().slice(0,10)}
+    else k=r.date.slice(0,7);
+    if(!m[k])m[k]={tasks:0,qp:0,qf:0};m[k].tasks+=r.tasks;m[k].qp+=r.qc_pass;m[k].qf+=r.qc_fail;
+  });
+  return Object.entries(m).sort((a,b)=>a[0].localeCompare(b[0]));
+}
+
+// ============================================================
+//  RENDER
+// ============================================================
+function render(){
+  if(CURRENT_UID!==null&&document.getElementById('detail').classList.contains('show')){renderDetail();return;}
+  const d=gf();
+  renderKPIs(d);renderRNT(d);renderCmp();renderDrill(d);
+  renderOther();renderTrend(d);renderQC(d);renderLB();renderAL();renderTable();renderTenure();updateBC();
+}
+
+function set(id,v){document.getElementById(id).textContent=v}
+
+function renderKPIs(d){
+  const t=aggTot(d);
+  const dayMechMap={};d.forEach(r=>{if(!dayMechMap[r.date])dayMechMap[r.date]=new Set();dayMechMap[r.date].add(r.user_id);});
+  const dayCounts=Object.values(dayMechMap).map(s=>s.size);
+  const mechs=dayCounts.length?+(dayCounts.reduce((a,b)=>a+b,0)/dayCounts.length).toFixed(1):0;
+  const totalMechs=[...new Set(d.map(r=>r.user_id))].length;
+  const mechDays=countActiveMechDays(d);
+  const tpd=mechDays?+(t.tasks/mechDays).toFixed(1):0;
+  const tpdr=mechDays?+(t.repair_tasks/mechDays).toFixed(1):0;
+  const tpdn=mechDays?+(t.non_repair_tasks/mechDays).toFixed(1):0;
+  const days=[...new Set(d.map(r=>r.date))].length||1;
+  set('vbdg',days+'d window · '+mechDays.toLocaleString()+' mech-days');
+  set('ktasks',t.tasks.toLocaleString());
+  set('krep',t.repair_tasks.toLocaleString());set('krepsub',t.tasks?Math.round(100*t.repair_tasks/t.tasks)+'% of total':'—');
+  set('knon',t.non_repair_tasks.toLocaleString());set('knonsub',t.tasks?Math.round(100*t.non_repair_tasks/t.tasks)+'% of total':'—');
+  set('kmechs',mechs);set('ktpdsub',totalMechs+' total · '+days+' days');
+  set('kfix',t.fully_fixed.toLocaleString());set('kfixsub',t.tasks?Math.round(100*t.fully_fixed/t.tasks)+'% of total':'—');
+  set('knfix',t.not_fixed.toLocaleString());set('knfixsub',t.tasks?Math.round(100*t.not_fixed/t.tasks)+'% of total':'—');
+  set('kqc',(t.qt?Math.round(100*t.qp/t.qt):0)+'%');set('kqcsub',t.qp.toLocaleString()+' pass · '+t.qf.toLocaleString()+' fail');
+  set('krep',t.repair_tasks.toLocaleString());set('krepsub',t.tasks?Math.round(100*t.repair_tasks/t.tasks)+'% of total':'—');
+  set('knon',t.non_repair_tasks.toLocaleString());set('knonsub',t.tasks?Math.round(100*t.non_repair_tasks/t.tasks)+'% of total':'—');
+  set('kavgrep',t.nrep?Math.round(t.srep/t.nrep)+' min':'—');
+  set('kavgnon',t.nnon?Math.round(t.snon/t.nnon)+' min':'—');
+  set('ktpd',tpd);set('ktpdr',tpdr);set('ktpdn',tpdn);
+  const liveRep=t.live_repair,nonLive=t.repair_tasks-liveRep;
+  const livePct=t.repair_tasks?Math.round(100*liveRep/t.repair_tasks):0;
+  const avgLiveTime = t.nlive ? Math.round(t.slive/t.nlive) : null;
+  const avgRegTime  = t.nreg  ? Math.round(t.sreg/t.nreg)  : null;
+  const livePerMech = mechDays ? (liveRep/mechDays).toFixed(1) : '—';
+  const regPerMech  = mechDays ? (nonLive/mechDays).toFixed(1) : '—';
+  set('klive',liveRep.toLocaleString());
+  set('klivesub',livePct+'% of repair tasks');
+  const liveTimeEl=document.getElementById('klivetime');if(liveTimeEl)liveTimeEl.textContent=avgLiveTime?avgLiveTime+' min':'—';
+  const liveBarEl=document.getElementById('klive-bar');if(liveBarEl)liveBarEl.style.width=livePct+'%';
+  const livePermechEl=document.getElementById('klive-permech');if(livePermechEl)livePermechEl.textContent=livePerMech;
+  set('knonlive',nonLive.toLocaleString());
+  set('knonlivesub',(100-livePct)+'% of repair tasks');
+  const regTimeEl=document.getElementById('knonlivetime');if(regTimeEl)regTimeEl.textContent=avgRegTime?avgRegTime+' min':'—';
+  const regBarEl=document.getElementById('kreg-bar');if(regBarEl)regBarEl.style.width=(100-livePct)+'%';
+  const regPermechEl=document.getElementById('kreg-permech');if(regPermechEl)regPermechEl.textContent=regPerMech;
+  set('kidle', t.n_idle ? Math.round(t.sum_idle/t.n_idle)+' min' : '—');
+  set('kshift', t.n_shift ? Math.round(t.sum_shift/t.n_shift)+' min' : '—');
+}
+
+function renderRNT(d){
+  const t=aggTot(d);
+  const bkts=[
+    {k:'r01',n:'0-1 day',c:'#00e5a0'},{k:'r15',n:'1-5 day',c:'#0ea5e9'},
+    {k:'r57',n:'5-7 day',c:'#a78bfa'},{k:'r714',n:'7-14 day',c:'#f59e0b'},
+    {k:'r1428',n:'14-28 day',c:'#f97316'},{k:'r2890',n:'28-90 day',c:'#ef4444'},{k:'r90',n:'>90 day',c:'#7f1d1d'}
+  ];
+  const total=bkts.reduce((s,b)=>s+t[b.k],0);
+  set('rntbdg',total.toLocaleString()+' classified');
+  document.getElementById('rntbars').innerHTML=bkts.map(b=>{
+    const v=t[b.k],p=total?(100*v/total):0;
+    return `<div class="rrow"><div class="rdot" style="background:${b.c}"></div><div class="rname">${b.n}</div>
+      <div class="rbg"><div class="rfill" style="width:${p}%;background:${b.c}"></div></div>
+      <div class="rval">${v.toLocaleString()} <span style="color:var(--mut);font-size:10px">(${p.toFixed(1)}%)</span></div></div>`;
+  }).join('');
+}
+
+function renderCmp(){
+  const d=gf();
+  const c=document.getElementById('fc').value,cl=document.getElementById('fcl').value,m=document.getElementById('fm').value;
+  const cc=document.getElementById('cmpcard');
+  if(m){cc.style.display='none';return}cc.style.display='';
+  const met=document.getElementById('cmpmet').value;
+  let gk,ctx;
+  if(!c){gk='city';ctx='Across cities'}else if(!cl){gk='cluster';ctx='Within '+c}else{gk='username';ctx='Within '+cl}
+  set('cmpctx','— '+ctx);
+  const grp={};
+  d.forEach(r=>{
+    const key=r[gk];if(!grp[key])grp[key]={key,tasks:0,qp:0,qt:0,ff:0,srep:0,nrep:0,rold:0,rtot:0,mechdays:new Set()};
+    const o=grp[key];o.tasks+=r.tasks;o.qp+=r.qc_pass;o.qt+=r.qc_total;o.ff+=r.fully_fixed;
+    if(r.repair_tasks){o.srep+=r.avg_repair_time*r.repair_tasks;o.nrep+=r.repair_tasks}
+    o.rold+=r.rnt_14_28+r.rnt_28_90+r.rnt_90p;
+    o.rtot+=r.rnt_0_1+r.rnt_1_5+r.rnt_5_7+r.rnt_7_14+r.rnt_14_28+r.rnt_28_90+r.rnt_90p;
+    o.mechdays.add(r.user_id+'|'+r.date);
+  });
+  let arr=Object.values(grp).map(o=>({...o,
+    qc_rate:o.qt?Math.round(100*o.qp/o.qt):0,fix_rate:o.tasks?Math.round(100*o.ff/o.tasks):0,
+    avg_repair_time:o.nrep?Math.round(o.srep/o.nrep):0,backlog_pct:o.rtot?Math.round(100*o.rold/o.rtot):0,
+    avg_tpd:o.mechdays.size?+(o.tasks/o.mechdays.size).toFixed(1):0
+  }));
+  const asc=met==='avg_repair_time';
+  arr.sort((a,b)=>asc?a[met]-b[met]:b[met]-a[met]);arr=arr.slice(0,12);
+  const max=Math.max(...arr.map(o=>o[met]),1);
+  const u={tasks:'',qc_rate:'%',fix_rate:'%',avg_repair_time:'m',backlog_pct:'%',avg_tpd:''}[met]||'';
+  document.getElementById('cmplist').innerHTML=arr.map((o,i)=>`
+    <div class="crow"><div class="crank">${i+1}</div><div class="cname">${o.key}</div>
+    <div class="cbg"><div class="cfill" style="width:${max?(100*o[met]/max):0}%"></div></div>
+    <div class="cval">${o[met].toLocaleString()}${u}</div></div>`).join('')||'<div class="empty">No data</div>';
+}
+
+function tenureTag(t){
+  if(t==='New')return '<span class="ttag n">NEW</span>';
+  if(t==='Moderate')return '<span class="ttag m">MOD</span>';
+  if(t==='Old')return '<span class="ttag o">OLD</span>';
+  return '<span class="ttag u">?</span>';
+}
+
+function catsInline(o){
+  const parts=[];
+  if(o.bc_Dex)parts.push('Dex '+o.bc_Dex);if(o.bc_Express)parts.push('Exp '+o.bc_Express);
+  if(o.bc_Miracle)parts.push('Mir '+o.bc_Miracle);if(o.bc_Wynn)parts.push('Wyn '+o.bc_Wynn);
+  return parts.join(' · ');
+}
+
+function renderDrill(d){
+  const c=document.getElementById('fc').value,cl=document.getElementById('fcl').value,m=document.getElementById('fm').value;
+  if(m){
+    const days=[...new Set(d.map(r=>r.date))].sort();
+    set('drltitle','Daily Performance');set('drlbdg',days.length+' days');set('drlcnt',days.length+' days');
+    document.getElementById('drlgrid').innerHTML=days.slice(-30).map(date=>{
+      const dd=d.filter(r=>r.date===date);
+      const t=dd.reduce((s,r)=>s+r.tasks,0),rep=dd.reduce((s,r)=>s+r.repair_tasks,0),nrep=dd.reduce((s,r)=>s+r.non_repair_tasks,0);
+      const old=dd.reduce((s,r)=>s+r.rnt_14_28+r.rnt_28_90+r.rnt_90p,0);
+      const dex=dd.reduce((s,r)=>s+r.bc_Dex,0),exp=dd.reduce((s,r)=>s+r.bc_Express,0);
+      const col=t>=8?'var(--acc)':t>=5?'var(--warn)':'var(--dng)';
+      return `<div class="dc" style="cursor:default">
+        <div class="dl">${date.slice(5)}</div><div class="ds" style="color:${col}">${t}</div>
+        <div class="dl">tasks · ${rep}R / ${nrep}N</div>
+        ${(dex||exp)?`<div class="dcats">Dex ${dex} · Exp ${exp}</div>`:''}
+        ${old>0?`<div class="dsub"><span style="color:var(--warn)">${old} old (&gt;14d)</span></div>`:''}
+      </div>`;
+    }).join('')||'<div class="empty">No data</div>';
+    return;
+  }
+  let gk,title;
+  if(!c){gk='city';title='All Cities'}else if(!cl){gk='cluster';title=c+' — Clusters'}else{gk='user_id';title=cl+' — Mechanics'}
+  const grp={};
+  d.forEach(r=>{
+    const k=r[gk];if(!grp[k])grp[k]={key:k,name:gk==='user_id'?r.username:r[gk],uid:r.user_id,tenure:r.tenure,yc:r.yc,
+      tasks:0,repair_tasks:0,non_repair_tasks:0,live_repair:0,mechs:new Set(),qp:0,qt:0,rold:0,rtot:0,srep:0,nrep:0,
+      bc_Dex:0,bc_Express:0,bc_Miracle:0,bc_Wynn:0};
+    const o=grp[k];
+    o.tasks+=r.tasks;o.repair_tasks+=r.repair_tasks;o.non_repair_tasks+=r.non_repair_tasks;
+    o.live_repair+=(r.live_repair||0);
+    o.mechs.add(r.user_id);o.qp+=r.qc_pass;o.qt+=r.qc_total;
+    if(r.repair_tasks){o.srep+=r.avg_repair_time*r.repair_tasks;o.nrep+=r.repair_tasks}
+    o.rold+=r.rnt_14_28+r.rnt_28_90+r.rnt_90p;
+    o.rtot+=r.rnt_0_1+r.rnt_1_5+r.rnt_5_7+r.rnt_7_14+r.rnt_14_28+r.rnt_28_90+r.rnt_90p;
+    o.bc_Dex+=r.bc_Dex;o.bc_Express+=r.bc_Express;o.bc_Miracle+=r.bc_Miracle;o.bc_Wynn+=r.bc_Wynn;
+  });
+  const arr=Object.values(grp).sort((a,b)=>b.tasks-a.tasks);
+  set('drltitle',title);set('drlbdg',arr.length+(gk==='user_id'?' mechanics':gk==='city'?' cities':' clusters'));set('drlcnt',arr.length);
+  document.getElementById('drlgrid').innerHTML=arr.map(o=>{
+    const qc=o.qt?Math.round(100*o.qp/o.qt):null,bp=o.rtot?Math.round(100*o.rold/o.rtot):0,at=o.nrep?Math.round(o.srep/o.nrep):0;
+    const liveR=o.live_repair||0,regR=o.repair_tasks-liveR;
+    const click=gk==='city'?`drillCity('${o.key}')`:gk==='cluster'?`drillCluster('${String(o.key).replace(/'/g,"\\'")}')`: `openMech(${o.uid})`;
+    const cats=catsInline(o);
+    return `<div class="dc" onclick="${click}">
+      <div class="dn"><span>${o.name}</span>${gk==='user_id'?tenureTag(o.tenure):''}</div>
+      <div class="ds">${o.tasks.toLocaleString()}</div>
+      <div class="dl">tasks · ${o.repair_tasks}R / ${o.non_repair_tasks}N</div>
+      <div style="font-size:10px;font-family:'Space Mono',monospace;margin:4px 0 5px;display:flex;gap:5px">
+        <span style="color:#34d399">⬤ ${liveR} live</span>
+        <span style="color:var(--mut)">/</span>
+        <span style="color:var(--pnk)">${regR} regular</span>
+      </div>
+      ${gk==='user_id'&&o.yc?`<div class="dcats" style="color:var(--acc2)">📍 ${o.yc}</div>`:''}
+      ${cats?`<div class="dcats">${cats}</div>`:''}
+      <div class="dsub">
+        ${gk!=='user_id'?`<span style="color:var(--acc2)">${o.mechs.size} mechs</span>`:''}
+        ${qc!==null?`<span style="color:var(--warn)">QC ${qc}%</span>`:''}
+        <span style="color:var(--pnk)">Old ${bp}%</span>
+        ${at?`<span style="color:var(--pur)">${at}m</span>`:''}
+      </div>
+    </div>`;
+  }).join('')||'<div class="empty">No data</div>';
+}
+
+function drillCity(c){document.getElementById('fc').value=c;onCity()}
+function drillCluster(cl){document.getElementById('fcl').value=cl;onCluster()}
+function openMech(uid){openDetail(uid)}
+
+function renderOther(){
+  const d=gfOther(),m=document.getElementById('fm').value;
+  const card=document.getElementById('othcard');
+  if(m){card.style.display='none';return}card.style.display='';
+  const grp={};
+  d.forEach(r=>{if(!grp[r.primary_role])grp[r.primary_role]={tasks:0,rep:0};grp[r.primary_role].tasks+=r.tasks;grp[r.primary_role].rep+=r.repair_tasks;});
+  const total=Object.values(grp).reduce((s,o)=>s+o.tasks,0);
+  set('othbdg',total.toLocaleString()+' tasks');
+  const arr=Object.entries(grp).sort((a,b)=>b[1].tasks-a[1].tasks);
+  document.getElementById('othbody').innerHTML=arr.map(([role,o])=>`
+    <div class="oth-row"><span class="oth-name">${role}</span>
+    <span class="oth-val">${o.tasks.toLocaleString()} <span style="color:var(--mut);font-size:10px;font-weight:400">(${o.rep} repair)</span></span></div>`
+  ).join('')||'<div class="empty">No other-profile tasks in this range</div>';
+}
+
+function renderTrend(d){
+  const periods=byPeriod(d,G);
+  const labels=periods.map(([k])=>k.slice(5)),vals=periods.map(([,v])=>v.tasks);
+  if(tChart)tChart.destroy();
+  const txtCol=getComputedStyle(document.body).getPropertyValue('--mut').trim();
+  const gridCol=document.body.classList.contains('light')?'rgba(219,226,236,.8)':'rgba(30,45,69,.4)';
+  tChart=new Chart(document.getElementById('charttrend'),{
+    type:'line',
+    data:{labels,datasets:[{label:'Tasks',data:vals,borderColor:'#00e5a0',backgroundColor:'rgba(0,229,160,0.08)',fill:true,tension:0.4,pointRadius:labels.length>30?0:3,pointBackgroundColor:'#00e5a0',borderWidth:2}]},
+    options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{display:false}},
+      scales:{x:{ticks:{color:txtCol,font:{size:10},maxTicksLimit:8},grid:{color:gridCol}},y:{ticks:{color:txtCol,font:{size:10}},grid:{color:gridCol}}}}
+  });
+  set('trendbdg',{daily:'Daily',weekly:'Weekly',monthly:'Monthly'}[G]);
+}
+
+function renderQC(d){
+  const t=aggTot(d);
+  if(qChart)qChart.destroy();
+  const txtCol=getComputedStyle(document.body).getPropertyValue('--mut').trim();
+  qChart=new Chart(document.getElementById('chartqc'),{
+    type:'doughnut',
+    data:{labels:['Pass','Fail'],datasets:[{data:[t.qp,t.qf],backgroundColor:['rgba(0,229,160,.8)','rgba(239,68,68,.7)'],borderWidth:0,hoverOffset:6}]},
+    options:{responsive:true,maintainAspectRatio:true,cutout:'72%',plugins:{legend:{position:'bottom',labels:{color:txtCol,font:{size:11},padding:16}}}}
+  });
+}
+
+function windowed(w){
+  const d=gf();if(w==='all')return d;
+  const dates=[...new Set(d.map(r=>r.date))].sort();
+  if(!dates.length)return d;
+  const last=new Date(dates[dates.length-1]);last.setDate(last.getDate()-w+1);
+  const s=last.toISOString().slice(0,10);return d.filter(r=>r.date>=s);
+}
+
+function setLBW(w,e){LBW=w;['lb7','lb30','lball'].forEach(id=>document.getElementById(id).classList.remove('on'));e.target.classList.add('on');renderLB()}
+function setALW(w,e){ALW=w;['al7','al30','alall'].forEach(id=>document.getElementById(id).classList.remove('on'));e.target.classList.add('on');renderAL()}
+
+function renderLB(){
+  const met=document.getElementById('lbmet').value;
+  const d=windowed(LBW);const agg=aggMech(d);
+  let arr=agg,sk,col,unit='';
+  if(met==='tasks'){arr=arr.sort((a,b)=>b.tasks-a.tasks);sk='tasks';col='var(--acc)'}
+  else if(met==='backlog'){arr=arr.filter(o=>o.rnt_old>=3).map(o=>({...o,_v:o.rnt_old})).sort((a,b)=>b._v-a._v);sk='_v';col='var(--pnk)'}
+  else if(met==='qc'){arr=arr.filter(o=>o.qt>=5).sort((a,b)=>b.qc_rate-a.qc_rate);sk='qc_rate';col='var(--acc)';unit='%'}
+  else if(met==='speed'){arr=arr.filter(o=>o.repair_tasks>=5).sort((a,b)=>a.avg_repair_time-b.avg_repair_time);sk='avg_repair_time';col='var(--pur)';unit='m'}
+  arr=arr.slice(0,10);const max=Math.max(...arr.map(o=>o[sk]),1);
+  document.getElementById('lb').innerHTML=arr.map((o,i)=>{
+    const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1);
+    const pct=met==='speed'?Math.max(5,100-(o[sk]/max)*100+5):(100*o[sk]/max);
+    return `<div class="lrow" onclick="openMech(${o.user_id})">
+      <div class="lnum">${medal}</div>
+      <div class="linf"><div class="lname">${o.username}</div><div class="lmeta">${o.city} · ${o.cluster}</div>
+      <div class="lbar"><div class="lfill" style="width:${pct}%;background:${col}"></div></div></div>
+      <div class="lval" style="color:${col}">${o[sk].toLocaleString()}${unit}</div></div>`;
+  }).join('')||'<div class="empty">No data in window</div>';
+}
+
+function renderAL(){
+  const d=windowed(ALW);const agg=aggMech(d);const alerts=[];
+  const clBL={};
+  agg.forEach(m=>{if(!clBL[m.cluster])clBL[m.cluster]={old:0,tot:0};clBL[m.cluster].old+=m.rnt_old;clBL[m.cluster].tot+=m.rnt_total});
+  const allD=gf(),allDates=[...new Set(allD.map(r=>r.date))].sort(),lastD=allDates[allDates.length-1];
+  const A=ACFG;
+  agg.forEach(m=>{
+    const mt=`${m.username} (${m.city} · ${m.cluster})`;
+    if(A.low_prod.on&&m.tasks>=5&&m.avg_tpd<A.low_prod.v)alerts.push({t:'w',i:'📉',msg:`<b>${mt}</b> — ${m.avg_tpd} tasks/day (target ${A.low_prod.v}+)`,uid:m.user_id});
+    if(A.low_qc.on&&m.qt>=3&&m.qc_rate!==null&&m.qc_rate<A.low_qc.v)alerts.push({t:'d',i:'❌',msg:`<b>${mt}</b> — QC ${m.qc_rate}% (target ${A.low_qc.v}%+)`,uid:m.user_id});
+    if(A.low_fix.on&&m.tasks>=5&&m.fix_rate!==null&&m.fix_rate<A.low_fix.v)alerts.push({t:'w',i:'🔧',msg:`<b>${mt}</b> — Fix rate ${m.fix_rate}%`,uid:m.user_id});
+    if(A.slow_rep.on&&m.repair_tasks>=5&&m.avg_repair_time>A.slow_rep.v)alerts.push({t:'w',i:'🐢',msg:`<b>${mt}</b> — Avg repair ${m.avg_repair_time}m (target <${A.slow_rep.v}m)`,uid:m.user_id});
+    if(A.attend.on&&m.days<A.attend.v)alerts.push({t:'i',i:'📅',msg:`<b>${mt}</b> — Present only ${m.days} days`,uid:m.user_id});
+    if(A.qc_cluster.on&&m.qf>=A.qc_cluster.v)alerts.push({t:'d',i:'⚠️',msg:`<b>${mt}</b> — ${m.qf} QC fails in window`,uid:m.user_id});
+    if(A.cherry.on&&m.rnt_total>=10){const cb=clBL[m.cluster];const clp=cb.tot?(100*cb.old/cb.tot):0;if(clp>=10&&m.backlog_pct<(clp*A.cherry.v/100))alerts.push({t:'w',i:'🍒',msg:`<b>${mt}</b> — Cherry-pick: ${m.backlog_pct}% old (cluster ${Math.round(clp)}%)`,uid:m.user_id})}
+    if(A.no_old.on&&m.rnt_total>=10&&m.rnt_old===0){const cb=clBL[m.cluster];const clp=cb.tot?(100*cb.old/cb.tot):0;if(clp>=10)alerts.push({t:'w',i:'🚫',msg:`<b>${mt}</b> — Zero old bikes (cluster ${Math.round(clp)}%)`,uid:m.user_id})}
+  });
+  if(A.inactive.on&&lastD){
+    agg.forEach(m=>{
+      const ud=d.filter(r=>r.user_id===m.user_id).map(r=>r.date).sort();
+      if(ud.length){const gap=Math.floor((new Date(lastD)-new Date(ud[ud.length-1]))/(864e5));if(gap>A.inactive.v)alerts.push({t:'i',i:'💤',msg:`<b>${m.username} (${m.city})</b> — No tasks for ${gap} days`,uid:m.user_id})}
+    });
+  }
+  set('alcnt',alerts.length+' alerts');
+  document.getElementById('allist').innerHTML=alerts.slice(0,15).map(a=>
+    `<div class="arow ${a.t}" onclick="openMech(${a.uid})"><span class="aico">${a.i}</span><span>${a.msg}</span></div>`
+  ).join('')||'<div class="empty">✅ No alerts!</div>';
+}
+
+function renderTable(){
+  const data=gf(),agg=aggMech(data);
+  const s=document.getElementById('srch').value.toLowerCase();
+  let arr=agg.filter(m=>!s||m.username.toLowerCase().includes(s)||m.city.toLowerCase().includes(s)||m.cluster.toLowerCase().includes(s));
+  arr.sort((a,b)=>{const av=a[SC]??-1,bv=b[SC]??-1;if(typeof av==='string')return SD*av.localeCompare(bv);return SD*(av-bv)});
+  document.getElementById('tbody').innerHTML=arr.map(m=>{
+    const qC=m.qc_rate===null?'x':m.qc_rate>=85?'g':m.qc_rate>=70?'w':'d';
+    const fC=m.fix_rate===null?'x':m.fix_rate>=90?'g':m.fix_rate>=75?'w':'d';
+    const bC=m.backlog_pct===null?'x':m.backlog_pct>=20?'g':m.backlog_pct>=10?'w':'d';
+    const prod=m.avg_tpd>=7?'<span class="pill g">High</span>':m.avg_tpd>=4?'<span class="pill w">Medium</span>':'<span class="pill d">Low</span>';
+    return `<tr onclick="openMech(${m.user_id})">
+      <td style="font-weight:600">${m.username}</td><td><span class="pill b">${m.city}</span></td><td>${m.cluster}</td>
+      <td style="font-size:11px;color:var(--acc2)">${m.yc||'—'}</td>
+      <td><b>${m.tasks}</b> <span style="color:var(--mut);font-size:10px">(${m.avg_tpd}/d)</span></td>
+      <td style="color:#34d399;font-weight:600">${m.live_repair||0}</td>
+      <td style="color:var(--pnk);font-weight:600">${(m.repair_tasks-(m.live_repair||0))}</td>
+      <td>${m.non_repair_tasks}</td><td>${m.avg_repair_time}m</td>
+      <td>${m.qc_rate!==null?`<span class="pill ${qC}">${m.qc_rate}%</span>`:'<span style="color:var(--mut)">–</span>'}</td>
+      <td>${m.fix_rate!==null?`<span class="pill ${fC}">${m.fix_rate}%</span>`:'<span style="color:var(--mut)">–</span>'}</td>
+      <td>${m.backlog_pct!==null?`<span class="pill ${bC}">${m.backlog_pct}%</span>`:'<span style="color:var(--mut)">–</span>'}</td>
+      <td>${tenureTag(m.tenure)}</td><td>${prod}</td></tr>`;
+  }).join('')||`<tr><td colspan="13" class="empty">No results</td></tr>`;
+}
+
+function srt(c){if(SC===c)SD*=-1;else{SC=c;SD=-1}renderTable()}
+function setG(g,e){G=g;['gd','gw','gm'].forEach(id=>document.getElementById(id).classList.remove('on'));e.target.classList.add('on');renderTrend(gf())}
+
+function renderTenure(){
+  const data=gf(),fromDate=document.getElementById('ff').value,agg=aggMech(data);
+  const groups={New:[],Moderate:[],Old:[]};
+  agg.forEach(m=>{
+    const refDate=new Date(RAW.reduce((mx,r)=>r.date>mx?r.date:mx,'2026-01-01'));
+    const fromD=new Date(fromDate);
+    const daysBack=Math.round((refDate-fromD)/864e5);
+    const tenureAtFrom=m.tenure_days-daysBack;
+    const dynTenure=tenureAtFrom<0?'Unknown':tenureAtFrom<30?'New':tenureAtFrom<90?'Moderate':'Old';
+    if(groups[dynTenure])groups[dynTenure].push(m);
+  });
+  const avg=(arr,key,filter=()=>true)=>{const f=arr.filter(o=>filter(o)&&o[key]!=null&&o[key]!==0);return f.length?+(f.reduce((s,o)=>s+(o[key]||0),0)/f.length).toFixed(1):0;};
+  const metrics=[
+    {key:'avg_tpd',lbl:'Avg Tasks/Day',unit:'',higher:true,hint:'Higher = more productive. No min threshold.'},
+    {key:'qc_rate',lbl:'QC Pass %',unit:'%',higher:true,filter:o=>o.qt>=3,hint:'% repairs passing QC check. Only mechs with ≥3 QC events counted.'},
+    {key:'fix_rate',lbl:'Fix Rate %',unit:'%',higher:true,filter:o=>o.tasks>=5,hint:'% bikes fully resolved. Only mechs with ≥5 tasks counted.'},
+    {key:'avg_repair_time',lbl:'Avg Repair Time',unit:'m',higher:false,filter:o=>o.repair_tasks>=3,hint:'Lower = faster. Old mechs get quicker over time. Min 3 repairs to count.'},
+    {key:'backlog_pct',lbl:'Old Bikes >14d %',unit:'%',higher:true,filter:o=>o.rnt_total>=5,hint:'% of bikes that waited 14+ days before repair. Lower is better. Min 5 RNT records.'},
+  ];
+  const totals={New:groups.New.length,Moderate:groups.Moderate.length,Old:groups.Old.length};
+  const totalAll=totals.New+totals.Moderate+totals.Old;
+  document.getElementById('tenure-bdg').textContent=totalAll+' mechanics';
+  const rows=metrics.map(m=>{
+    const f=m.filter||null;
+    const vN=avg(groups.New,m.key,f||undefined),vM=avg(groups.Moderate,m.key,f||undefined),vO=avg(groups.Old,m.key,f||undefined);
+    const delta=vO&&vN?((vO-vN)/Math.max(vN,0.1)*100).toFixed(0):null;
+    const dTag=delta===null?'':(m.higher?(+delta>=0?`<span class="delta-up">↑${Math.abs(delta)}%</span>`:`<span class="delta-dn">↓${Math.abs(delta)}%</span>`):(+delta<=0?`<span class="delta-up">↓${Math.abs(delta)}%</span>`:`<span class="delta-dn">↑${Math.abs(delta)}%</span>`));
+    return `<tr><td class="tnr-lbl">${m.lbl}</td><td class="tnr-new">${vN}${m.unit}</td><td class="tnr-mod">${vM}${m.unit}</td><td class="tnr-old">${vO}${m.unit}</td><td>${dTag}</td><td style="font-size:10px;color:var(--mut);line-height:1.4">${m.hint}</td></tr>`;
+  }).join('');
+  document.getElementById('tenure-table').innerHTML=`<table class="tnr-table"><thead><tr><th>Metric</th>
+    <th>🔵 New <span class="tnr-cnt">(${totals.New})</span></th>
+    <th>🟡 Moderate <span class="tnr-cnt">(${totals.Moderate})</span></th>
+    <th>🟢 Old <span class="tnr-cnt">(${totals.Old})</span></th>
+    <th>New→Old</th><th>What it means</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+function updateBC(){
+  const c=document.getElementById('fc').value,cl=document.getElementById('fcl').value,m=document.getElementById('fm').value;
+  let p=['<span class="bci" onclick="resetAll()">All Cities</span>'];
+  if(c)p.push(`<span class="bcs">›</span><span class="bci" onclick="resetCl()">${c}</span>`);
+  if(cl)p.push(`<span class="bcs">›</span><span class="bci" onclick="resetMe()">${cl}</span>`);
+  if(m){const n=document.getElementById('fm').options[document.getElementById('fm').selectedIndex].text;p.push(`<span class="bcs">›</span><span class="bci a">${n}</span>`)}
+  document.getElementById('bc').innerHTML=p.join('');
+}
+function resetAll(){document.getElementById('fc').value='';document.getElementById('fcl').innerHTML='<option value="">All Clusters</option>';document.getElementById('fm').innerHTML='<option value="">All Mechanics</option>';render()}
+function resetCl(){document.getElementById('fcl').value='';document.getElementById('fm').value='';render()}
+function resetMe(){document.getElementById('fm').value='';render()}
+
+// ============================================================
+//  MECHANIC DETAIL PAGE
+// ============================================================
+function openDetail(uid){
+  CURRENT_UID=uid;
+  document.getElementById('app').classList.add('hide');
+  document.getElementById('detail').classList.add('show');
+  const df=document.getElementById('df-from'),dt=document.getElementById('df-to');
+  if(!df.dataset.init){df.value=document.getElementById('ff').value;dt.value=document.getElementById('ft').value;df.dataset.init='1';}
+  window.scrollTo(0,0);renderDetail();
+}
+function closeDetail(){
+  CURRENT_UID=null;
+  document.getElementById('app').classList.remove('hide');
+  document.getElementById('detail').classList.remove('show');
+  if(dChart){dChart.destroy();dChart=null}
+}
+function switchTab(t){
+  ['ov','bk'].forEach(x=>{
+    document.getElementById('tab-'+x).classList.toggle('on',x===t);
+    document.getElementById('panel-'+x).classList.toggle('on',x===t);
+  });
+  if(t==='bk'){window._bikeTasks=null;loadBikeDataForMech();}
+}
+
+function getMechAggForRange(){
+  const f=document.getElementById('df-from').value,t=document.getElementById('df-to').value;
+  const data=RAW.filter(r=>r.user_id===CURRENT_UID&&(!f||r.date>=f)&&(!t||r.date<=t));
+  return aggMech(data)[0]||null;
+}
+
+function syncMainDates(){
+  document.getElementById('df-from').value=document.getElementById('ff').value;
+  document.getElementById('df-to').value=document.getElementById('ft').value;
+  renderDetail();
+}
+
+function renderDetail(){
+  const m=RAW.find(r=>r.user_id===CURRENT_UID);
+  if(!m){alert('Mechanic data not found');closeDetail();return}
+  const tag=tenureTag(m.tenure);
+  document.getElementById('dname').innerHTML=`${m.username} ${tag}`;
+  document.getElementById('dmeta').innerHTML=`${m.city} · ${m.cluster} · 📍 ${m.yc||'—'} · ${m.party} · Joined ${m.tenure_days>=0?m.tenure_days+' days ago':'?'}`;
+  renderDetailOverview(); // async - will update time fields when raw_tasks fetch completes
+}
+
+async function renderDetailOverview(){
+  const f=document.getElementById('df-from').value,t=document.getElementById('df-to').value;
+  const agg=getMechAggForRange();
+  if(!agg){['d-k1','d-k2','d-k3','d-k4','d-k5','d-k6','d-k7','d-k8','d-k8r','d-k8n','d-k9','d-k10','d-k11','d-k4b','d-klive','d-kregular','d-kidle','d-kshift'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='—'});return;}
+  const days=agg.days;
+  document.getElementById('d-kbdg').textContent=days+' active days';
+  document.getElementById('d-k1').textContent=agg.tasks;
+  document.getElementById('d-k1s').textContent=agg.avg_tpd+' avg/day';
+  document.getElementById('d-k2').textContent=agg.repair_tasks;
+  document.getElementById('d-k2s').textContent=agg.tasks?Math.round(100*agg.repair_tasks/agg.tasks)+'%':'—';
+  document.getElementById('d-k3').textContent=agg.non_repair_tasks;
+  document.getElementById('d-k3s').textContent=agg.tasks?Math.round(100*agg.non_repair_tasks/agg.tasks)+'%':'—';
+  document.getElementById('d-k2').textContent=agg.repair_tasks;
+  document.getElementById('d-k2s').textContent=agg.tasks?Math.round(100*agg.repair_tasks/agg.tasks)+'% of total':'—';
+  document.getElementById('d-k3').textContent=agg.non_repair_tasks;
+  document.getElementById('d-k3s').textContent=agg.tasks?Math.round(100*agg.non_repair_tasks/agg.tasks)+'% of total':'—';
+  document.getElementById('d-k4').textContent=days;document.getElementById('d-k4s').textContent='days present';
+  const fixPct=agg.tasks?Math.round(100*agg.fully_fixed/agg.tasks):0;
+  document.getElementById('d-k5').textContent=fixPct+'%';document.getElementById('d-k5s').textContent=agg.fully_fixed+' tasks';
+  document.getElementById('d-k6').textContent=(100-fixPct)+'%';document.getElementById('d-k6s').textContent=agg.not_fixed+' tasks';
+  document.getElementById('d-k7').textContent=agg.qc_rate!==null?agg.qc_rate+'%':'—';
+  document.getElementById('d-k7s').textContent=agg.qp+' pass · '+agg.qf+' fail';
+  document.getElementById('d-k8').textContent=agg.avg_tpd;
+  document.getElementById('d-k8r').textContent=days?+(agg.repair_tasks/days).toFixed(1):0;
+  document.getElementById('d-k8n').textContent=days?+(agg.non_repair_tasks/days).toFixed(1):0;
+  document.getElementById('d-k4b').textContent=days;
+  const dLive=agg.live_repair||0,dReg=agg.repair_tasks-dLive;
+  const dLivePct=agg.repair_tasks?Math.round(100*dLive/agg.repair_tasks):0;
+  document.getElementById('d-klive').textContent=dLive.toLocaleString();
+  document.getElementById('d-klivesub').textContent=dLivePct+'% of repair tasks';
+  const dLiveBar=document.getElementById('d-klive-bar');if(dLiveBar)dLiveBar.style.width=dLivePct+'%';
+  const dLivePerday=document.getElementById('d-klive-perday');if(dLivePerday)dLivePerday.textContent=days?(dLive/days).toFixed(1):'—';
+  document.getElementById('d-kregular').textContent=dReg.toLocaleString();
+  document.getElementById('d-kregularsub').textContent=(100-dLivePct)+'% of repair tasks';
+  const dRegBar=document.getElementById('d-kreg-bar');if(dRegBar)dRegBar.style.width=(100-dLivePct)+'%';
+  const dRegPerday=document.getElementById('d-kreg-perday');if(dRegPerday)dRegPerday.textContent=days?(dReg/days).toFixed(1):'—';
+
+  // Shift from mech_agg (total_shift_min exists in DB)
+  const dData=RAW.filter(r=>r.user_id===CURRENT_UID&&(!f||r.date>=f)&&(!t||r.date<=t));
+  const shiftRows=dData.filter(r=>r.shift_dur_min>0);
+  const avgShift=shiftRows.length?Math.round(shiftRows.reduce((s,r)=>s+r.shift_dur_min,0)/shiftRows.length):null;
+  document.getElementById('d-kshift').textContent=avgShift?avgShift+' min':'—';
+
+  // ── Fetch real task times + idle from raw_tasks for THIS mechanic ──
+  document.getElementById('d-k9').textContent='…';
+  document.getElementById('d-k10').textContent='…';
+  document.getElementById('d-k11').textContent='…';
+  document.getElementById('d-kidle').textContent='…';
+  if(document.getElementById('d-klivetime'))document.getElementById('d-klivetime').textContent='…';
+  if(document.getElementById('d-kregtime'))document.getElementById('d-kregtime').textContent='…';
+
+  try {
+    // IMPORTANT: filter by day_start_dt (login/shift date), NOT task_date
+    // Mechanic logged in May 8 evening → shift date = May 8, tasks may run into May 9
+    // All tasks in that shift belong to May 8 for idle/time calculations
+    const tFilters = [
+      `user_id=eq.${CURRENT_UID}`,
+      f ? `day_start_dt=gte.${f}` : '',
+      t ? `day_start_dt=lte.${t}` : '',
+      'task_time_taken=gt.0'
+    ].filter(Boolean).join('&');
+
+    const tRows = await sbFetch('raw_tasks',
+      'task_type,task_time_taken,live_repair_flag,day_start_dt,day_start_time,day_end_time,user_shift_id',
+      tFilters, 10000
+    );
+
+    const toMin = (secs) => secs > 0 ? Math.round(secs / 60) : null;
+    const avgSec = (arr, key='task_time_taken') =>
+      arr.length ? arr.reduce((s,r) => s + (parseFloat(r[key])||0), 0) / arr.length : 0;
+
+    // ── Task time averages ──
+    const repRows    = tRows.filter(r => r.task_type==='repair_task');
+    const nonRepRows = tRows.filter(r => r.task_type!=='repair_task');
+    const liveRows   = tRows.filter(r => parseInt(r.live_repair_flag)===1 && r.task_type==='repair_task');
+    const regRows    = tRows.filter(r => parseInt(r.live_repair_flag)!==1 && r.task_type==='repair_task');
+
+    const avgRepMin  = toMin(avgSec(repRows));
+    const avgNonMin  = toMin(avgSec(nonRepRows));
+    const avgLiveMin = toMin(avgSec(liveRows));
+    const avgRegMin  = toMin(avgSec(regRows));
+    const maxRepMin  = repRows.length ? toMin(Math.max(...repRows.map(r=>parseFloat(r.task_time_taken)||0))) : null;
+
+    // ── Idle time: per shift = shift_duration - sum(task_time_taken) ──
+    // Group all tasks by shift (day_start_dt + user_shift_id)
+    const shiftMap = {};
+    tRows.forEach(r => {
+      const key = (r.user_shift_id || r.day_start_dt); // fallback to date if no shift_id
+      if (!shiftMap[key]) {
+        shiftMap[key] = {
+          day_start_time: r.day_start_time,
+          day_end_time:   r.day_end_time,
+          taskSecs:       0
+        };
+      }
+      shiftMap[key].taskSecs += parseFloat(r.task_time_taken) || 0;
+    });
+
+    // Parse time string — handles "M/D/YYYY H:MM", "HH:MM:SS", or "HH:MM"
+    const parseTimeMin = (s) => {
+      if (!s) return null;
+      // Extract time portion if full datetime like "1/5/2026 7:59"
+      const timePart = s.includes(' ') ? s.split(' ')[1] : s;
+      const parts = timePart.split(':').map(Number);
+      if (parts.length < 2 || isNaN(parts[0])) return null;
+      return parts[0] * 60 + parts[1] + (parts[2]||0) / 60;
+    };
+
+    const idleMinutes = [];
+    const shiftDurMinutes = [];
+    Object.values(shiftMap).forEach(sh => {
+      const startMin = parseTimeMin(sh.day_start_time);
+      let   endMin   = parseTimeMin(sh.day_end_time);
+      if (startMin === null || endMin === null) return;
+      // Handle overnight shift: end < start means crossed midnight
+      if (endMin <= startMin) endMin += 1440;
+      const shiftDurSec = (endMin - startMin) * 60;
+      if (shiftDurSec <= 0 || shiftDurSec > 86400) return; // skip invalid
+      const idleSec = shiftDurSec - sh.taskSecs;
+      shiftDurMinutes.push(shiftDurSec / 60); // always count shift duration
+      if (idleSec >= 0) idleMinutes.push(idleSec / 60); // skip idle if anomalous
+    });
+
+    const avgIdle  = idleMinutes.length  ? Math.round(idleMinutes.reduce((a,b)=>a+b,0)  / idleMinutes.length)  : null;
+    const avgShift = shiftDurMinutes.length ? Math.round(shiftDurMinutes.reduce((a,b)=>a+b,0) / shiftDurMinutes.length) : null;
+
+    document.getElementById('d-k9').textContent  = avgRepMin  ? avgRepMin+' min'  : '—';
+    document.getElementById('d-k10').textContent = avgNonMin  ? avgNonMin+' min'  : '—';
+    document.getElementById('d-k11').textContent = maxRepMin  ? maxRepMin+' min'  : '—';
+    document.getElementById('d-kidle').textContent  = avgIdle  ? avgIdle+' min'  : '—';
+    document.getElementById('d-kshift').textContent = avgShift ? avgShift+' min' : '—';
+    const dLtEl=document.getElementById('d-klivetime');if(dLtEl)dLtEl.textContent=avgLiveMin?avgLiveMin+' min':'—';
+    const dRtEl=document.getElementById('d-kregtime');if(dRtEl)dRtEl.textContent=avgRegMin?avgRegMin+' min':'—';
+
+    // Update agg with real times for peer comparison
+    if (avgRepMin) agg.avg_repair_time    = avgRepMin;
+    if (avgNonMin) agg.avg_nonrepair_time = avgNonMin;
+
+  } catch(e) {
+    console.warn('Detail time fetch failed:', e.message);
+    ['d-k9','d-k10','d-k11','d-kidle','d-klivetime','d-kregtime'].forEach(id=>{
+      const el=document.getElementById(id); if(el) el.textContent='—';
+    });
+  }
+
+  renderPeers(agg);
+  renderDetailRNT(agg);
+  renderDetailChart(dData);
+  renderAttendance(dData);
+}
+
+function renderPeers(mech){
+  const f=document.getElementById('df-from').value,t=document.getElementById('df-to').value;
+  const data=RAW.filter(r=>(!f||r.date>=f)&&(!t||r.date<=t));
+  const clAgg=aggMech(data.filter(r=>r.cluster===mech.cluster));
+  const cityAgg=aggMech(data.filter(r=>r.city===mech.city));
+  const allAgg=aggMech(data);
+  const clRankArr=[...clAgg].sort((a,b)=>b.tasks-a.tasks);
+  const cityRankArr=[...cityAgg].sort((a,b)=>b.tasks-a.tasks);
+  const clRank=clRankArr.findIndex(o=>o.user_id===CURRENT_UID)+1;
+  const cityRank=cityRankArr.findIndex(o=>o.user_id===CURRENT_UID)+1;
+  document.getElementById('d-rank').textContent=`#${clRank} of ${clAgg.length} in cluster · #${cityRank} of ${cityAgg.length} in city`;
+  const avgOf=(arr,key,fil=()=>true)=>{const fa=arr.filter(o=>fil(o)&&o[key]!=null);return fa.length?+(fa.reduce((s,o)=>s+(o[key]||0),0)/fa.length).toFixed(1):0;};
+  const metrics=[
+    {key:'avg_tpd',lbl:'Avg Tasks/Day',unit:'',higher:true},
+    {key:'qc_rate',lbl:'QC Pass Rate',unit:'%',higher:true,f:o=>o.qt>=3},
+    {key:'fix_rate',lbl:'Fix Rate',unit:'%',higher:true,f:o=>o.tasks>=5},
+    {key:'avg_repair_time',lbl:'Avg Repair Time',unit:'m',higher:false,f:o=>o.repair_tasks>=3},
+    {key:'backlog_pct',lbl:'Old Bikes >14d',unit:'%',higher:true,f:o=>o.rnt_total>=5},
+  ];
+  const max_tasks=Math.max(mech.avg_tpd,avgOf(clAgg,'avg_tpd'),avgOf(cityAgg,'avg_tpd'),avgOf(allAgg,'avg_tpd'),1);
+  document.getElementById('peerbars').innerHTML=`<div style="font-size:11px;color:var(--mut);margin-bottom:10px;font-family:'Space Mono',monospace">Tasks/day visual comparison</div>`+
+  [['You',mech.avg_tpd,'var(--pnk)'],[mech.cluster+' avg',avgOf(clAgg,'avg_tpd'),'var(--acc)'],[mech.city+' avg',avgOf(cityAgg,'avg_tpd'),'var(--acc2)'],['PAN India avg',avgOf(allAgg,'avg_tpd'),'var(--pur)']].map(([lbl,val,col])=>`
+    <div class="peer-row"><div class="peer-lbl">${lbl}</div>
+    <div class="peer-bar"><div class="peer-fill" style="width:${100*val/max_tasks}%;background:${col}">${val}</div></div></div>`).join('');
+  const rows=metrics.map(m=>{
+    const fil=m.f||(()=>true);
+    const vMe=mech[m.key]??0,vCl=avgOf(clAgg,m.key,fil),vCi=avgOf(cityAgg,m.key,fil),vPA=avgOf(allAgg,m.key,fil);
+    const delta=(v,base)=>{if(!base)return '';const d=((v-base)/Math.max(base,0.1)*100).toFixed(0);const good=m.higher?(+d>=0):(+d<=0);return good?`<span class="delta-up">↑${Math.abs(d)}%</span>`:`<span class="delta-dn">↓${Math.abs(d)}%</span>`;};
+    return `<tr><td class="tnr-lbl">${m.lbl}</td><td class="tnr-you">${vMe}${m.unit}</td><td class="tnr-old">${vCl}${m.unit} ${delta(vMe,vCl)}</td><td class="tnr-mod">${vCi}${m.unit} ${delta(vMe,vCi)}</td><td class="tnr-new">${vPA}${m.unit} ${delta(vMe,vPA)}</td></tr>`;
+  }).join('');
+  document.getElementById('peer-table').innerHTML=`<table class="tnr-table"><thead><tr><th>Metric</th><th style="color:var(--pnk)">You</th><th style="color:var(--acc)">Cluster Avg</th><th style="color:var(--acc2)">City Avg</th><th style="color:var(--pur)">PAN India Avg</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+function renderDetailRNT(agg){
+  const bkts=[{k:'r01',n:'0-1 day',c:'#00e5a0'},{k:'r15',n:'1-5 day',c:'#0ea5e9'},{k:'r57',n:'5-7 day',c:'#a78bfa'},{k:'r714',n:'7-14 day',c:'#f59e0b'},{k:'r1428',n:'14-28 day',c:'#f97316'},{k:'r2890',n:'28-90 day',c:'#ef4444'},{k:'r90',n:'>90 day',c:'#7f1d1d'}];
+  const total=bkts.reduce((s,b)=>s+agg[b.k],0);
+  document.getElementById('d-rntbdg').textContent=total+' classified';
+  document.getElementById('d-rntbars').innerHTML=bkts.map(b=>{const v=agg[b.k],p=total?(100*v/total):0;return `<div class="rrow"><div class="rdot" style="background:${b.c}"></div><div class="rname">${b.n}</div><div class="rbg"><div class="rfill" style="width:${p}%;background:${b.c}"></div></div><div class="rval">${v} <span style="color:var(--mut);font-size:10px">(${p.toFixed(1)}%)</span></div></div>`;}).join('');
+}
+
+function renderDetailChart(dailyRows){
+  const sorted=[...dailyRows].sort((a,b)=>a.date<b.date?-1:1);
+  const labels=sorted.map(r=>r.date.slice(5)),vals=sorted.map(r=>r.tasks);
+  if(dChart)dChart.destroy();
+  const txtCol=getComputedStyle(document.body).getPropertyValue('--mut').trim();
+  const grd=document.body.classList.contains('light')?'rgba(219,226,236,.8)':'rgba(30,45,69,.4)';
+  dChart=new Chart(document.getElementById('dchart'),{
+    type:'bar',
+    data:{labels,datasets:[{data:vals,backgroundColor:vals.map(v=>v>=8?'rgba(0,229,160,.7)':v>=5?'rgba(245,158,11,.7)':'rgba(239,68,68,.7)'),borderRadius:4}]},
+    options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{display:false}},
+      scales:{x:{ticks:{color:txtCol,font:{size:9},maxTicksLimit:12},grid:{display:false}},y:{ticks:{color:txtCol,font:{size:9}},grid:{color:grd}}}}
+  });
+}
+
+function renderAttendance(dailyRows){
+  const f=document.getElementById('df-from').value,t=document.getElementById('df-to').value;
+  if(!f||!t)return;
+  const presentDays=new Set(dailyRows.map(r=>r.date));
+  const start=new Date(f),end=new Date(t);
+  const cells=[];
+  const today=new Date();
+  for(let d=new Date(start);d<=end;d.setDate(d.getDate()+1)){
+    const ds=d.toISOString().slice(0,10);
+    cells.push({
+      date:ds,
+      present:presentDays.has(ds),
+      future:d>today,
+      dayNum:d.getDate(),
+      dow:d.getDay(), // 0=Sun..6=Sat
+      month:d.toLocaleString('en',{month:'short'})
+    });
+  }
+  const presCount=cells.filter(c=>c.present).length;
+  const totalNonFuture=cells.filter(c=>!c.future).length;
+  const absCount=totalNonFuture-presCount;
+  document.getElementById('d-att-bdg').textContent=`${presCount}P · ${absCount}A`;
+
+  // Build 7-col calendar starting on Monday
+  // Pad start to Monday
+  const DAY_LABELS=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  // convert Sunday=0 to Mon=0 index
+  const toMon=(dow)=>(dow+6)%7;
+  const firstDow=toMon(cells[0].dow);
+  const padStart=firstDow; // empty cells before first day
+
+  let html=`<div class="cal-week-grid">`;
+  // Day headers
+  DAY_LABELS.forEach(d=>{
+    html+=`<div class="cal-dow">${d}</div>`;
+  });
+  // Padding cells
+  for(let i=0;i<padStart;i++) html+=`<div class="cal-cell future"></div>`;
+  // Actual cells
+  cells.forEach((c,idx)=>{
+    const cls=c.future?'future':(c.present?'p':'a');
+    // Show month label on 1st of month or first cell
+    const showMonth=(c.dayNum===1);
+    html+=`<div class="cal-cell ${cls}" title="${c.date} (${DAY_LABELS[toMon(c.dow)]})">
+      <span class="cal-day-num">${c.dayNum}</span>
+      ${showMonth?`<span class="cal-month">${c.month}</span>`:''}
+    </div>`;
+  });
+  html+=`</div>`;
+  document.getElementById('d-cal').innerHTML=html;
+}
+
+// ============================================================
+//  BIKES TAB
+// ============================================================
+function getRntClass(rnt){if(rnt===null||rnt===undefined)return '';if(rnt<=1)return 'fresh';if(rnt<=7)return 'recent';if(rnt<=14)return 'stale';return 'old';}
+
+function fmtBike(t){
+  const cls=getRntClass(t.rnt);
+  const rntStr=t.rnt!==null&&t.rnt!==undefined?`<span class="bike-rnt">RNT-${Math.round(t.rnt)}d</span>`:'<span class="bike-rnt">RNT-?</span>';
+  const cat=t.cat?`<span class="bike-rnt">${t.cat}</span>`:'';
+  return `<span class="bike-tag ${cls}">${t.bike} ${cat} ${rntStr}</span>`;
+}
+
+function renderDetailBikes(){
+  const tasks=window._bikeTasks||[];
+  const dayBikePairs=new Set();tasks.forEach(t=>{if(t.bike)dayBikePairs.add(t.date+'|'+t.bike)});
+  const totalUniqueDay=dayBikePairs.size,activeDays=new Set(tasks.map(t=>t.date)).size;
+  const avgBkDay=activeDays?(totalUniqueDay/activeDays).toFixed(1):0;
+  const repTasks=tasks.filter(t=>t.type==='r').length,nonRepTasks=tasks.filter(t=>t.type==='n').length;
+  const avgRep=activeDays?(repTasks/activeDays).toFixed(1):0,avgNon=activeDays?(nonRepTasks/activeDays).toFixed(1):0;
+  const catBikes={Dex:new Set(),Express:new Set(),Miracle:new Set(),Wynn:new Set()};
+  tasks.forEach(t=>{if(t.cat&&catBikes[t.cat])catBikes[t.cat].add(t.bike)});
+  const catStr=Object.entries(catBikes).filter(([,s])=>s.size>0).map(([k,s])=>`${k}:${s.size}`).join(' · ')||'—';
+  const visitCount={},visitDates={};
+  tasks.forEach(t=>{if(!t.bike)return;visitCount[t.bike]=(visitCount[t.bike]||0)+1;if(!visitDates[t.bike])visitDates[t.bike]=[];if(!visitDates[t.bike].includes(t.date))visitDates[t.bike].push(t.date);});
+  const repeatBikes=Object.entries(visitCount).filter(([,c])=>c>=3).sort((a,b)=>b[1]-a[1]).map(([bike,c])=>({bike,count:c,cat:tasks.find(t=>t.bike===bike)?.cat||'',dates:visitDates[bike].sort()}));
+  document.getElementById('d-bk1').textContent=totalUniqueDay;
+  document.getElementById('d-bk1s').textContent=`across ${activeDays} active days`;
+  document.getElementById('d-bk2').textContent=avgBkDay;
+  document.getElementById('d-bk2s').textContent=`${avgRep}R · ${avgNon}N per day`;
+  document.getElementById('d-bk3').textContent=catStr;
+  document.getElementById('d-bk3s').textContent=`${tasks.length} tasks total`;
+  document.getElementById('d-bk4').textContent=repeatBikes.length;
+  document.getElementById('d-bk4s').textContent=repeatBikes.length>=2?'PATTERN! 🚨':'monitor';
+  const card=document.getElementById('d-repeatcard');
+  if(repeatBikes.length>=2){
+    card.style.display='';
+    document.getElementById('d-repeatbdg').textContent=`${repeatBikes.length} bikes`;
+    document.getElementById('d-repeatlist').innerHTML=repeatBikes.map(r=>`<div class="repeat-row"><div><span class="repeat-bike">${r.bike}</span><span style="color:var(--mut);font-size:11px;margin-left:6px">[${r.cat||'?'}]</span></div><div style="text-align:right"><div class="repeat-visits">${r.count} visits</div><div class="repeat-dates">${r.dates.map(d=>d.slice(5)).join(', ')}</div></div></div>`).join('');
+  } else {card.style.display='none';}
+  const byDay={};
+  tasks.forEach(t=>{if(!byDay[t.date])byDay[t.date]={tasks:[],bikes:new Map()};byDay[t.date].tasks.push(t);if(t.bike&&!byDay[t.date].bikes.has(t.bike))byDay[t.date].bikes.set(t.bike,t);});
+  const sortedDays=Object.keys(byDay).sort().reverse();
+  document.getElementById('d-bkdaybdg').textContent=sortedDays.length+' days';
+  document.getElementById('d-bkdays').innerHTML=sortedDays.map((date,i)=>{
+    const d=byDay[date],ts=d.tasks,rep=ts.filter(t=>t.type==='r').length,non=ts.filter(t=>t.type==='n').length;
+    const bikeArr=[...d.bikes.values()],isOpen=i<3?'open':'';
+    return `<div class="day-hdr" onclick="this.nextElementSibling.classList.toggle('open');this.querySelector('.exp-arr').textContent=this.nextElementSibling.classList.contains('open')?'▼':'▶'">
+      <div><span class="exp-arr" style="margin-right:8px;color:var(--mut)">${isOpen?'▼':'▶'}</span><span class="day-name">${date}</span></div>
+      <div class="day-meta">${ts.length} tasks · ${rep}R / ${non}N · ${bikeArr.length} bikes</div>
+    </div>
+    <div class="day-content ${isOpen}">${bikeArr.map(t=>fmtBike(t)).join('')}</div>`;
+  }).join('')||'<div class="empty">No tasks in this range</div>';
+}
+
+// ============================================================
+//  UTILITIES
+// ============================================================
+function showToast(msg){
+  let t=document.getElementById('toast');
+  if(!t){t=document.createElement('div');t.id='toast';t.style.cssText='position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--warn);color:#0a0e1a;padding:10px 18px;border-radius:8px;font-size:12px;font-family:Space Mono,monospace;z-index:9999;font-weight:700';document.body.appendChild(t);}
+  t.textContent=msg;t.style.display='block';
+  setTimeout(()=>t.style.display='none',3500);
+}
+
+// ============================================================
+//  BOOT
+// ============================================================
+init();
+</script>
+</body>
+</html>
