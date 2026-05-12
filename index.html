@@ -4,17 +4,47 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Yulu · MechanicOps v3</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#13151f;--sur:#111827;--sur2:#1a2236;--bdr:#1e2d45;--acc:#00e5a0;--acc2:#0ea5e9;--warn:#f59e0b;--dng:#ef4444;--pur:#a78bfa;--pnk:#f472b6;--txt:#f0f4ff;--mut:#6b7fa3;--r:14px}
 body.light{--bg:#f2f4f7;--sur:#fafafa;--sur2:#eef2f8;--bdr:#dbe2ec;--acc:#059669;--acc2:#0284c7;--warn:#d97706;--dng:#dc2626;--pur:#7c3aed;--pnk:#db2777;--txt:#0a0e1a;--mut:#64748b}
+
+/* ── AUTH WALL ── */
+#auth-wall{position:fixed;inset:0;background:#0b0f1a;display:flex;align-items:center;justify-content:center;z-index:9999;font-family:'DM Sans',sans-serif}
+#auth-wall.hide{display:none}
+.aw-box{background:#111827;border:1px solid #1e2d45;border-radius:18px;padding:44px 40px;width:100%;max-width:420px;box-shadow:0 32px 80px rgba(0,0,0,.7)}
+.aw-logo{font-size:26px;font-weight:900;color:#00B0FF;font-family:'Space Mono',monospace;letter-spacing:-1px}
+.aw-sub{font-size:13px;color:#6b7fa3;margin-top:4px;margin-bottom:32px}
+.aw-label{font-size:11px;color:#6b7fa3;font-weight:700;letter-spacing:.8px;margin-bottom:6px;display:block;text-transform:uppercase}
+.aw-input{width:100%;background:#1a2236;border:1.5px solid #1e2d45;border-radius:10px;padding:11px 14px;color:#f0f4ff;font-size:14px;font-family:'DM Sans',sans-serif;outline:none;box-sizing:border-box;transition:border .2s}
+.aw-input:focus{border-color:#00e5a0}
+.aw-btn{width:100%;background:#00e5a0;border:none;border-radius:10px;padding:13px;color:#0a0e1a;font-size:14px;font-weight:700;font-family:'Space Mono',monospace;cursor:pointer;margin-top:18px;letter-spacing:.5px;transition:opacity .2s}
+.aw-btn:hover{opacity:.85}
+.aw-btn:disabled{opacity:.35;cursor:not-allowed}
+.aw-btn.secondary{background:transparent;border:1.5px solid #1e2d45;color:#6b7fa3;margin-top:10px}
+.aw-btn.secondary:hover{border-color:#6b7fa3;opacity:1}
+.aw-err{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#ef4444;border-radius:8px;padding:10px 14px;font-size:13px;margin-top:14px;display:none;line-height:1.5}
+.aw-err.show{display:block}
+.aw-ok{background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.25);color:#00e5a0;border-radius:8px;padding:10px 14px;font-size:13px;margin-top:14px;display:none;line-height:1.6}
+.aw-ok.show{display:block}
+.aw-step{display:none}.aw-step.active{display:block}
+.otp-wrap{display:flex;gap:10px;justify-content:center;margin-top:10px}
+.otp-d{width:52px;height:60px;background:#1a2236;border:1.5px solid #1e2d45;border-radius:10px;color:#f0f4ff;font-size:24px;font-weight:700;font-family:'Space Mono',monospace;text-align:center;outline:none;transition:border .2s;caret-color:transparent;-moz-appearance:textfield}
+.otp-d::-webkit-outer-spin-button,.otp-d::-webkit-inner-spin-button{-webkit-appearance:none}
+.otp-d:focus{border-color:#00e5a0;background:#1e2a40}
+.aw-hint{font-size:12px;color:#6b7fa3;text-align:center;margin-top:14px}
+.aw-hint span{color:#00e5a0;cursor:pointer;text-decoration:underline}
+/* signout in header */
+.signout-btn{background:none;border:1px solid #1e2d45;color:#6b7fa3;border-radius:6px;padding:5px 12px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
+.signout-btn:hover{border-color:#ef4444;color:#ef4444}
+.hdr-email{font-size:11px;color:#6b7fa3;font-family:'Space Mono',monospace;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden;transition:background .3s,color .3s}
 body::before{content:'';position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 80% 50% at 20% 0%,rgba(0,229,160,.06),transparent 60%),radial-gradient(ellipse 60% 40% at 80% 100%,rgba(14,165,233,.05),transparent 60%);pointer-events:none}
 body.light::before{opacity:.35}
 #app{position:relative;z-index:1}
 header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--bdr);background:var(--sur);position:sticky;top:0;z-index:100;gap:10px;flex-wrap:wrap}
-@media(max-width:600px){header{flex-wrap:wrap;gap:6px}header .logo{order:2;width:100%;justify-content:center;font-size:14px;padding:2px 0}}
 .logo{display:flex;align-items:center;gap:10px;font-family:'Space Mono',monospace;font-size:15px;font-weight:700}
 .hdr-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .live-badge{display:flex;align-items:center;gap:6px;background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.25);border-radius:20px;padding:4px 10px;font-size:11px;color:var(--acc);font-family:'Space Mono',monospace}
@@ -181,18 +211,59 @@ td{padding:8px 11px;white-space:nowrap}
 <div style="text-align:center"><div class="spinner"></div><div class="loading-msg" id="loadingMsg">Loading live data...</div></div>
 </div>
 
+<!-- ══ AUTH WALL ══════════════════════════════════════════ -->
+<div id="auth-wall">
+  <div class="aw-box">
+    <div class="aw-logo">yulu</div>
+    <div class="aw-sub">R&amp;M Dashboard · Sign in with your @yulu.bike email</div>
+
+    <!-- Step 1: Email -->
+    <div class="aw-step active" id="step-email">
+      <label class="aw-label">Work Email</label>
+      <input class="aw-input" type="email" id="aw-email" placeholder="yourname@yulu.bike"
+        autocomplete="email" onkeydown="if(event.key==='Enter')sendOTP()" />
+      <button class="aw-btn" id="aw-send-btn" onclick="sendOTP()">SEND OTP →</button>
+      <div class="aw-err" id="aw-err1"></div>
+    </div>
+
+    <!-- Step 2: OTP -->
+    <div class="aw-step" id="step-otp">
+      <div style="font-size:13px;color:#6b7fa3;margin-bottom:20px;line-height:1.6">
+        A 6-digit code was sent to<br>
+        <strong id="aw-sent-to" style="color:#f0f4ff"></strong>
+      </div>
+      <label class="aw-label">Enter OTP Code</label>
+      <div class="otp-wrap">
+        <input class="otp-d" type="number" maxlength="1" id="o0" oninput="otpInput(0)" onkeydown="otpKey(0,event)" />
+        <input class="otp-d" type="number" maxlength="1" id="o1" oninput="otpInput(1)" onkeydown="otpKey(1,event)" />
+        <input class="otp-d" type="number" maxlength="1" id="o2" oninput="otpInput(2)" onkeydown="otpKey(2,event)" />
+        <input class="otp-d" type="number" maxlength="1" id="o3" oninput="otpInput(3)" onkeydown="otpKey(3,event)" />
+        <input class="otp-d" type="number" maxlength="1" id="o4" oninput="otpInput(4)" onkeydown="otpKey(4,event)" />
+        <input class="otp-d" type="number" maxlength="1" id="o5" oninput="otpInput(5)" onkeydown="otpKey(5,event)" />
+      </div>
+      <button class="aw-btn" id="aw-verify-btn" onclick="verifyOTP()">VERIFY & ENTER →</button>
+      <button class="aw-btn secondary" onclick="backToEmail()">← Use different email</button>
+      <div class="aw-err" id="aw-err2"></div>
+      <div class="aw-hint">Didn't get it? <span onclick="resendOTP()">Resend code</span></div>
+    </div>
+  </div>
+</div>
+<!-- ══ END AUTH WALL ═════════════════════════════════════ -->
+
 <div id="app">
 <header style="position:relative;">
 <div style="display:flex;align-items:center;gap:10px;flex-shrink:0"><span style="font-size:22px;font-weight:900;color:#00B0FF;font-family:'Space Mono',monospace;letter-spacing:-1px">yulu</span></div>
-<div class="logo" style="font-size:14px;text-align:center;justify-content:center;">Yulu R&amp;M Dashboard</div>
+<div class="logo" style="font-size:17px;text-align:center;flex:1;justify-content:center;position:absolute;left:50%;transform:translateX(-50%)">Yulu R&amp;M Dashboard</div>
 <div class="hdr-right">
 <div class="live-badge"><div class="pulse"></div><span id="dataBadge">JFMA 2026</span></div>
+<span class="hdr-email" id="hdr-email"></span>
 <div class="tog">
 <button class="tbtn on" id="gd" onclick="setG('daily',event)">D</button>
 <button class="tbtn" id="gw" onclick="setG('weekly',event)">W</button>
 <button class="tbtn" id="gm" onclick="setG('monthly',event)">M</button>
 </div>
 <button class="mode-btn" onclick="toggleMode()" id="modeBtn">🌙</button>
+<button class="signout-btn" onclick="doSignOut()">Sign out</button>
 </div>
 </header>
 
@@ -519,6 +590,112 @@ td{padding:8px 11px;white-space:nowrap}
 </div><!-- /detail -->
 
 <script>
+// ============================================================
+//  SUPABASE AUTH — OTP LOGIN (@yulu.bike only)
+// ============================================================
+const _sb = supabase.createClient(
+  'https://ajlingowsubkqduglbtn.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFqbGluZ293c3Via3FkdWdsYnRuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgwNzAwNDgsImV4cCI6MjA5MzY0NjA0OH0.GFinoyc-4FK96qt_4Wka9UAmtZVM6RgNNZ6XBNfcUM8'
+);
+
+function awErr(step, msg) {
+  const el = document.getElementById('aw-err' + step);
+  el.textContent = msg; el.classList.add('show');
+}
+function awClearErr(step) {
+  document.getElementById('aw-err' + step).classList.remove('show');
+}
+
+async function sendOTP() {
+  const email = document.getElementById('aw-email').value.trim().toLowerCase();
+  awClearErr(1);
+  if (!email) { awErr(1, 'Please enter your email address.'); return; }
+  if (!email.endsWith('@yulu.bike')) {
+    awErr(1, '⚠️ Only @yulu.bike email addresses are allowed.'); return;
+  }
+  const btn = document.getElementById('aw-send-btn');
+  btn.disabled = true; btn.textContent = 'SENDING...';
+  const { error } = await _sb.auth.signInWithOtp({
+    email,
+    options: { shouldCreateUser: true }
+  });
+  btn.disabled = false; btn.textContent = 'SEND OTP →';
+  if (error) { awErr(1, error.message); return; }
+  document.getElementById('aw-sent-to').textContent = email;
+  document.getElementById('step-email').classList.remove('active');
+  document.getElementById('step-otp').classList.add('active');
+  document.getElementById('o0').focus();
+}
+
+async function resendOTP() {
+  const email = document.getElementById('aw-email').value.trim().toLowerCase();
+  await _sb.auth.signInWithOtp({ email, options: { shouldCreateUser: true } });
+  awClearErr(2);
+  const hint = document.querySelector('.aw-hint');
+  hint.textContent = 'Code resent! Check your inbox.';
+  setTimeout(() => hint.innerHTML = 'Didn\'t get it? <span onclick="resendOTP()">Resend code</span>', 3000);
+}
+
+function backToEmail() {
+  document.getElementById('step-otp').classList.remove('active');
+  document.getElementById('step-email').classList.add('active');
+  awClearErr(1); awClearErr(2);
+  for(let i=0;i<6;i++) document.getElementById('o'+i).value='';
+}
+
+function otpInput(idx) {
+  const el = document.getElementById('o' + idx);
+  const val = el.value.replace(/\D/g,'').slice(-1);
+  el.value = val;
+  if (val && idx < 5) document.getElementById('o' + (idx+1)).focus();
+  // auto-verify when all 6 filled
+  const code = Array.from({length:6}, (_,i) => document.getElementById('o'+i).value).join('');
+  if (code.length === 6) verifyOTP();
+}
+
+function otpKey(idx, e) {
+  if (e.key === 'Backspace' && !document.getElementById('o'+idx).value && idx > 0)
+    document.getElementById('o'+(idx-1)).focus();
+  if (e.key === 'Enter') verifyOTP();
+}
+
+async function verifyOTP() {
+  const email = document.getElementById('aw-email').value.trim().toLowerCase();
+  const token = Array.from({length:6}, (_,i) => document.getElementById('o'+i).value).join('');
+  awClearErr(2);
+  if (token.length < 6) { awErr(2, 'Please enter the full 6-digit code.'); return; }
+  const btn = document.getElementById('aw-verify-btn');
+  btn.disabled = true; btn.textContent = 'VERIFYING...';
+  const { data, error } = await _sb.auth.verifyOtp({ email, token, type: 'email' });
+  btn.disabled = false; btn.textContent = 'VERIFY & ENTER →';
+  if (error) { awErr(2, '✗ ' + error.message); return; }
+  unlockDashboard(data.user);
+}
+
+function unlockDashboard(user) {
+  document.getElementById('auth-wall').classList.add('hide');
+  const el = document.getElementById('hdr-email');
+  if (el) el.textContent = user.email;
+  init();
+}
+
+async function doSignOut() {
+  await _sb.auth.signOut();
+  document.getElementById('auth-wall').classList.remove('hide');
+  document.getElementById('step-otp').classList.remove('active');
+  document.getElementById('step-email').classList.add('active');
+  for(let i=0;i<6;i++) document.getElementById('o'+i).value='';
+  document.getElementById('aw-email').value = '';
+  document.getElementById('hdr-email').textContent = '';
+  awClearErr(1); awClearErr(2);
+}
+
+// Auto-login if session already exists
+(async () => {
+  const { data: { session } } = await _sb.auth.getSession();
+  if (session) unlockDashboard(session.user);
+})();
+
 // ============================================================
 //  SUPABASE CONFIG
 // ============================================================
@@ -1798,9 +1975,8 @@ function showToast(msg){
 }
 
 // ============================================================
-//  BOOT
+//  BOOT — controlled by auth session check above
 // ============================================================
-init();
 </script>
 </body>
 </html>
