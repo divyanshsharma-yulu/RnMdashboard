@@ -9,7 +9,6 @@
 <style>
 :root{--bg:#13151f;--sur:#111827;--sur2:#1a2236;--bdr:#1e2d45;--acc:#00e5a0;--acc2:#0ea5e9;--warn:#f59e0b;--dng:#ef4444;--pur:#a78bfa;--pnk:#f472b6;--txt:#f0f4ff;--mut:#6b7fa3;--r:14px}
 body.light{--bg:#f2f4f7;--sur:#fafafa;--sur2:#eef2f8;--bdr:#dbe2ec;--acc:#059669;--acc2:#0284c7;--warn:#d97706;--dng:#dc2626;--pur:#7c3aed;--pnk:#db2777;--txt:#0a0e1a;--mut:#64748b}
-
 /* ── AUTH WALL ── */
 #auth-wall{position:fixed;inset:0;background:#0b0f1a;display:flex;align-items:center;justify-content:center;z-index:9999;font-family:'DM Sans',sans-serif}
 #auth-wall.hide{display:none}
@@ -210,13 +209,11 @@ td{padding:8px 11px;white-space:nowrap}
 <div class="loading-overlay" id="loadingOverlay">
 <div style="text-align:center"><div class="spinner"></div><div class="loading-msg" id="loadingMsg">Loading live data...</div></div>
 </div>
-
 <!-- ══ AUTH WALL ══════════════════════════════════════════ -->
 <div id="auth-wall">
   <div class="aw-box">
     <div class="aw-logo">yulu</div>
     <div class="aw-sub">R&amp;M Dashboard · Sign in with your @yulu.bike email</div>
-
     <!-- Step 1: Email -->
     <div class="aw-step active" id="step-email">
       <label class="aw-label">Work Email</label>
@@ -225,7 +222,6 @@ td{padding:8px 11px;white-space:nowrap}
       <button class="aw-btn" id="aw-send-btn" onclick="sendOTP()">SEND OTP →</button>
       <div class="aw-err" id="aw-err1"></div>
     </div>
-
     <!-- Step 2: OTP -->
     <div class="aw-step" id="step-otp">
       <div style="font-size:13px;color:#6b7fa3;margin-bottom:20px;line-height:1.6">
@@ -249,7 +245,6 @@ td{padding:8px 11px;white-space:nowrap}
   </div>
 </div>
 <!-- ══ END AUTH WALL ═════════════════════════════════════ -->
-
 <div id="app">
 <header style="position:relative;">
 <div style="display:flex;align-items:center;gap:10px;flex-shrink:0"><span style="font-size:22px;font-weight:900;color:#00B0FF;font-family:'Space Mono',monospace;letter-spacing:-1px">yulu</span></div>
@@ -266,7 +261,6 @@ td{padding:8px 11px;white-space:nowrap}
 <button class="signout-btn" onclick="doSignOut()">Sign out</button>
 </div>
 </header>
-
 <div class="fbar">
 <div class="fg"><div class="fl">City</div><select id="fc" onchange="onCity()"><option value="">All Cities</option></select></div>
 <div class="fg"><div class="fl">Cluster</div><select id="fcl" onchange="onCluster()"><option value="">All Clusters</option></select></div>
@@ -278,7 +272,6 @@ td{padding:8px 11px;white-space:nowrap}
 <button onclick="onDateChange()" style="background:var(--acc);border:none;color:#0a0e1a;border-radius:8px;padding:8px 10px;font-size:13px;font-weight:800;cursor:pointer;font-family:'Space Mono',monospace;white-space:nowrap">▶ GO</button>
 </div>
 </div>
-
 <div style="padding:6px 20px;display:flex;gap:6px;flex-wrap:wrap;background:var(--sur);border-bottom:1px solid var(--bdr)">
 <span style="font-size:10px;color:var(--mut);font-family:'Space Mono',monospace;align-self:center;margin-right:4px">QUICK:</span>
 <button class="tbtn" onclick="setQuick(7)">7d</button>
@@ -287,22 +280,16 @@ td{padding:8px 11px;white-space:nowrap}
 <button class="tbtn" onclick="setQuick(90)">3M</button>
 <button class="tbtn" onclick="setQuick(180)">6M</button>
 </div>
-
 <div id="bc" class="bc"></div>
-
 <div class="slbl">📦 Volume <span class="sbdg" id="vbdg">—</span></div>
 <div class="kg" style="grid-template-columns:repeat(2,1fr)">
 <div class="kpi g"><div class="klbl">Total Tasks</div><div class="kval" id="ktasks">–</div><div class="ksub">by mechanics</div></div>
 <div class="kpi k"><div class="klbl">Active Mechanics</div><div class="kval" id="kmechs">–</div><div class="ksub" id="ktpdsub">—</div></div>
 </div>
 <div class="kg" style="margin-top:8px">
-<div class="kpi b"><div class="klbl">Repair Tasks</div><div class="kval" id="krep">–</div><div class="ksub" id="krepsub">—</div></div>
-<div class="kpi p"><div class="klbl">Non-Repair Tasks</div><div class="kval" id="knon">–</div><div class="ksub" id="knonsub">—</div></div>
 <div class="kpi b" style="border-top-color:var(--acc)"><div class="klbl">Avg Tasks / Day</div><div class="kval" id="ktpd" style="color:var(--acc)">–</div><div class="ksub">per mechanic-day</div></div>
-<div class="kpi p" style="border-top-color:var(--pur)"><div class="klbl">Avg Repair Tasks / Day</div><div class="kval" id="ktpdr" style="color:var(--pur)">–</div><div class="ksub">per mechanic-day</div></div>
 </div>
-
-<div class="slbl">⚡ Repair Breakdown — Live vs Regular</div>
+<div class="slbl">⚡ Live vs Regular Breakdown</div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 20px;margin-bottom:8px">
 <div class="kpi b">
   <div class="klbl" style="color:#34d399">Live Repair</div>
@@ -341,24 +328,20 @@ td{padding:8px 11px;white-space:nowrap}
 </div>
 <!-- hidden compat -->
 <div style="display:none"><span id="ktpdn">0</span></div>
-
 <div class="slbl">✓ Quality</div>
 <div class="kg c3">
 <div class="kpi g"><div class="klbl">Fully Fixed</div><div class="kval" id="kfix">–</div><div class="ksub" id="kfixsub">—</div></div>
 <div class="kpi d"><div class="klbl">Not Fully Fixed</div><div class="kval" id="knfix">–</div><div class="ksub" id="knfixsub">—</div></div>
 <div class="kpi w"><div class="klbl">QC Pass Rate</div><div class="kval" id="kqc">–</div><div class="ksub" id="kqcsub">—</div></div>
 </div>
-
 <div class="slbl">🕐 Time &amp; Shift</div>
 <div class="kg" style="margin-bottom:20px">
 <div class="kpi b"><div class="klbl">Avg Repair Task Time</div><div class="kval" id="kavgrep">–</div><div class="ksub">avg per task</div></div>
-<div class="kpi p"><div class="klbl">Avg Non-Repair Task Time</div><div class="kval" id="kavgnon">–</div><div class="ksub">avg per task</div></div>
 <div class="kpi w"><div class="klbl">Avg Idle Time / Day</div><div class="kval" id="kidle">–</div><div class="ksub">gaps between tasks · per present day</div></div>
 <div class="kpi x"><div class="klbl">Avg Active Span / Day</div><div class="kval" id="kshift">–</div><div class="ksub">first task start → last task end</div></div>
 </div>
 <!-- hidden elements kept for JS compatibility -->
 <div style="display:none"><span id="krep">0</span><span id="krepsub"></span><span id="knon">0</span><span id="knonsub"></span></div>
-
 <div class="con">
 <div class="row two">
 <div class="card">
@@ -377,7 +360,6 @@ td{padding:8px 11px;white-space:nowrap}
 <div id="cmplist"></div>
 </div>
 </div>
-
 <div class="card" id="tenure-card">
 <div class="ch"><span class="ct">👷 New vs Moderate vs Old — Productivity Comparison</span><span class="cb" id="tenure-bdg">—</span></div>
 <div style="font-size:11px;color:var(--mut);line-height:1.6;margin-bottom:10px;padding:9px;background:var(--sur2);border-radius:8px">
@@ -387,24 +369,20 @@ td{padding:8px 11px;white-space:nowrap}
 </div>
 <div id="tenure-table"></div>
 </div>
-
 <div class="slbl" style="padding-top:0"><span>🎯 Drill-down — tap any card to go deeper</span><span class="sbdg" id="drlcnt">—</span></div>
 <div class="card">
 <div class="ch"><span class="ct" id="drltitle">All Cities</span><span class="cb" id="drlbdg">—</span></div>
 <div class="dg" id="drlgrid"></div>
 </div>
-
 <div class="card" id="othcard">
 <div class="ch"><span class="ct">🧰 Repairs by Other Profiles</span><span class="cb" id="othbdg">—</span></div>
 <div id="othbody"></div>
 <div style="margin-top:11px;padding:9px;background:var(--sur2);border-radius:8px;font-size:11px;color:var(--mut);line-height:1.5">Non-Maintenance roles (Yulu Captain, Biker, QA, etc.) and blank roles that also did tasks.</div>
 </div>
-
 <div class="row two">
 <div class="card"><div class="ch"><span class="ct">📈 Tasks Over Time</span><span class="cb" id="trendbdg">Daily</span></div><canvas id="charttrend"></canvas></div>
 <div class="card"><div class="ch"><span class="ct">🥧 QC Pass vs Fail</span></div><canvas id="chartqc"></canvas></div>
 </div>
-
 <div class="row two">
 <div class="card">
 <div class="ch">
@@ -420,7 +398,6 @@ td{padding:8px 11px;white-space:nowrap}
 </div>
 <div id="lb"></div>
 </div>
-
 <div class="card">
 <div class="ch">
 <span class="ct">⚠️ Alerts</span>
@@ -435,7 +412,6 @@ td{padding:8px 11px;white-space:nowrap}
 <div id="allist"></div>
 </div>
 </div>
-
 <div class="card">
 <div class="ch"><span class="ct">👷 All Mechanics</span><input class="srch" id="srch" placeholder="Search name / city…" oninput="renderTable()" style="max-width:195px"></div>
 <div class="tw">
@@ -445,7 +421,7 @@ td{padding:8px 11px;white-space:nowrap}
 <th onclick="srt('yc')">YC ↕</th><th onclick="srt('tasks')">Tasks ↕</th>
 <th onclick="srt('live_repair')" style="color:#34d399">Live R ↕</th>
 <th onclick="srt('regular_repair')" style="color:var(--pnk)">Reg R ↕</th>
-<th onclick="srt('non_repair_tasks')">Non-Rep ↕</th><th onclick="srt('avg_repair_time')">Avg Time ↕</th>
+<th onclick="srt('avg_repair_time')">Avg Time ↕</th>
 <th onclick="srt('qc_rate')">QC % ↕</th><th onclick="srt('fix_rate')">Fix % ↕</th>
 <th onclick="srt('backlog_pct')">Old &gt;14d ↕</th><th>Tenure</th><th>Productivity</th>
 </tr></thead>
@@ -455,7 +431,6 @@ td{padding:8px 11px;white-space:nowrap}
 </div>
 </div>
 </div><!-- /app -->
-
 <!-- MECHANIC DETAIL PAGE -->
 <div id="detail">
 <div class="det-hdr">
@@ -469,12 +444,10 @@ td{padding:8px 11px;white-space:nowrap}
 <button class="back-btn" style="margin:0" onclick="syncMainDates()">↻ Sync with main filter</button>
 </div>
 </div>
-
 <div class="det-tabs">
 <button class="dtab on" id="tab-ov" onclick="switchTab('ov')">Overview</button>
 <button class="dtab" id="tab-bk" onclick="switchTab('bk')">🚲 Bikes</button>
 </div>
-
 <div class="dpanel on" id="panel-ov">
 <div class="slbl" style="padding-left:0">📦 Volume <span class="sbdg" id="d-kbdg">—</span></div>
 <div class="kg" style="padding:0;grid-template-columns:repeat(2,1fr)">
@@ -482,13 +455,9 @@ td{padding:8px 11px;white-space:nowrap}
 <div class="kpi k"><div class="klbl">Active Days</div><div class="kval" id="d-k4">–</div><div class="ksub" id="d-k4s">—</div></div>
 </div>
 <div class="kg" style="padding:0;margin-top:8px">
-<div class="kpi b"><div class="klbl">Repair Tasks</div><div class="kval" id="d-k2">–</div><div class="ksub" id="d-k2s">—</div></div>
-<div class="kpi p"><div class="klbl">Non-Repair Tasks</div><div class="kval" id="d-k3">–</div><div class="ksub" id="d-k3s">—</div></div>
 <div class="kpi b" style="border-top-color:var(--acc)"><div class="klbl">Avg Tasks / Day</div><div class="kval" id="d-k8" style="color:var(--acc)">–</div><div class="ksub">per present day</div></div>
-<div class="kpi p" style="border-top-color:var(--pur)"><div class="klbl">Avg Repair Tasks / Day</div><div class="kval" id="d-k8r" style="color:var(--pur)">–</div><div class="ksub">per present day</div></div>
 </div>
-
-<div class="slbl" style="padding-left:0">⚡ Repair Breakdown — Live vs Regular</div>
+<div class="slbl" style="padding-left:0">⚡ Live vs Regular Breakdown</div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
 <div class="kpi b">
   <div class="klbl" style="color:#34d399">Live Repair</div>
@@ -527,24 +496,20 @@ td{padding:8px 11px;white-space:nowrap}
 </div>
 <!-- hidden compat -->
 <div style="display:none"><span id="d-k8n">0</span></div>
-
 <div class="slbl" style="padding-left:0">✓ Quality</div>
 <div class="kg c3" style="padding:0;margin-bottom:4px">
 <div class="kpi g"><div class="klbl">Fully Fixed %</div><div class="kval" id="d-k5">–</div><div class="ksub" id="d-k5s">—</div></div>
 <div class="kpi d"><div class="klbl">Not Fixed %</div><div class="kval" id="d-k6">–</div><div class="ksub" id="d-k6s">—</div></div>
 <div class="kpi w"><div class="klbl">QC Pass Rate</div><div class="kval" id="d-k7">–</div><div class="ksub" id="d-k7s">—</div></div>
 </div>
-
 <div class="slbl" style="padding-left:0">🕐 Time &amp; Shift</div>
 <div class="kg" style="padding:0;margin-bottom:20px">
 <div class="kpi b"><div class="klbl">Avg Repair Task Time</div><div class="kval" id="d-k9">–</div><div class="ksub">avg per task</div></div>
-<div class="kpi p"><div class="klbl">Avg Non-Repair Task Time</div><div class="kval" id="d-k10">–</div><div class="ksub">avg per task</div></div>
 <div class="kpi w"><div class="klbl">Avg Idle Time / Day</div><div class="kval" id="d-kidle">–</div><div class="ksub">gaps between tasks · per present day</div></div>
 <div class="kpi x"><div class="klbl">Avg Active Span / Day</div><div class="kval" id="d-kshift">–</div><div class="ksub">first task start → last task end</div></div>
 </div>
 <!-- hidden compat -->
 <div style="display:none"><span id="d-k4b">0</span><span id="d-k11">0</span></div>
-
 <div class="row two" style="margin-top:14px">
 <div class="card">
 <div class="ch"><span class="ct">🆚 Performance vs Peers</span><span class="cb" id="d-rank">—</span></div>
@@ -554,7 +519,6 @@ td{padding:8px 11px;white-space:nowrap}
 </div>
 <div class="card"><div class="ch"><span class="ct">🔧 RNT Distribution</span><span class="cb" id="d-rntbdg">—</span></div><div id="d-rntbars"></div></div>
 </div>
-
 <div class="row two" style="margin-top:14px">
 <div class="card"><div class="ch"><span class="ct">📈 Daily Tasks</span></div><canvas id="dchart"></canvas></div>
 <div class="card">
@@ -568,7 +532,6 @@ td{padding:8px 11px;white-space:nowrap}
 </div>
 </div>
 </div><!-- /panel-ov -->
-
 <div class="dpanel" id="panel-bk">
 <div class="slbl" style="padding-left:0">🚲 Bike Stats</div>
 <div class="kg">
@@ -588,7 +551,6 @@ td{padding:8px 11px;white-space:nowrap}
 </div>
 </div><!-- /panel-bk -->
 </div><!-- /detail -->
-
 <script>
 // ============================================================
 //  SUPABASE AUTH — OTP LOGIN (@yulu.bike only)
@@ -597,7 +559,6 @@ const _sb = supabase.createClient(
   'https://ajlingowsubkqduglbtn.supabase.co',
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFqbGluZ293c3Via3FkdWdsYnRuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgwNzAwNDgsImV4cCI6MjA5MzY0NjA0OH0.GFinoyc-4FK96qt_4Wka9UAmtZVM6RgNNZ6XBNfcUM8'
 );
-
 function awErr(step, msg) {
   const el = document.getElementById('aw-err' + step);
   el.textContent = msg; el.classList.add('show');
@@ -605,7 +566,6 @@ function awErr(step, msg) {
 function awClearErr(step) {
   document.getElementById('aw-err' + step).classList.remove('show');
 }
-
 async function sendOTP() {
   const email = document.getElementById('aw-email').value.trim().toLowerCase();
   awClearErr(1);
@@ -626,7 +586,6 @@ async function sendOTP() {
   document.getElementById('step-otp').classList.add('active');
   document.getElementById('o0').focus();
 }
-
 async function resendOTP() {
   const email = document.getElementById('aw-email').value.trim().toLowerCase();
   await _sb.auth.signInWithOtp({ email, options: { shouldCreateUser: true } });
@@ -635,30 +594,25 @@ async function resendOTP() {
   hint.textContent = 'Code resent! Check your inbox.';
   setTimeout(() => hint.innerHTML = 'Didn\'t get it? <span onclick="resendOTP()">Resend code</span>', 3000);
 }
-
 function backToEmail() {
   document.getElementById('step-otp').classList.remove('active');
   document.getElementById('step-email').classList.add('active');
   awClearErr(1); awClearErr(2);
   for(let i=0;i<6;i++) document.getElementById('o'+i).value='';
 }
-
 function otpInput(idx) {
   const el = document.getElementById('o' + idx);
   const val = el.value.replace(/\D/g,'').slice(-1);
   el.value = val;
   if (val && idx < 5) document.getElementById('o' + (idx+1)).focus();
-  // auto-verify when all 6 filled
   const code = Array.from({length:6}, (_,i) => document.getElementById('o'+i).value).join('');
   if (code.length === 6) verifyOTP();
 }
-
 function otpKey(idx, e) {
   if (e.key === 'Backspace' && !document.getElementById('o'+idx).value && idx > 0)
     document.getElementById('o'+(idx-1)).focus();
   if (e.key === 'Enter') verifyOTP();
 }
-
 async function verifyOTP() {
   const email = document.getElementById('aw-email').value.trim().toLowerCase();
   const token = Array.from({length:6}, (_,i) => document.getElementById('o'+i).value).join('');
@@ -671,14 +625,12 @@ async function verifyOTP() {
   if (error) { awErr(2, '✗ ' + error.message); return; }
   unlockDashboard(data.user);
 }
-
 function unlockDashboard(user) {
   document.getElementById('auth-wall').classList.add('hide');
   const el = document.getElementById('hdr-email');
   if (el) el.textContent = user.email;
   init();
 }
-
 async function doSignOut() {
   await _sb.auth.signOut();
   document.getElementById('auth-wall').classList.remove('hide');
@@ -689,29 +641,17 @@ async function doSignOut() {
   document.getElementById('hdr-email').textContent = '';
   awClearErr(1); awClearErr(2);
 }
-
-// Auto-login if session already exists
 (async () => {
   const { data: { session } } = await _sb.auth.getSession();
   if (session) unlockDashboard(session.user);
 })();
-
-// ============================================================
-//  SUPABASE CONFIG
-// ============================================================
 const SUPABASE_URL = 'https://ajlingowsubkqduglbtn.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFqbGluZ293c3Via3FkdWdsYnRuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgwNzAwNDgsImV4cCI6MjA5MzY0NjA0OH0.GFinoyc-4FK96qt_4Wka9UAmtZVM6RgNNZ6XBNfcUM8';
-
-// ============================================================
-//  GLOBAL STATE
-// ============================================================
-const RAW = [];   // mechanic daily rows (normalised)
-const OTHER = []; // other-role rows
-
+const RAW = [];
+const OTHER = [];
 let G='daily', SC='tasks', SD=-1, tChart=null, qChart=null, LBW=7, ALW=7;
 let CURRENT_UID = null;
 let dChart = null;
-
 const ACFG = {
   low_prod:  {on:true, v:6,  lbl:'Low productivity — avg tasks/day below',   op:'<'},
   low_qc:    {on:true, v:70, lbl:'Low QC pass rate (%) below',               op:'<'},
@@ -723,10 +663,6 @@ const ACFG = {
   cherry:    {on:true, v:50, lbl:'Cherry-picking — mech old% below cluster', op:'<'},
   no_old:    {on:false,v:0,  lbl:'Avoiding old bikes entirely',              op:'='}
 };
-
-// ============================================================
-//  SUPABASE FETCH (auto-paginated)
-// ============================================================
 async function sbFetch(table, select, filters, pageSize=1000) {
   let all=[], from=0;
   while(true) {
@@ -747,48 +683,33 @@ async function sbFetch(table, select, filters, pageSize=1000) {
   }
   return all;
 }
-
-// ============================================================
-//  DATA NORMALISATION
-// ============================================================
 function mapNCR(city) {
   if (!city) return '';
   if (['DEL','NOI','GGN'].includes(city)) return 'NCR';
   if (/^south\s*delhi/i.test(city.trim())) return 'South Delhi';
   return city;
 }
-
-// Merge cluster name variants
 function mapCluster(cluster) {
   if (!cluster) return '';
   const c = cluster.trim();
-  // South Delhi 2, South Delhi 3 → South Delhi
   if (/^south\s*delhi\s*[23]/i.test(c)) return 'South Delhi';
   return c;
 }
-
 function tenureBucket(days) {
   if (days < 0)  return 'Unknown';
   if (days < 30) return 'New';
   if (days < 90) return 'Moderate';
   return 'Old';
 }
-
 function calcTenureDays(doj) {
   if (!doj) return -1;
   const ref = new Date();
   return Math.round((ref - new Date(doj)) / 864e5);
 }
-
-// Map one mech_agg DB row → internal RAW format
-// Key differences: times stored as seconds, lowercase bc_ cols, cluster = start_cluster
 function normMechRow(r) {
   const tenureDays = calcTenureDays(r.date_of_joining);
-  // Times stored as SECONDS in DB → convert to minutes (div by 60)
-  // But some DBs may already be minutes - detect by value range
   const rawRepTime = parseFloat(r.avg_repair_time_sec) || 0;
   const rawNonTime = parseFloat(r.avg_nonrepair_time_sec) || 0;
-  // If values are suspiciously large (>600 min) they're seconds, convert
   const avgRepMin  = rawRepTime  > 600 ? rawRepTime  / 60 : rawRepTime;
   const avgNonMin  = rawNonTime  > 600 ? rawNonTime  / 60 : rawNonTime;
   return {
@@ -829,18 +750,11 @@ function normMechRow(r) {
     idle_time_min:       0,
   };
 }
-
-// ============================================================
-//  MAIN DATA LOAD  (replaces old loadLiveData + JFM block)
-// ============================================================
 async function loadLiveData() {
   document.getElementById('loadingOverlay').classList.add('show');
   document.getElementById('loadingMsg').textContent = 'Connecting to Supabase...';
-
   let fromVal = document.getElementById('ff').value;
   let toVal   = document.getElementById('ft').value;
-
-  // Default: last 30 days, excluding today
   if (!fromVal || !toVal) {
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
@@ -852,22 +766,16 @@ async function loadLiveData() {
     document.getElementById('ff').value = fromVal;
     document.getElementById('ft').value = toVal;
   }
-
   try {
-    // ── 1. Mechanic rows from mech_agg ──
     document.getElementById('loadingMsg').textContent = 'Loading mechanic data...';
     const mechFilters = [
       'primary_role=in.(Maintenance,Refurb Mechanic)',
       fromVal ? `task_date=gte.${fromVal}` : '',
       toVal   ? `task_date=lte.${toVal}`   : ''
     ].filter(Boolean).join('&');
-
     const mechRows = await sbFetch('mech_agg', '*', mechFilters);
     RAW.length = 0;
     mechRows.forEach(r => RAW.push(normMechRow(r)));
-
-    // ── Backfill missing city/cluster/party/yc from each mechanic's latest task ──
-    // Build a "best known" profile per user_id using their most recent row
     const latestByUser = {};
     RAW.forEach(r => {
       if (!latestByUser[r.user_id] || r.date > latestByUser[r.user_id].date) {
@@ -881,21 +789,17 @@ async function loadLiveData() {
       if (!r.party   || r.party   === '') r.party   = latest.party   || '';
       if (!r.yc      || r.yc      === '') r.yc      = latest.cluster || '';
     });
-
-    // ── 2. Enrich with avg times + idle/shift from raw_tasks ──
     document.getElementById('loadingMsg').textContent = 'Loading task times...';
     try {
       const allUids = [...new Set(RAW.map(r=>r.user_id))];
-      // Fetch in chunks of 50 uids to avoid URL length limits
       const CHUNK = 50;
       const parseTimeMin = (s) => {
         if (!s) return null;
-        // Handle "M/D/YYYY H:MM" or "M/D/YYYY HH:MM" — extract time portion after the space
         const timePart = s.includes(' ') ? s.split(' ')[1] : s;
         const p = timePart.split(':').map(Number);
         return (!isNaN(p[0]) && p.length>=2) ? p[0]*60 + p[1] + (p[2]||0)/60 : null;
       };
-      const timeMap = {}; // uid → {repSum,repN,nonSum,nonN,liveSum,liveN,regSum,regN,shiftByKey:{}}
+      const timeMap = {};
       for (let i=0; i<allUids.length; i+=CHUNK) {
         const chunk = allUids.slice(i, i+CHUNK);
         const tFilters = [
@@ -921,20 +825,17 @@ async function loadLiveData() {
           else        { tm.nonSum+=mins; tm.nonN++; }
           if (isRep && isLive)  { tm.liveSum+=mins; tm.liveN++; }
           if (isRep && !isLive) { tm.regSum+=mins;  tm.regN++;  }
-          // Per-shift grouping for idle
           const sk = r.user_shift_id || (r.day_start_dt+r.day_start_time);
           if (!tm.shiftByKey[sk]) tm.shiftByKey[sk]={start:r.day_start_time,end:r.day_end_time,taskSecs:0};
           tm.shiftByKey[sk].taskSecs += secs;
         });
       }
-      // Compute idle/shift per user, apply to RAW
       RAW.forEach(r => {
         const tm = timeMap[r.user_id]; if (!tm) return;
         if (tm.repN  > 0) r.avg_repair_time    = Math.round(tm.repSum  / tm.repN);
         if (tm.nonN  > 0) r.avg_nonrepair_time  = Math.round(tm.nonSum  / tm.nonN);
         r.live_repair_time    = tm.liveN > 0 ? Math.round(tm.liveSum / tm.liveN) : 0;
         r.regular_repair_time = tm.regN  > 0 ? Math.round(tm.regSum  / tm.regN)  : 0;
-        // Idle + shift from shift map
         const idles=[], durs=[];
         Object.values(tm.shiftByKey).forEach(sh => {
           const startMin = parseTimeMin(sh.start);
@@ -944,15 +845,13 @@ async function loadLiveData() {
           const durSec=(endMin-startMin)*60;
           if (durSec<=0||durSec>86400) return;
           const idleSec=durSec-sh.taskSecs;
-          durs.push(durSec/60); // always count shift duration
-          if (idleSec>=0) idles.push(idleSec/60); // skip idle if anomalous (tasks > shift)
+          durs.push(durSec/60);
+          if (idleSec>=0) idles.push(idleSec/60);
         });
         if (idles.length) r.idle_time_min = Math.round(idles.reduce((a,b)=>a+b,0)/idles.length);
         if (durs.length)  r.shift_dur_min = Math.round(durs.reduce((a,b)=>a+b,0)/durs.length);
       });
     } catch(e) { console.warn('Time enrichment failed:', e.message); }
-
-    // ── 3. Other profiles — fetch directly from raw_tasks (non-Maintenance roles) ──
     document.getElementById('loadingMsg').textContent = 'Loading other profiles...';
     try {
       const otherFilters = [
@@ -965,7 +864,6 @@ async function loadLiveData() {
         'task_date,city,task_type,primary_role,user_id',
         otherFilters, 5000
       );
-      // Aggregate client-side: group by date+city+cluster+role
       const otherMap = {};
       otherRows.forEach(r => {
         const key = `${r.task_date}|${r.city||''}|${r.primary_role||''}`;
@@ -986,8 +884,6 @@ async function loadLiveData() {
         repair_tasks: r.repair_tasks,
       }));
     } catch(e) { console.warn('Other profiles load failed:', e.message); }
-
-    // ── 4. Rebuild city dropdown ──
     const cs = document.getElementById('fc');
     const prevCity = cs.value;
     cs.innerHTML = '<option value="">All Cities</option>';
@@ -997,34 +893,25 @@ async function loadLiveData() {
       cs.appendChild(o);
     });
     if (prevCity) cs.value = prevCity;
-
-    // ── 4. Update badge ──
     const dates = RAW.map(r=>r.date).sort();
     if (dates.length) {
       document.getElementById('dataBadge').textContent =
         dates[0].slice(0,7) + ' → ' + dates[dates.length-1].slice(0,7);
     }
-
     document.getElementById('loadingOverlay').classList.remove('show');
     showToast('✅ Loaded '+RAW.length.toLocaleString()+' records from Supabase');
     render();
-
   } catch(e) {
     document.getElementById('loadingOverlay').classList.remove('show');
     showToast('❌ Load failed: '+e.message);
     console.error(e);
   }
 }
-
-// ============================================================
-//  BIKE DATA LOAD  (Bikes tab — from raw_tasks)
-// ============================================================
 async function loadBikeDataForMech() {
   if (!CURRENT_UID) return;
   const f = document.getElementById('df-from').value;
   const t = document.getElementById('df-to').value;
   showToast('Loading bike data... 🚲');
-
   try {
     const filters = [
       `user_id=eq.${CURRENT_UID}`,
@@ -1032,12 +919,10 @@ async function loadBikeDataForMech() {
       t ? `task_date=lte.${t}` : '',
       'task_type=neq.null'
     ].filter(Boolean).join('&');
-
     const rows = await sbFetch('raw_tasks',
       'task_date,bike_name,bike_category,task_type,task_time_taken,is_fully_fixed,no_of_days_rnt',
       filters
     );
-
     window._bikeTasks = rows.map(r => ({
       uid:   CURRENT_UID,
       date:  r.task_date||'',
@@ -1046,32 +931,25 @@ async function loadBikeDataForMech() {
       type:  r.task_type==='repair_task' ? 'r' : 'n',
       time:  parseFloat(r.task_time_taken)||0,
       fixed: parseInt(r.is_fully_fixed)||0,
-      qc:    '',  // not needed for bike tab display
+      qc:    '',
       rnt:   r.no_of_days_rnt!==null ? parseFloat(r.no_of_days_rnt) : null
     }));
-
     renderDetailBikes();
   } catch(e) {
     showToast('Bike load failed: '+e.message+' ❌');
     console.error(e);
   }
 }
-
-// ============================================================
-//  INIT
-// ============================================================
 function toggleMode(){
   document.body.classList.toggle('light');
   document.getElementById('modeBtn').textContent=document.body.classList.contains('light')?'☀️':'🌙';
   if(tChart||qChart){setTimeout(()=>render(),50)}
 }
-
 function init(){
   buildACFG();
   document.getElementById('ktasks').textContent='...';
   loadLiveData();
 }
-
 function buildACFG(){
   document.getElementById('acfg').innerHTML=Object.entries(ACFG).map(([k,c])=>`
     <div class="atog">
@@ -1085,10 +963,6 @@ function buildACFG(){
 }
 function toggleA(k,el){ACFG[k].on=!ACFG[k].on;el.classList.toggle('on');renderAL()}
 function toggleASet(){document.getElementById('aset').classList.toggle('open')}
-
-// ============================================================
-//  FILTER HELPERS
-// ============================================================
 function gf(){
   const c=document.getElementById('fc').value,cl=document.getElementById('fcl').value;
   const m=document.getElementById('fm').value,f=document.getElementById('ff').value,t=document.getElementById('ft').value;
@@ -1106,7 +980,6 @@ function gfOther(){
     if(f&&r.date<f)return false;if(t&&r.date>t)return false;return true;
   });
 }
-
 function onCity(){
   const c=document.getElementById('fc').value;
   const el=document.getElementById('fcl');el.innerHTML='<option value="">All Clusters</option>';
@@ -1124,9 +997,7 @@ function onCluster(){
     });
   render();
 }
-
 function onDateChange(){
-  // Called only by GO button — enforce 6-month max then fetch
   const f=new Date(document.getElementById('ff').value);
   const t=new Date(document.getElementById('ft').value);
   if(isNaN(f)||isNaN(t))return;
@@ -1138,7 +1009,6 @@ function onDateChange(){
   }
   loadLiveData();
 }
-
 function setQuick(v){
   const yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);
   const toStr=yesterday.toISOString().slice(0,10);
@@ -1150,15 +1020,10 @@ function setQuick(v){
   document.getElementById('ft').value=toStr;
   loadLiveData();
 }
-
 function getDataMaxDate(){
   if(RAW.length)return RAW.reduce((m,r)=>r.date>m?r.date:m,'');
   return new Date().toISOString().slice(0,10);
 }
-
-// ============================================================
-//  AGGREGATION HELPERS  (identical to v6)
-// ============================================================
 function aggMech(data){
   const m={};
   data.forEach(r=>{
@@ -1202,7 +1067,6 @@ function aggMech(data){
     };
   });
 }
-
 function aggTot(data){
   const t={tasks:0,repair_tasks:0,non_repair_tasks:0,fully_fixed:0,not_fixed:0,qp:0,qf:0,qt:0,
     srep:0,nrep:0,snon:0,nnon:0,r01:0,r15:0,r57:0,r714:0,r1428:0,r2890:0,r90:0,
@@ -1215,7 +1079,6 @@ function aggTot(data){
     t.live_repair+=(r.live_repair||0);
     if(r.repair_tasks>0 && r.avg_repair_time>0){t.srep+=r.avg_repair_time*r.repair_tasks;t.nrep+=r.repair_tasks}
     if(r.non_repair_tasks>0 && r.avg_nonrepair_time>0){t.snon+=r.avg_nonrepair_time*r.non_repair_tasks;t.nnon+=r.non_repair_tasks}
-    // Live / regular repair time (stored per-row after enrichment)
     const liveN = r.live_repair||0;
     const regN  = r.repair_tasks - liveN;
     if(r.live_repair_time>0 && liveN>0){t.slive+=r.live_repair_time*liveN; t.nlive+=liveN;}
@@ -1227,11 +1090,9 @@ function aggTot(data){
   });
   return t;
 }
-
 function countActiveMechDays(data){
   const s=new Set();data.forEach(r=>s.add(r.user_id+'|'+r.date));return s.size;
 }
-
 function byPeriod(data,p){
   const m={};
   data.forEach(r=>{
@@ -1242,19 +1103,13 @@ function byPeriod(data,p){
   });
   return Object.entries(m).sort((a,b)=>a[0].localeCompare(b[0]));
 }
-
-// ============================================================
-//  RENDER
-// ============================================================
 function render(){
   if(CURRENT_UID!==null&&document.getElementById('detail').classList.contains('show')){renderDetail();return;}
   const d=gf();
   renderKPIs(d);renderRNT(d);renderCmp();renderDrill(d);
   renderOther();renderTrend(d);renderQC(d);renderLB();renderAL();renderTable();renderTenure();updateBC();
 }
-
 function set(id,v){document.getElementById(id).textContent=v}
-
 function renderKPIs(d){
   const t=aggTot(d);
   const dayMechMap={};d.forEach(r=>{if(!dayMechMap[r.date])dayMechMap[r.date]=new Set();dayMechMap[r.date].add(r.user_id);});
@@ -1279,26 +1134,25 @@ function renderKPIs(d){
   set('kavgrep',t.nrep?Math.round(t.srep/t.nrep)+' min':'—');
   set('kavgnon',t.nnon?Math.round(t.snon/t.nnon)+' min':'—');
   set('ktpd',tpd);set('ktpdr',tpdr);set('ktpdn',tpdn);
-  const liveRep=t.live_repair,nonLive=t.repair_tasks-liveRep;
-  const livePct=t.repair_tasks?Math.round(100*liveRep/t.repair_tasks):0;
+  const liveRep=t.live_repair,nonLive=t.tasks-liveRep;
+  const livePct=t.tasks?Math.round(100*liveRep/t.tasks):0;
   const avgLiveTime = t.nlive ? Math.round(t.slive/t.nlive) : null;
   const avgRegTime  = t.nreg  ? Math.round(t.sreg/t.nreg)  : null;
   const livePerMech = mechDays ? (liveRep/mechDays).toFixed(1) : '—';
   const regPerMech  = mechDays ? (nonLive/mechDays).toFixed(1) : '—';
   set('klive',liveRep.toLocaleString());
-  set('klivesub',livePct+'% of repair tasks');
+  set('klivesub',livePct+'% of total tasks');
   const liveTimeEl=document.getElementById('klivetime');if(liveTimeEl)liveTimeEl.textContent=avgLiveTime?avgLiveTime+' min':'—';
   const liveBarEl=document.getElementById('klive-bar');if(liveBarEl)liveBarEl.style.width=livePct+'%';
   const livePermechEl=document.getElementById('klive-permech');if(livePermechEl)livePermechEl.textContent=livePerMech;
   set('knonlive',nonLive.toLocaleString());
-  set('knonlivesub',(100-livePct)+'% of repair tasks');
+  set('knonlivesub',(100-livePct)+'% of total tasks');
   const regTimeEl=document.getElementById('knonlivetime');if(regTimeEl)regTimeEl.textContent=avgRegTime?avgRegTime+' min':'—';
   const regBarEl=document.getElementById('kreg-bar');if(regBarEl)regBarEl.style.width=(100-livePct)+'%';
   const regPermechEl=document.getElementById('kreg-permech');if(regPermechEl)regPermechEl.textContent=regPerMech;
   set('kidle', t.n_idle ? Math.round(t.sum_idle/t.n_idle)+' min' : '—');
   set('kshift', t.n_shift ? Math.round(t.sum_shift/t.n_shift)+' min' : '—');
 }
-
 function renderRNT(d){
   const t=aggTot(d);
   const bkts=[
@@ -1315,7 +1169,6 @@ function renderRNT(d){
       <div class="rval">${v.toLocaleString()} <span style="color:var(--mut);font-size:10px">(${p.toFixed(1)}%)</span></div></div>`;
   }).join('');
 }
-
 function renderCmp(){
   const d=gf();
   const c=document.getElementById('fc').value,cl=document.getElementById('fcl').value,m=document.getElementById('fm').value;
@@ -1348,21 +1201,18 @@ function renderCmp(){
     <div class="cbg"><div class="cfill" style="width:${max?(100*o[met]/max):0}%"></div></div>
     <div class="cval">${o[met].toLocaleString()}${u}</div></div>`).join('')||'<div class="empty">No data</div>';
 }
-
 function tenureTag(t){
   if(t==='New')return '<span class="ttag n">NEW</span>';
   if(t==='Moderate')return '<span class="ttag m">MOD</span>';
   if(t==='Old')return '<span class="ttag o">OLD</span>';
   return '<span class="ttag u">?</span>';
 }
-
 function catsInline(o){
   const parts=[];
   if(o.bc_Dex)parts.push('Dex '+o.bc_Dex);if(o.bc_Express)parts.push('Exp '+o.bc_Express);
   if(o.bc_Miracle)parts.push('Mir '+o.bc_Miracle);if(o.bc_Wynn)parts.push('Wyn '+o.bc_Wynn);
   return parts.join(' · ');
 }
-
 function renderDrill(d){
   const c=document.getElementById('fc').value,cl=document.getElementById('fcl').value,m=document.getElementById('fm').value;
   if(m){
@@ -1373,10 +1223,15 @@ function renderDrill(d){
       const t=dd.reduce((s,r)=>s+r.tasks,0),rep=dd.reduce((s,r)=>s+r.repair_tasks,0),nrep=dd.reduce((s,r)=>s+r.non_repair_tasks,0);
       const old=dd.reduce((s,r)=>s+r.rnt_14_28+r.rnt_28_90+r.rnt_90p,0);
       const dex=dd.reduce((s,r)=>s+r.bc_Dex,0),exp=dd.reduce((s,r)=>s+r.bc_Express,0);
+      const liveD=dd.reduce((s,r)=>s+(r.live_repair||0),0),regD=t-liveD;
       const col=t>=8?'var(--acc)':t>=5?'var(--warn)':'var(--dng)';
       return `<div class="dc" style="cursor:default">
         <div class="dl">${date.slice(5)}</div><div class="ds" style="color:${col}">${t}</div>
-        <div class="dl">tasks · ${rep}R / ${nrep}N</div>
+        <div style="font-size:10px;font-family:'Space Mono',monospace;margin:3px 0 4px;display:flex;gap:5px">
+          <span style="color:#34d399">⬤ ${liveD} live</span>
+          <span style="color:var(--mut)">/</span>
+          <span style="color:var(--pnk)">${regD} reg</span>
+        </div>
         ${(dex||exp)?`<div class="dcats">Dex ${dex} · Exp ${exp}</div>`:''}
         ${old>0?`<div class="dsub"><span style="color:var(--warn)">${old} old (&gt;14d)</span></div>`:''}
       </div>`;
@@ -1403,13 +1258,12 @@ function renderDrill(d){
   set('drltitle',title);set('drlbdg',arr.length+(gk==='user_id'?' mechanics':gk==='city'?' cities':' clusters'));set('drlcnt',arr.length);
   document.getElementById('drlgrid').innerHTML=arr.map(o=>{
     const qc=o.qt?Math.round(100*o.qp/o.qt):null,bp=o.rtot?Math.round(100*o.rold/o.rtot):0,at=o.nrep?Math.round(o.srep/o.nrep):0;
-    const liveR=o.live_repair||0,regR=o.repair_tasks-liveR;
+    const liveR=o.live_repair||0,regR=o.tasks-liveR;
     const click=gk==='city'?`drillCity('${o.key}')`:gk==='cluster'?`drillCluster('${String(o.key).replace(/'/g,"\\'")}')`: `openMech(${o.uid})`;
     const cats=catsInline(o);
     return `<div class="dc" onclick="${click}">
       <div class="dn"><span>${o.name}</span>${gk==='user_id'?tenureTag(o.tenure):''}</div>
       <div class="ds">${o.tasks.toLocaleString()}</div>
-      <div class="dl">tasks · ${o.repair_tasks}R / ${o.non_repair_tasks}N</div>
       <div style="font-size:10px;font-family:'Space Mono',monospace;margin:4px 0 5px;display:flex;gap:5px">
         <span style="color:#34d399">⬤ ${liveR} live</span>
         <span style="color:var(--mut)">/</span>
@@ -1426,11 +1280,9 @@ function renderDrill(d){
     </div>`;
   }).join('')||'<div class="empty">No data</div>';
 }
-
 function drillCity(c){document.getElementById('fc').value=c;onCity()}
 function drillCluster(cl){document.getElementById('fcl').value=cl;onCluster()}
 function openMech(uid){openDetail(uid)}
-
 function renderOther(){
   const d=gfOther(),m=document.getElementById('fm').value;
   const card=document.getElementById('othcard');
@@ -1445,7 +1297,6 @@ function renderOther(){
     <span class="oth-val">${o.tasks.toLocaleString()} <span style="color:var(--mut);font-size:10px;font-weight:400">(${o.rep} repair)</span></span></div>`
   ).join('')||'<div class="empty">No other-profile tasks in this range</div>';
 }
-
 function renderTrend(d){
   const periods=byPeriod(d,G);
   const labels=periods.map(([k])=>k.slice(5)),vals=periods.map(([,v])=>v.tasks);
@@ -1460,7 +1311,6 @@ function renderTrend(d){
   });
   set('trendbdg',{daily:'Daily',weekly:'Weekly',monthly:'Monthly'}[G]);
 }
-
 function renderQC(d){
   const t=aggTot(d);
   if(qChart)qChart.destroy();
@@ -1471,7 +1321,6 @@ function renderQC(d){
     options:{responsive:true,maintainAspectRatio:true,cutout:'72%',plugins:{legend:{position:'bottom',labels:{color:txtCol,font:{size:11},padding:16}}}}
   });
 }
-
 function windowed(w){
   const d=gf();if(w==='all')return d;
   const dates=[...new Set(d.map(r=>r.date))].sort();
@@ -1479,10 +1328,8 @@ function windowed(w){
   const last=new Date(dates[dates.length-1]);last.setDate(last.getDate()-w+1);
   const s=last.toISOString().slice(0,10);return d.filter(r=>r.date>=s);
 }
-
 function setLBW(w,e){LBW=w;['lb7','lb30','lball'].forEach(id=>document.getElementById(id).classList.remove('on'));e.target.classList.add('on');renderLB()}
 function setALW(w,e){ALW=w;['al7','al30','alall'].forEach(id=>document.getElementById(id).classList.remove('on'));e.target.classList.add('on');renderAL()}
-
 function renderLB(){
   const met=document.getElementById('lbmet').value;
   const d=windowed(LBW);const agg=aggMech(d);
@@ -1502,7 +1349,6 @@ function renderLB(){
       <div class="lval" style="color:${col}">${o[sk].toLocaleString()}${unit}</div></div>`;
   }).join('')||'<div class="empty">No data in window</div>';
 }
-
 function renderAL(){
   const d=windowed(ALW);const agg=aggMech(d);const alerts=[];
   const clBL={};
@@ -1531,7 +1377,6 @@ function renderAL(){
     `<div class="arow ${a.t}" onclick="openMech(${a.uid})"><span class="aico">${a.i}</span><span>${a.msg}</span></div>`
   ).join('')||'<div class="empty">✅ No alerts!</div>';
 }
-
 function renderTable(){
   const data=gf(),agg=aggMech(data);
   const s=document.getElementById('srch').value.toLowerCase();
@@ -1548,17 +1393,15 @@ function renderTable(){
       <td><b>${m.tasks}</b> <span style="color:var(--mut);font-size:10px">(${m.avg_tpd}/d)</span></td>
       <td style="color:#34d399;font-weight:600">${m.live_repair||0}</td>
       <td style="color:var(--pnk);font-weight:600">${(m.repair_tasks-(m.live_repair||0))}</td>
-      <td>${m.non_repair_tasks}</td><td>${m.avg_repair_time}m</td>
+      <td>${m.avg_repair_time}m</td>
       <td>${m.qc_rate!==null?`<span class="pill ${qC}">${m.qc_rate}%</span>`:'<span style="color:var(--mut)">–</span>'}</td>
       <td>${m.fix_rate!==null?`<span class="pill ${fC}">${m.fix_rate}%</span>`:'<span style="color:var(--mut)">–</span>'}</td>
       <td>${m.backlog_pct!==null?`<span class="pill ${bC}">${m.backlog_pct}%</span>`:'<span style="color:var(--mut)">–</span>'}</td>
       <td>${tenureTag(m.tenure)}</td><td>${prod}</td></tr>`;
-  }).join('')||`<tr><td colspan="13" class="empty">No results</td></tr>`;
+  }).join('')||`<tr><td colspan="12" class="empty">No results</td></tr>`;
 }
-
 function srt(c){if(SC===c)SD*=-1;else{SC=c;SD=-1}renderTable()}
 function setG(g,e){G=g;['gd','gw','gm'].forEach(id=>document.getElementById(id).classList.remove('on'));e.target.classList.add('on');renderTrend(gf())}
-
 function renderTenure(){
   const data=gf(),fromDate=document.getElementById('ff').value,agg=aggMech(data);
   const groups={New:[],Moderate:[],Old:[]};
@@ -1594,7 +1437,6 @@ function renderTenure(){
     <th>🟢 Old <span class="tnr-cnt">(${totals.Old})</span></th>
     <th>New→Old</th><th>What it means</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
-
 function updateBC(){
   const c=document.getElementById('fc').value,cl=document.getElementById('fcl').value,m=document.getElementById('fm').value;
   let p=['<span class="bci" onclick="resetAll()">All Cities</span>'];
@@ -1606,10 +1448,6 @@ function updateBC(){
 function resetAll(){document.getElementById('fc').value='';document.getElementById('fcl').innerHTML='<option value="">All Clusters</option>';document.getElementById('fm').innerHTML='<option value="">All Mechanics</option>';render()}
 function resetCl(){document.getElementById('fcl').value='';document.getElementById('fm').value='';render()}
 function resetMe(){document.getElementById('fm').value='';render()}
-
-// ============================================================
-//  MECHANIC DETAIL PAGE
-// ============================================================
 function openDetail(uid){
   CURRENT_UID=uid;
   document.getElementById('app').classList.add('hide');
@@ -1631,44 +1469,32 @@ function switchTab(t){
   });
   if(t==='bk'){window._bikeTasks=null;loadBikeDataForMech();}
 }
-
 function getMechAggForRange(){
   const f=document.getElementById('df-from').value,t=document.getElementById('df-to').value;
   const data=RAW.filter(r=>r.user_id===CURRENT_UID&&(!f||r.date>=f)&&(!t||r.date<=t));
   return aggMech(data)[0]||null;
 }
-
 function syncMainDates(){
   document.getElementById('df-from').value=document.getElementById('ff').value;
   document.getElementById('df-to').value=document.getElementById('ft').value;
   renderDetail();
 }
-
 function renderDetail(){
   const m=RAW.find(r=>r.user_id===CURRENT_UID);
   if(!m){alert('Mechanic data not found');closeDetail();return}
   const tag=tenureTag(m.tenure);
   document.getElementById('dname').innerHTML=`${m.username} ${tag}`;
   document.getElementById('dmeta').innerHTML=`${m.city} · ${m.cluster} · 📍 ${m.yc||'—'} · ${m.party} · Joined ${m.tenure_days>=0?m.tenure_days+' days ago':'?'}`;
-  renderDetailOverview(); // async - will update time fields when raw_tasks fetch completes
+  renderDetailOverview();
 }
-
 async function renderDetailOverview(){
   const f=document.getElementById('df-from').value,t=document.getElementById('df-to').value;
   const agg=getMechAggForRange();
-  if(!agg){['d-k1','d-k2','d-k3','d-k4','d-k5','d-k6','d-k7','d-k8','d-k8r','d-k8n','d-k9','d-k10','d-k11','d-k4b','d-klive','d-kregular','d-kidle','d-kshift'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='—'});return;}
+  if(!agg){['d-k1','d-k4','d-k5','d-k6','d-k7','d-k8','d-k8n','d-k9','d-k10','d-k11','d-k4b','d-klive','d-kregular','d-kidle','d-kshift'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='—'});return;}
   const days=agg.days;
   document.getElementById('d-kbdg').textContent=days+' active days';
   document.getElementById('d-k1').textContent=agg.tasks;
   document.getElementById('d-k1s').textContent=agg.avg_tpd+' avg/day';
-  document.getElementById('d-k2').textContent=agg.repair_tasks;
-  document.getElementById('d-k2s').textContent=agg.tasks?Math.round(100*agg.repair_tasks/agg.tasks)+'%':'—';
-  document.getElementById('d-k3').textContent=agg.non_repair_tasks;
-  document.getElementById('d-k3s').textContent=agg.tasks?Math.round(100*agg.non_repair_tasks/agg.tasks)+'%':'—';
-  document.getElementById('d-k2').textContent=agg.repair_tasks;
-  document.getElementById('d-k2s').textContent=agg.tasks?Math.round(100*agg.repair_tasks/agg.tasks)+'% of total':'—';
-  document.getElementById('d-k3').textContent=agg.non_repair_tasks;
-  document.getElementById('d-k3s').textContent=agg.tasks?Math.round(100*agg.non_repair_tasks/agg.tasks)+'% of total':'—';
   document.getElementById('d-k4').textContent=days;document.getElementById('d-k4s').textContent='days present';
   const fixPct=agg.tasks?Math.round(100*agg.fully_fixed/agg.tasks):0;
   document.getElementById('d-k5').textContent=fixPct+'%';document.getElementById('d-k5s').textContent=agg.fully_fixed+' tasks';
@@ -1676,134 +1502,101 @@ async function renderDetailOverview(){
   document.getElementById('d-k7').textContent=agg.qc_rate!==null?agg.qc_rate+'%':'—';
   document.getElementById('d-k7s').textContent=agg.qp+' pass · '+agg.qf+' fail';
   document.getElementById('d-k8').textContent=agg.avg_tpd;
-  document.getElementById('d-k8r').textContent=days?+(agg.repair_tasks/days).toFixed(1):0;
   document.getElementById('d-k8n').textContent=days?+(agg.non_repair_tasks/days).toFixed(1):0;
   document.getElementById('d-k4b').textContent=days;
-  const dLive=agg.live_repair||0,dReg=agg.repair_tasks-dLive;
-  const dLivePct=agg.repair_tasks?Math.round(100*dLive/agg.repair_tasks):0;
+  const dLive=agg.live_repair||0,dReg=agg.tasks-dLive;
+  const dLivePct=agg.tasks?Math.round(100*dLive/agg.tasks):0;
   document.getElementById('d-klive').textContent=dLive.toLocaleString();
-  document.getElementById('d-klivesub').textContent=dLivePct+'% of repair tasks';
+  document.getElementById('d-klivesub').textContent=dLivePct+'% of total tasks';
   const dLiveBar=document.getElementById('d-klive-bar');if(dLiveBar)dLiveBar.style.width=dLivePct+'%';
   const dLivePerday=document.getElementById('d-klive-perday');if(dLivePerday)dLivePerday.textContent=days?(dLive/days).toFixed(1):'—';
   document.getElementById('d-kregular').textContent=dReg.toLocaleString();
-  document.getElementById('d-kregularsub').textContent=(100-dLivePct)+'% of repair tasks';
+  document.getElementById('d-kregularsub').textContent=(100-dLivePct)+'% of total tasks';
   const dRegBar=document.getElementById('d-kreg-bar');if(dRegBar)dRegBar.style.width=(100-dLivePct)+'%';
   const dRegPerday=document.getElementById('d-kreg-perday');if(dRegPerday)dRegPerday.textContent=days?(dReg/days).toFixed(1):'—';
-
-  // Shift from mech_agg (total_shift_min exists in DB)
   const dData=RAW.filter(r=>r.user_id===CURRENT_UID&&(!f||r.date>=f)&&(!t||r.date<=t));
   const shiftRows=dData.filter(r=>r.shift_dur_min>0);
   const avgShift=shiftRows.length?Math.round(shiftRows.reduce((s,r)=>s+r.shift_dur_min,0)/shiftRows.length):null;
   document.getElementById('d-kshift').textContent=avgShift?avgShift+' min':'—';
-
-  // ── Fetch real task times + idle from raw_tasks for THIS mechanic ──
   document.getElementById('d-k9').textContent='…';
   document.getElementById('d-k10').textContent='…';
   document.getElementById('d-k11').textContent='…';
   document.getElementById('d-kidle').textContent='…';
   if(document.getElementById('d-klivetime'))document.getElementById('d-klivetime').textContent='…';
   if(document.getElementById('d-kregtime'))document.getElementById('d-kregtime').textContent='…';
-
   try {
-    // IMPORTANT: filter by day_start_dt (login/shift date), NOT task_date
-    // Mechanic logged in May 8 evening → shift date = May 8, tasks may run into May 9
-    // All tasks in that shift belong to May 8 for idle/time calculations
     const tFilters = [
       `user_id=eq.${CURRENT_UID}`,
       f ? `day_start_dt=gte.${f}` : '',
       t ? `day_start_dt=lte.${t}` : '',
       'task_time_taken=gt.0'
     ].filter(Boolean).join('&');
-
     const tRows = await sbFetch('raw_tasks',
       'task_type,task_time_taken,live_repair_flag,day_start_dt,day_start_time,day_end_time,user_shift_id',
       tFilters, 10000
     );
-
     const toMin = (secs) => secs > 0 ? Math.round(secs / 60) : null;
     const avgSec = (arr, key='task_time_taken') =>
       arr.length ? arr.reduce((s,r) => s + (parseFloat(r[key])||0), 0) / arr.length : 0;
-
-    // ── Task time averages ──
     const repRows    = tRows.filter(r => r.task_type==='repair_task');
     const nonRepRows = tRows.filter(r => r.task_type!=='repair_task');
     const liveRows   = tRows.filter(r => parseInt(r.live_repair_flag)===1 && r.task_type==='repair_task');
     const regRows    = tRows.filter(r => parseInt(r.live_repair_flag)!==1 && r.task_type==='repair_task');
-
     const avgRepMin  = toMin(avgSec(repRows));
     const avgNonMin  = toMin(avgSec(nonRepRows));
     const avgLiveMin = toMin(avgSec(liveRows));
     const avgRegMin  = toMin(avgSec(regRows));
     const maxRepMin  = repRows.length ? toMin(Math.max(...repRows.map(r=>parseFloat(r.task_time_taken)||0))) : null;
-
-    // ── Idle time: per shift = shift_duration - sum(task_time_taken) ──
-    // Group all tasks by shift (day_start_dt + user_shift_id)
     const shiftMap = {};
     tRows.forEach(r => {
-      const key = (r.user_shift_id || r.day_start_dt); // fallback to date if no shift_id
+      const key = (r.user_shift_id || r.day_start_dt);
       if (!shiftMap[key]) {
-        shiftMap[key] = {
-          day_start_time: r.day_start_time,
-          day_end_time:   r.day_end_time,
-          taskSecs:       0
-        };
+        shiftMap[key] = { day_start_time: r.day_start_time, day_end_time: r.day_end_time, taskSecs: 0 };
       }
       shiftMap[key].taskSecs += parseFloat(r.task_time_taken) || 0;
     });
-
-    // Parse time string — handles "M/D/YYYY H:MM", "HH:MM:SS", or "HH:MM"
     const parseTimeMin = (s) => {
       if (!s) return null;
-      // Extract time portion if full datetime like "1/5/2026 7:59"
       const timePart = s.includes(' ') ? s.split(' ')[1] : s;
       const parts = timePart.split(':').map(Number);
       if (parts.length < 2 || isNaN(parts[0])) return null;
       return parts[0] * 60 + parts[1] + (parts[2]||0) / 60;
     };
-
     const idleMinutes = [];
     const shiftDurMinutes = [];
     Object.values(shiftMap).forEach(sh => {
       const startMin = parseTimeMin(sh.day_start_time);
       let   endMin   = parseTimeMin(sh.day_end_time);
       if (startMin === null || endMin === null) return;
-      // Handle overnight shift: end < start means crossed midnight
       if (endMin <= startMin) endMin += 1440;
       const shiftDurSec = (endMin - startMin) * 60;
-      if (shiftDurSec <= 0 || shiftDurSec > 86400) return; // skip invalid
+      if (shiftDurSec <= 0 || shiftDurSec > 86400) return;
       const idleSec = shiftDurSec - sh.taskSecs;
-      shiftDurMinutes.push(shiftDurSec / 60); // always count shift duration
-      if (idleSec >= 0) idleMinutes.push(idleSec / 60); // skip idle if anomalous
+      shiftDurMinutes.push(shiftDurSec / 60);
+      if (idleSec >= 0) idleMinutes.push(idleSec / 60);
     });
-
     const avgIdle  = idleMinutes.length  ? Math.round(idleMinutes.reduce((a,b)=>a+b,0)  / idleMinutes.length)  : null;
-    const avgShift = shiftDurMinutes.length ? Math.round(shiftDurMinutes.reduce((a,b)=>a+b,0) / shiftDurMinutes.length) : null;
-
+    const avgShiftR = shiftDurMinutes.length ? Math.round(shiftDurMinutes.reduce((a,b)=>a+b,0) / shiftDurMinutes.length) : null;
     document.getElementById('d-k9').textContent  = avgRepMin  ? avgRepMin+' min'  : '—';
     document.getElementById('d-k10').textContent = avgNonMin  ? avgNonMin+' min'  : '—';
     document.getElementById('d-k11').textContent = maxRepMin  ? maxRepMin+' min'  : '—';
     document.getElementById('d-kidle').textContent  = avgIdle  ? avgIdle+' min'  : '—';
-    document.getElementById('d-kshift').textContent = avgShift ? avgShift+' min' : '—';
+    document.getElementById('d-kshift').textContent = avgShiftR ? avgShiftR+' min' : '—';
     const dLtEl=document.getElementById('d-klivetime');if(dLtEl)dLtEl.textContent=avgLiveMin?avgLiveMin+' min':'—';
     const dRtEl=document.getElementById('d-kregtime');if(dRtEl)dRtEl.textContent=avgRegMin?avgRegMin+' min':'—';
-
-    // Update agg with real times for peer comparison
     if (avgRepMin) agg.avg_repair_time    = avgRepMin;
     if (avgNonMin) agg.avg_nonrepair_time = avgNonMin;
-
   } catch(e) {
     console.warn('Detail time fetch failed:', e.message);
     ['d-k9','d-k10','d-k11','d-kidle','d-klivetime','d-kregtime'].forEach(id=>{
       const el=document.getElementById(id); if(el) el.textContent='—';
     });
   }
-
   renderPeers(agg);
   renderDetailRNT(agg);
   renderDetailChart(dData);
   renderAttendance(dData);
 }
-
 function renderPeers(mech){
   const f=document.getElementById('df-from').value,t=document.getElementById('df-to').value;
   const data=RAW.filter(r=>(!f||r.date>=f)&&(!t||r.date<=t));
@@ -1836,14 +1629,12 @@ function renderPeers(mech){
   }).join('');
   document.getElementById('peer-table').innerHTML=`<table class="tnr-table"><thead><tr><th>Metric</th><th style="color:var(--pnk)">You</th><th style="color:var(--acc)">Cluster Avg</th><th style="color:var(--acc2)">City Avg</th><th style="color:var(--pur)">PAN India Avg</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
-
 function renderDetailRNT(agg){
   const bkts=[{k:'r01',n:'0-1 day',c:'#00e5a0'},{k:'r15',n:'1-5 day',c:'#0ea5e9'},{k:'r57',n:'5-7 day',c:'#a78bfa'},{k:'r714',n:'7-14 day',c:'#f59e0b'},{k:'r1428',n:'14-28 day',c:'#f97316'},{k:'r2890',n:'28-90 day',c:'#ef4444'},{k:'r90',n:'>90 day',c:'#7f1d1d'}];
   const total=bkts.reduce((s,b)=>s+agg[b.k],0);
   document.getElementById('d-rntbdg').textContent=total+' classified';
   document.getElementById('d-rntbars').innerHTML=bkts.map(b=>{const v=agg[b.k],p=total?(100*v/total):0;return `<div class="rrow"><div class="rdot" style="background:${b.c}"></div><div class="rname">${b.n}</div><div class="rbg"><div class="rfill" style="width:${p}%;background:${b.c}"></div></div><div class="rval">${v} <span style="color:var(--mut);font-size:10px">(${p.toFixed(1)}%)</span></div></div>`;}).join('');
 }
-
 function renderDetailChart(dailyRows){
   const sorted=[...dailyRows].sort((a,b)=>a.date<b.date?-1:1);
   const labels=sorted.map(r=>r.date.slice(5)),vals=sorted.map(r=>r.tasks);
@@ -1857,7 +1648,6 @@ function renderDetailChart(dailyRows){
       scales:{x:{ticks:{color:txtCol,font:{size:9},maxTicksLimit:12},grid:{display:false}},y:{ticks:{color:txtCol,font:{size:9}},grid:{color:grd}}}}
   });
 }
-
 function renderAttendance(dailyRows){
   const f=document.getElementById('df-from').value,t=document.getElementById('df-to').value;
   if(!f||!t)return;
@@ -1867,39 +1657,20 @@ function renderAttendance(dailyRows){
   const today=new Date();
   for(let d=new Date(start);d<=end;d.setDate(d.getDate()+1)){
     const ds=d.toISOString().slice(0,10);
-    cells.push({
-      date:ds,
-      present:presentDays.has(ds),
-      future:d>today,
-      dayNum:d.getDate(),
-      dow:d.getDay(), // 0=Sun..6=Sat
-      month:d.toLocaleString('en',{month:'short'})
-    });
+    cells.push({date:ds,present:presentDays.has(ds),future:d>today,dayNum:d.getDate(),dow:d.getDay(),month:d.toLocaleString('en',{month:'short'})});
   }
   const presCount=cells.filter(c=>c.present).length;
   const totalNonFuture=cells.filter(c=>!c.future).length;
   const absCount=totalNonFuture-presCount;
   document.getElementById('d-att-bdg').textContent=`${presCount}P · ${absCount}A`;
-
-  // Build 7-col calendar starting on Monday
-  // Pad start to Monday
   const DAY_LABELS=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-  // convert Sunday=0 to Mon=0 index
   const toMon=(dow)=>(dow+6)%7;
   const firstDow=toMon(cells[0].dow);
-  const padStart=firstDow; // empty cells before first day
-
   let html=`<div class="cal-week-grid">`;
-  // Day headers
-  DAY_LABELS.forEach(d=>{
-    html+=`<div class="cal-dow">${d}</div>`;
-  });
-  // Padding cells
-  for(let i=0;i<padStart;i++) html+=`<div class="cal-cell future"></div>`;
-  // Actual cells
+  DAY_LABELS.forEach(d=>{html+=`<div class="cal-dow">${d}</div>`;});
+  for(let i=0;i<firstDow;i++) html+=`<div class="cal-cell future"></div>`;
   cells.forEach((c,idx)=>{
     const cls=c.future?'future':(c.present?'p':'a');
-    // Show month label on 1st of month or first cell
     const showMonth=(c.dayNum===1);
     html+=`<div class="cal-cell ${cls}" title="${c.date} (${DAY_LABELS[toMon(c.dow)]})">
       <span class="cal-day-num">${c.dayNum}</span>
@@ -1909,19 +1680,13 @@ function renderAttendance(dailyRows){
   html+=`</div>`;
   document.getElementById('d-cal').innerHTML=html;
 }
-
-// ============================================================
-//  BIKES TAB
-// ============================================================
 function getRntClass(rnt){if(rnt===null||rnt===undefined)return '';if(rnt<=1)return 'fresh';if(rnt<=7)return 'recent';if(rnt<=14)return 'stale';return 'old';}
-
 function fmtBike(t){
   const cls=getRntClass(t.rnt);
   const rntStr=t.rnt!==null&&t.rnt!==undefined?`<span class="bike-rnt">RNT-${Math.round(t.rnt)}d</span>`:'<span class="bike-rnt">RNT-?</span>';
   const cat=t.cat?`<span class="bike-rnt">${t.cat}</span>`:'';
   return `<span class="bike-tag ${cls}">${t.bike} ${cat} ${rntStr}</span>`;
 }
-
 function renderDetailBikes(){
   const tasks=window._bikeTasks||[];
   const dayBikePairs=new Set();tasks.forEach(t=>{if(t.bike)dayBikePairs.add(t.date+'|'+t.bike)});
@@ -1963,20 +1728,12 @@ function renderDetailBikes(){
     <div class="day-content ${isOpen}">${bikeArr.map(t=>fmtBike(t)).join('')}</div>`;
   }).join('')||'<div class="empty">No tasks in this range</div>';
 }
-
-// ============================================================
-//  UTILITIES
-// ============================================================
 function showToast(msg){
   let t=document.getElementById('toast');
   if(!t){t=document.createElement('div');t.id='toast';t.style.cssText='position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--warn);color:#0a0e1a;padding:10px 18px;border-radius:8px;font-size:12px;font-family:Space Mono,monospace;z-index:9999;font-weight:700';document.body.appendChild(t);}
   t.textContent=msg;t.style.display='block';
   setTimeout(()=>t.style.display='none',3500);
 }
-
-// ============================================================
-//  BOOT — controlled by auth session check above
-// ============================================================
 </script>
 </body>
 </html>
