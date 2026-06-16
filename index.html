@@ -1109,7 +1109,7 @@ function render(){
   renderKPIs(d);renderRNT(d);renderCmp();renderDrill(d);
   renderOther();renderTrend(d);renderQC(d);renderLB();renderAL();renderTable();renderTenure();updateBC();
 }
-function set(id,v){document.getElementById(id).textContent=v}
+function set(id,v){const el=document.getElementById(id);if(el)el.textContent=v}
 function renderKPIs(d){
   const t=aggTot(d);
   const dayMechMap={};d.forEach(r=>{if(!dayMechMap[r.date])dayMechMap[r.date]=new Set();dayMechMap[r.date].add(r.user_id);});
@@ -1519,7 +1519,7 @@ async function renderDetailOverview(){
   const avgShift=shiftRows.length?Math.round(shiftRows.reduce((s,r)=>s+r.shift_dur_min,0)/shiftRows.length):null;
   document.getElementById('d-kshift').textContent=avgShift?avgShift+' min':'—';
   document.getElementById('d-k9').textContent='…';
-  document.getElementById('d-k10').textContent='…';
+  // d-k10 removed
   document.getElementById('d-k11').textContent='…';
   document.getElementById('d-kidle').textContent='…';
   if(document.getElementById('d-klivetime'))document.getElementById('d-klivetime').textContent='…';
@@ -1578,7 +1578,7 @@ async function renderDetailOverview(){
     const avgIdle  = idleMinutes.length  ? Math.round(idleMinutes.reduce((a,b)=>a+b,0)  / idleMinutes.length)  : null;
     const avgShiftR = shiftDurMinutes.length ? Math.round(shiftDurMinutes.reduce((a,b)=>a+b,0) / shiftDurMinutes.length) : null;
     document.getElementById('d-k9').textContent  = avgRepMin  ? avgRepMin+' min'  : '—';
-    document.getElementById('d-k10').textContent = avgNonMin  ? avgNonMin+' min'  : '—';
+    // d-k10 removed
     document.getElementById('d-k11').textContent = maxRepMin  ? maxRepMin+' min'  : '—';
     document.getElementById('d-kidle').textContent  = avgIdle  ? avgIdle+' min'  : '—';
     document.getElementById('d-kshift').textContent = avgShiftR ? avgShiftR+' min' : '—';
