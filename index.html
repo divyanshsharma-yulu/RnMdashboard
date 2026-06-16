@@ -769,7 +769,7 @@ async function loadLiveData() {
   try {
     document.getElementById('loadingMsg').textContent = 'Loading mechanic data...';
     const mechFilters = [
-      'primary_role=in.(Maintenance,Refurb Mechanic)',
+      'primary_role=eq.Maintenance',
       fromVal ? `task_date=gte.${fromVal}` : '',
       toVal   ? `task_date=lte.${toVal}`   : ''
     ].filter(Boolean).join('&');
