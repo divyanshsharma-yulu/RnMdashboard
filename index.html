@@ -308,7 +308,9 @@ td{padding:8px 11px;white-space:nowrap}
 <div class="kpi g"><div class="klbl">Total Tasks</div><div class="kval" id="ktasks">–</div><div class="ksub">by mechanics</div></div>
 <div class="kpi k"><div class="klbl">Active Mechanics</div><div class="kval" id="kmechs">–</div><div class="ksub" id="ktpdsub">—</div></div>
 </div>
-<div style="display:none"><span id="krep">0</span><span id="krepsub"></span><span id="knon">0</span><span id="knonsub"></span></div><div class="kval" id="ktpd" style="color:var(--acc)">–</div><div class="ksub">per mechanic-day</div></div>
+<div style="display:none"><span id="krep">0</span><span id="krepsub"></span><span id="knon">0</span><span id="knonsub"></span></div>
+<div class="kg" style="margin-top:8px">
+<div class="kpi b" style="border-top-color:var(--acc)"><div class="klbl">Avg Tasks / Day</div><div class="kval" id="ktpd" style="color:var(--acc)">–</div><div class="ksub">per mechanic-day</div></div>
 <div class="kpi g" style="border-top-color:var(--pur)"><div class="klbl">Avg MTTR</div><div class="kval" id="kmttr" style="color:var(--pur)">–</div><div class="ksub" id="kmttrsub">days before bike returns · higher = better</div></div>
 </div>
 <div class="slbl">⚡ Repair Breakdown — Live vs Regular</div>
@@ -745,15 +747,21 @@ const ACFG = {
 async function sbFetch(table, select, filters, pageSize=1000) {
   let all=[], from=0;
   while(true) {
+    const end = from + pageSize - 1;
     const qs = [
       `select=${encodeURIComponent(select)}`,
-      filters||'',
-      `limit=${pageSize}`,
-      `offset=${from}`
+      filters||''
     ].filter(Boolean).join('&');
     const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${qs}`, {
-      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer '+SUPABASE_KEY }
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer '+SUPABASE_KEY,
+        'Range': `${from}-${end}`,
+        'Range-Unit': 'items',
+        'Prefer': 'count=none'
+      }
     });
+    if (res.status === 416) break; // Range not satisfiable — done
     if (!res.ok) throw new Error(`[${table}] ${res.status}: ${await res.text()}`);
     const rows = await res.json();
     all = all.concat(rows);
@@ -1118,16 +1126,16 @@ function getDataMaxDate(){
 function computeMTTR(userIds, cityFilter, clusterFilter) {
   const uidSet = new Set(userIds.map(String));
   let rows = BIKE_RETURNS.filter(r => uidSet.has(String(r.prev_user_id)));
-  if (cityFilter) rows = rows.filter(r => mapNCR(r.city||'') === cityFilter || r.city === cityFilter);
-  if (clusterFilter) rows = rows.filter(r => mapCluster(r.cluster||'') === clusterFilter || r.cluster === clusterFilter);
+  if (cityFilter) rows = rows.filter(r => mapNCR(r.city||'') === cityFilter);
+  if (clusterFilter) rows = rows.filter(r => mapCluster(r.cluster||'') === clusterFilter);
   if (!rows.length) return null;
   return Math.round(rows.reduce((s,r)=>s+(r.gap_days||0),0)/rows.length*10)/10;
 }
 function computeMTTRByMech(userIds, cityFilter, clusterFilter) {
   const map = {};
   let rows = BIKE_RETURNS;
-  if (cityFilter) rows = rows.filter(r => mapNCR(r.city||'') === cityFilter || r.city === cityFilter);
-  if (clusterFilter) rows = rows.filter(r => mapCluster(r.cluster||'') === clusterFilter || r.cluster === clusterFilter);
+  if (cityFilter) rows = rows.filter(r => mapNCR(r.city||'') === cityFilter);
+  if (clusterFilter) rows = rows.filter(r => mapCluster(r.cluster||'') === clusterFilter);
   const uidSet = new Set(userIds.map(String));
   rows.forEach(r => {
     const uid = String(r.prev_user_id); if (!uidSet.has(uid)) return;
@@ -1871,8 +1879,8 @@ function renderDetailBikes(){
 function renderSpares(){
   const c=document.getElementById('fc').value,cl=document.getElementById('fcl').value,m=document.getElementById('fm').value;
   let rows=SPARES_AGG;
-  if(c)rows=rows.filter(r=>mapNCR(r.city||'')===c||r.city===c);
-  if(cl)rows=rows.filter(r=>mapCluster(r.cluster||'')===cl||r.cluster===cl);
+  if(c)rows=rows.filter(r=>mapNCR(r.city||'')===c);
+  if(cl)rows=rows.filter(r=>mapCluster(r.cluster||'')===cl);
   if(m)rows=rows.filter(r=>String(r.user_id)===m);
   const card=document.getElementById('sparescard');
   if(!card)return;
@@ -1901,8 +1909,8 @@ function renderGhost(){
   let sig2=BIKE_RETURNS.filter(r=>parseInt(r.prev_is_fully_fixed)===1&&(r.gap_days||0)>0&&(r.gap_days||0)<=ghostN);
   let sig1=BIKE_RETURNS.filter(r=>parseInt(r.prev_is_fully_fixed)===1&&(r.gap_days||0)===0);
   const filt=rows=>{
-    if(c)rows=rows.filter(r=>mapNCR(r.city||'')===c||r.city===c);
-    if(cl)rows=rows.filter(r=>mapCluster(r.cluster||'')===cl||r.cluster===cl);
+    if(c)rows=rows.filter(r=>mapNCR(r.city||'')===c);
+    if(cl)rows=rows.filter(r=>mapCluster(r.cluster||'')===cl);
     if(m)rows=rows.filter(r=>String(r.prev_user_id)===m);
     if(f)rows=rows.filter(r=>r.prev_task_date>=f);
     if(t)rows=rows.filter(r=>r.prev_task_date<=t);
