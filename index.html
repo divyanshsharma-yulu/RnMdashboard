@@ -203,6 +203,28 @@ td{padding:8px 11px;white-space:nowrap}
 .kpct{height:3px;background:var(--sur2);border-radius:2px;margin-top:8px;overflow:hidden}
 .kpct-fill{height:100%;border-radius:2px}
 .khint{font-size:10px;color:var(--mut);line-height:1.5;margin-top:7px;padding-top:7px;border-top:1px solid var(--bdr)}
+/* ── NEW: Spares WoW chart bar ── */
+.spare-row{display:flex;align-items:center;gap:8px;padding:4px 0}
+.spare-name{flex:0 0 160px;font-size:11px;font-family:'Space Mono',monospace;color:var(--txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.spare-bg{flex:1;height:20px;background:var(--sur2);border-radius:4px;overflow:hidden;position:relative}
+.spare-fill{height:100%;border-radius:4px;background:var(--pur);display:flex;align-items:center;justify-content:flex-end;padding-right:6px;font-size:10px;font-family:'Space Mono',monospace;font-weight:700;color:#fff;min-width:28px}
+.spare-weeks{display:flex;gap:3px;margin-top:3px}
+.spare-wk{height:4px;border-radius:2px;flex:1}
+/* ── NEW: Ghost Repair & cherry-pick rows ── */
+.ghost-row{display:flex;justify-content:space-between;align-items:center;padding:8px 11px;border-radius:7px;margin-bottom:4px;background:rgba(239,68,68,.06);border-left:3px solid var(--dng);font-size:12px}
+.ghost-bike{font-family:'Space Mono',monospace;font-weight:700;color:var(--dng)}
+.ghost-gap{font-family:'Space Mono',monospace;font-size:11px;color:var(--warn)}
+.cherry-row{display:flex;align-items:center;gap:8px;padding:7px 11px;border-radius:7px;margin-bottom:4px;background:rgba(245,158,11,.06);border-left:3px solid var(--warn);font-size:12px}
+.issue-badge{display:inline-flex;padding:1px 7px;border-radius:8px;font-size:10px;font-family:'Space Mono',monospace;font-weight:600;background:rgba(167,139,250,.15);color:var(--pur)}
+.mttr-badge{display:inline-flex;padding:2px 10px;border-radius:8px;font-size:13px;font-family:'Space Mono',monospace;font-weight:700}
+.mttr-badge.good{background:rgba(0,229,160,.12);color:var(--acc)}
+.mttr-badge.warn{background:rgba(245,158,11,.12);color:var(--warn)}
+.mttr-badge.bad{background:rgba(239,68,68,.12);color:var(--dng)}
+.mttr-bike-row{display:flex;justify-content:space-between;align-items:center;padding:7px 11px;border-bottom:1px solid rgba(30,45,69,.3);font-size:12px}
+.mttr-bike-row:last-child{border:none}
+.mttr-bike-name{font-family:'Space Mono',monospace;font-weight:700;color:var(--acc2)}
+.mttr-gap{font-family:'Space Mono',monospace;font-size:11px}
+.mttr-gap.fast{color:var(--dng)}.mttr-gap.ok{color:var(--warn)}.mttr-gap.good{color:var(--acc)}
 </style>
 </head>
 <body>
@@ -287,9 +309,12 @@ td{padding:8px 11px;white-space:nowrap}
 <div class="kpi k"><div class="klbl">Active Mechanics</div><div class="kval" id="kmechs">–</div><div class="ksub" id="ktpdsub">—</div></div>
 </div>
 <div class="kg" style="margin-top:8px">
+<div class="kpi b"><div class="klbl">Repair Tasks</div><div class="kval" id="krep">–</div><div class="ksub" id="krepsub">—</div></div>
+<div class="kpi p"><div class="klbl">Non-Repair Tasks</div><div class="kval" id="knon">–</div><div class="ksub" id="knonsub">—</div></div>
 <div class="kpi b" style="border-top-color:var(--acc)"><div class="klbl">Avg Tasks / Day</div><div class="kval" id="ktpd" style="color:var(--acc)">–</div><div class="ksub">per mechanic-day</div></div>
+<div class="kpi g" style="border-top-color:var(--pur)"><div class="klbl">Avg MTTR</div><div class="kval" id="kmttr" style="color:var(--pur)">–</div><div class="ksub" id="kmttrsub">days before bike returns · higher = better</div></div>
 </div>
-<div class="slbl">⚡ Live vs Regular Breakdown</div>
+<div class="slbl">⚡ Repair Breakdown — Live vs Regular</div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 20px;margin-bottom:8px">
 <div class="kpi b">
   <div class="klbl" style="color:#34d399">Live Repair</div>
@@ -337,6 +362,7 @@ td{padding:8px 11px;white-space:nowrap}
 <div class="slbl">🕐 Time &amp; Shift</div>
 <div class="kg" style="margin-bottom:20px">
 <div class="kpi b"><div class="klbl">Avg Repair Task Time</div><div class="kval" id="kavgrep">–</div><div class="ksub">avg per task</div></div>
+<div class="kpi p"><div class="klbl">Avg Non-Repair Task Time</div><div class="kval" id="kavgnon">–</div><div class="ksub">avg per task</div></div>
 <div class="kpi w"><div class="klbl">Avg Idle Time / Day</div><div class="kval" id="kidle">–</div><div class="ksub">gaps between tasks · per present day</div></div>
 <div class="kpi x"><div class="klbl">Avg Active Span / Day</div><div class="kval" id="kshift">–</div><div class="ksub">first task start → last task end</div></div>
 </div>
@@ -355,6 +381,7 @@ td{padding:8px 11px;white-space:nowrap}
 <select id="cmpmet" onchange="renderCmp()" style="max-width:190px;font-size:11px;padding:4px 8px">
 <option value="tasks">By Tasks</option><option value="qc_rate">By QC Rate %</option><option value="fix_rate">By Fix Rate %</option>
 <option value="avg_repair_time">By Avg Repair Time</option><option value="backlog_pct">By Old Bikes (&gt;14d) %</option><option value="avg_tpd">By Avg Tasks / Day</option>
+<option value="mttr">By MTTR (avg days)</option>
 </select>
 </div>
 <div id="cmplist"></div>
@@ -369,6 +396,24 @@ td{padding:8px 11px;white-space:nowrap}
 </div>
 <div id="tenure-table"></div>
 </div>
+<!-- NEW: Top 10 Spares WoW -->
+<div class="card" id="sparescard">
+<div class="ch"><span class="ct">🔩 Top 10 Spares Used</span><span class="cb" id="sparesbdg">—</span></div>
+<div style="font-size:11px;color:var(--mut);margin-bottom:10px;padding:8px;background:var(--sur2);border-radius:8px;line-height:1.5">Top parts by consumption. Weekly trend bars show last 4 weeks (oldest → newest).</div>
+<div id="spareslist"></div>
+</div>
+
+<!-- NEW: Ghost Repair Fraud Detection -->
+<div class="card" id="ghostcard">
+<div class="ch"><span class="ct" style="color:var(--dng)">👻 Ghost Repair Detection</span><span class="cb" id="ghostbdg" style="background:rgba(239,68,68,.1);color:var(--dng);border-color:rgba(239,68,68,.3)">—</span></div>
+<div style="font-size:11px;color:var(--mut);margin-bottom:10px;padding:8px;background:var(--sur2);border-radius:8px;line-height:1.5">
+  <b style="color:var(--txt)">Signal 1</b>: Same bike fully fixed 2+ times same day.
+  <b style="color:var(--txt)">Signal 2</b>: Bike marked fully fixed, returned within
+  <input type="number" id="ghost-n" value="2" min="1" max="7" style="width:36px;padding:1px 4px;font-size:11px;background:var(--bg);color:var(--txt);border:1px solid var(--bdr);border-radius:4px;font-family:'Space Mono',monospace" onchange="renderGhost()"> days.
+</div>
+<div id="ghostlist"></div>
+</div>
+
 <div class="slbl" style="padding-top:0"><span>🎯 Drill-down — tap any card to go deeper</span><span class="sbdg" id="drlcnt">—</span></div>
 <div class="card">
 <div class="ch"><span class="ct" id="drltitle">All Cities</span><span class="cb" id="drlbdg">—</span></div>
@@ -389,6 +434,7 @@ td{padding:8px 11px;white-space:nowrap}
 <span class="ct">🏆 Leaderboard</span>
 <select id="lbmet" onchange="renderLB()" style="max-width:185px;font-size:11px;padding:4px 8px">
 <option value="tasks">Most Tasks</option><option value="backlog">Backlog Heroes (&gt;14d)</option><option value="qc">Best QC Rate</option><option value="speed">Fastest Repair</option>
+<option value="mttr">Best MTTR</option>
 </select>
 </div>
 <div class="tog" style="margin-bottom:9px">
@@ -421,7 +467,8 @@ td{padding:8px 11px;white-space:nowrap}
 <th onclick="srt('yc')">YC ↕</th><th onclick="srt('tasks')">Tasks ↕</th>
 <th onclick="srt('live_repair')" style="color:#34d399">Live R ↕</th>
 <th onclick="srt('regular_repair')" style="color:var(--pnk)">Reg R ↕</th>
-<th onclick="srt('avg_repair_time')">Avg Time ↕</th>
+<th onclick="srt('non_repair_tasks')">Non-Rep ↕</th><th onclick="srt('avg_repair_time')">Avg Time ↕</th>
+<th onclick="srt('mttr')" style="color:var(--pur)">MTTR ↕</th>
 <th onclick="srt('qc_rate')">QC % ↕</th><th onclick="srt('fix_rate')">Fix % ↕</th>
 <th onclick="srt('backlog_pct')">Old &gt;14d ↕</th><th>Tenure</th><th>Productivity</th>
 </tr></thead>
@@ -447,6 +494,7 @@ td{padding:8px 11px;white-space:nowrap}
 <div class="det-tabs">
 <button class="dtab on" id="tab-ov" onclick="switchTab('ov')">Overview</button>
 <button class="dtab" id="tab-bk" onclick="switchTab('bk')">🚲 Bikes</button>
+<button class="dtab" id="tab-q" onclick="switchTab('q')">🔍 Quality Intel</button>
 </div>
 <div class="dpanel on" id="panel-ov">
 <div class="slbl" style="padding-left:0">📦 Volume <span class="sbdg" id="d-kbdg">—</span></div>
@@ -455,9 +503,12 @@ td{padding:8px 11px;white-space:nowrap}
 <div class="kpi k"><div class="klbl">Active Days</div><div class="kval" id="d-k4">–</div><div class="ksub" id="d-k4s">—</div></div>
 </div>
 <div class="kg" style="padding:0;margin-top:8px">
+<div class="kpi b"><div class="klbl">Repair Tasks</div><div class="kval" id="d-k2">–</div><div class="ksub" id="d-k2s">—</div></div>
+<div class="kpi p"><div class="klbl">Non-Repair Tasks</div><div class="kval" id="d-k3">–</div><div class="ksub" id="d-k3s">—</div></div>
 <div class="kpi b" style="border-top-color:var(--acc)"><div class="klbl">Avg Tasks / Day</div><div class="kval" id="d-k8" style="color:var(--acc)">–</div><div class="ksub">per present day</div></div>
+<div class="kpi g" style="border-top-color:var(--pur)"><div class="klbl">My MTTR</div><div class="kval" id="d-mttr" style="color:var(--pur)">–</div><div class="ksub" id="d-mttrsub">days · higher = better quality</div></div>
 </div>
-<div class="slbl" style="padding-left:0">⚡ Live vs Regular Breakdown</div>
+<div class="slbl" style="padding-left:0">⚡ Repair Breakdown — Live vs Regular</div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
 <div class="kpi b">
   <div class="klbl" style="color:#34d399">Live Repair</div>
@@ -505,6 +556,7 @@ td{padding:8px 11px;white-space:nowrap}
 <div class="slbl" style="padding-left:0">🕐 Time &amp; Shift</div>
 <div class="kg" style="padding:0;margin-bottom:20px">
 <div class="kpi b"><div class="klbl">Avg Repair Task Time</div><div class="kval" id="d-k9">–</div><div class="ksub">avg per task</div></div>
+<div class="kpi p"><div class="klbl">Avg Non-Repair Task Time</div><div class="kval" id="d-k10">–</div><div class="ksub">avg per task</div></div>
 <div class="kpi w"><div class="klbl">Avg Idle Time / Day</div><div class="kval" id="d-kidle">–</div><div class="ksub">gaps between tasks · per present day</div></div>
 <div class="kpi x"><div class="klbl">Avg Active Span / Day</div><div class="kval" id="d-kshift">–</div><div class="ksub">first task start → last task end</div></div>
 </div>
@@ -550,6 +602,34 @@ td{padding:8px 11px;white-space:nowrap}
 <div id="d-bkdays"></div>
 </div>
 </div><!-- /panel-bk -->
+
+<!-- NEW: Quality Intel Panel -->
+<div class="dpanel" id="panel-q">
+<div class="slbl" style="padding-left:0">📊 MTTR — Mean Time To Return <span class="sbdg" id="d-mttr-bdg">—</span></div>
+<div class="card" style="margin-bottom:14px">
+<div style="display:flex;align-items:center;gap:16px;margin-bottom:14px;flex-wrap:wrap">
+  <div style="text-align:center"><div class="ksub" style="margin-bottom:4px">Your MTTR</div><div id="d-mttr-val" class="mttr-badge good">—</div></div>
+  <div style="width:1px;height:40px;background:var(--bdr)"></div>
+  <div style="text-align:center"><div class="ksub" style="margin-bottom:4px">Cluster avg</div><div id="d-mttr-cl" style="font-family:'Space Mono',monospace;font-size:14px;color:var(--acc)">—</div></div>
+  <div style="text-align:center"><div class="ksub" style="margin-bottom:4px">City avg</div><div id="d-mttr-ci" style="font-family:'Space Mono',monospace;font-size:14px;color:var(--acc2)">—</div></div>
+  <div style="text-align:center"><div class="ksub" style="margin-bottom:4px">PAN India avg</div><div id="d-mttr-all" style="font-family:'Space Mono',monospace;font-size:14px;color:var(--pur)">—</div></div>
+</div>
+<div style="font-size:11px;color:var(--mut);margin-bottom:10px">Bikes returned after this mechanic's last task — sorted by fastest return first. Gap capped at 60 days.</div>
+<div id="d-mttr-bikes"></div>
+</div>
+<div class="slbl" style="padding-left:0">👻 Ghost Repairs <span class="sbdg" id="d-ghost-bdg">—</span></div>
+<div class="card" style="margin-bottom:14px">
+<div style="font-size:11px;color:var(--mut);margin-bottom:10px;line-height:1.5"><b style="color:var(--txt)">Signal 1:</b> Same bike fully fixed 2+ times same day. <b style="color:var(--txt)">Signal 2:</b> Marked fully fixed, returned within N+2 days.</div>
+<div id="d-ghost-list"></div>
+</div>
+<div class="slbl" style="padding-left:0">🍒 Issue Complexity & Cherry-Pick Detection <span class="sbdg" id="d-cherry-bdg">—</span></div>
+<div class="card" style="margin-bottom:14px">
+<div style="font-size:11px;color:var(--mut);margin-bottom:10px;line-height:1.5">Fleet median time shown per issue. <span style="color:var(--warn)">🚩 flagged</span> = avg time is 2.5× or more above fleet median (min 5 tasks).</div>
+<div id="d-cherry-list"></div>
+</div>
+<div class="slbl" style="padding-left:0">🔩 My Top Spares Used <span class="sbdg" id="d-spares-bdg">—</span></div>
+<div class="card"><div id="d-spares-list"></div></div>
+</div><!-- /panel-q -->
 </div><!-- /detail -->
 <script>
 // ============================================================
@@ -652,6 +732,10 @@ const OTHER = [];
 let G='daily', SC='tasks', SD=-1, tChart=null, qChart=null, LBW=7, ALW=7;
 let CURRENT_UID = null;
 let dChart = null;
+// NEW: Aggregation data from new tables
+let BIKE_RETURNS=[];
+let ISSUE_AGG=[];
+let SPARES_AGG=[];
 const ACFG = {
   low_prod:  {on:true, v:6,  lbl:'Low productivity — avg tasks/day below',   op:'<'},
   low_qc:    {on:true, v:70, lbl:'Low QC pass rate (%) below',               op:'<'},
@@ -661,7 +745,8 @@ const ACFG = {
   attend:    {on:true, v:4,  lbl:'Low attendance — active days below',       op:'<'},
   qc_cluster:{on:true, v:3,  lbl:'QC fail cluster — fails in window above',  op:'>='},
   cherry:    {on:true, v:50, lbl:'Cherry-picking — mech old% below cluster', op:'<'},
-  no_old:    {on:false,v:0,  lbl:'Avoiding old bikes entirely',              op:'='}
+  no_old:    {on:false,v:0,  lbl:'Avoiding old bikes entirely',              op:'='},
+  low_mttr:  {on:true, v:8,  lbl:'Low MTTR — avg days before return below',   op:'<'},
 };
 async function sbFetch(table, select, filters, pageSize=1000) {
   let all=[], from=0;
@@ -769,7 +854,7 @@ async function loadLiveData() {
   try {
     document.getElementById('loadingMsg').textContent = 'Loading mechanic data...';
     const mechFilters = [
-      'primary_role=eq.Maintenance',
+      'primary_role=in.(Maintenance,Refurb Mechanic)',
       fromVal ? `task_date=gte.${fromVal}` : '',
       toVal   ? `task_date=lte.${toVal}`   : ''
     ].filter(Boolean).join('&');
@@ -898,6 +983,17 @@ async function loadLiveData() {
       document.getElementById('dataBadge').textContent =
         dates[0].slice(0,7) + ' → ' + dates[dates.length-1].slice(0,7);
     }
+    // Load new aggregation tables (full history)
+    document.getElementById('loadingMsg').textContent = 'Loading quality data...';
+    try {
+      const [brRows, iaRows, saRows] = await Promise.all([
+        sbFetch('bike_returns','bike_name,prev_task_date,next_task_date,gap_days,prev_user_id,prev_username,next_user_id,prev_is_fully_fixed,city,cluster','',2000),
+        sbFetch('issue_agg','user_id,username,city,cluster,issue_name,task_count,avg_time_sec,fleet_median_sec,week_start','',2000),
+        sbFetch('spares_agg','spare_name,week_start,city,cluster,user_id,username,count','',2000),
+      ]);
+      BIKE_RETURNS=brRows; ISSUE_AGG=iaRows; SPARES_AGG=saRows;
+      console.log('Quality data: bike_returns='+brRows.length+', issue_agg='+iaRows.length+', spares_agg='+saRows.length);
+    } catch(e) { console.warn('Quality data load failed:', e.message); }
     document.getElementById('loadingOverlay').classList.remove('show');
     showToast('✅ Loaded '+RAW.length.toLocaleString()+' records from Supabase');
     render();
@@ -1024,6 +1120,31 @@ function getDataMaxDate(){
   if(RAW.length)return RAW.reduce((m,r)=>r.date>m?r.date:m,'');
   return new Date().toISOString().slice(0,10);
 }
+// ── MTTR HELPERS ──────────────────────────────────────────
+function computeMTTR(userIds, cityFilter, clusterFilter) {
+  const uidSet = new Set(userIds.map(String));
+  let rows = BIKE_RETURNS.filter(r => uidSet.has(String(r.prev_user_id)));
+  if (cityFilter) rows = rows.filter(r => mapNCR(r.city||'') === cityFilter);
+  if (clusterFilter) rows = rows.filter(r => mapCluster(r.cluster||'') === clusterFilter);
+  if (!rows.length) return null;
+  return Math.round(rows.reduce((s,r)=>s+(r.gap_days||0),0)/rows.length*10)/10;
+}
+function computeMTTRByMech(userIds, cityFilter, clusterFilter) {
+  const map = {};
+  let rows = BIKE_RETURNS;
+  if (cityFilter) rows = rows.filter(r => mapNCR(r.city||'') === cityFilter);
+  if (clusterFilter) rows = rows.filter(r => mapCluster(r.cluster||'') === clusterFilter);
+  const uidSet = new Set(userIds.map(String));
+  rows.forEach(r => {
+    const uid = String(r.prev_user_id); if (!uidSet.has(uid)) return;
+    if (!map[uid]) map[uid] = {sum:0,n:0};
+    map[uid].sum += r.gap_days||0; map[uid].n++;
+  });
+  const result = {};
+  Object.entries(map).forEach(([uid,v]) => { result[uid] = Math.round(v.sum/v.n*10)/10; });
+  return result;
+}
+
 function aggMech(data){
   const m={};
   data.forEach(r=>{
@@ -1063,9 +1184,13 @@ function aggMech(data){
       live_repair_pct:o.repair_tasks?Math.round(100*o.live_repair/o.repair_tasks):null,
       regular_repair:o.repair_tasks-(o.live_repair||0),
       avg_idle:o.n_idle?Math.round(o.sum_idle/o.n_idle):null,
-      rnt_total:rt,rnt_old:old
+            rnt_total:rt,rnt_old:old,
+      mttr: null
     };
   });
+  const mttrMap=computeMTTRByMech(Object.values(m).map(o=>o.user_id));
+  Object.values(m).forEach(o=>{o.mttr=mttrMap[String(o.user_id)]||null;});
+  return Object.values(m).map(o=>{const days=o.days.size||1;const rt=o.r01+o.r15+o.r57+o.r714+o.r1428+o.r2890+o.r90;const old=o.r1428+o.r2890+o.r90;const base={...o,days,avg_tpd:+(o.tasks/days).toFixed(1),avg_repair_time:o.nrep?Math.round(o.srep/o.nrep):0,avg_nonrepair_time:o.nnon?Math.round(o.snon/o.nnon):0,qc_rate:o.qt?Math.round(100*o.qp/o.qt):null,fix_rate:o.tasks?Math.round(100*o.fully_fixed/o.tasks):null,backlog_pct:rt?Math.round(100*old/rt):null,live_repair_pct:o.repair_tasks?Math.round(100*o.live_repair/o.repair_tasks):null,regular_repair:o.repair_tasks-(o.live_repair||0),avg_idle:o.n_idle?Math.round(o.sum_idle/o.n_idle):null,rnt_total:rt,rnt_old:old,mttr:o.mttr};return base;});
 }
 function aggTot(data){
   const t={tasks:0,repair_tasks:0,non_repair_tasks:0,fully_fixed:0,not_fixed:0,qp:0,qf:0,qt:0,
@@ -1107,9 +1232,11 @@ function render(){
   if(CURRENT_UID!==null&&document.getElementById('detail').classList.contains('show')){renderDetail();return;}
   const d=gf();
   renderKPIs(d);renderRNT(d);renderCmp();renderDrill(d);
-  renderOther();renderTrend(d);renderQC(d);renderLB();renderAL();renderTable();renderTenure();updateBC();
+  renderOther();renderTrend(d);renderQC(d);renderLB();renderAL();renderTable();renderTenure();
+  renderSpares();renderGhost();
+  updateBC();
 }
-function set(id,v){const el=document.getElementById(id);if(el)el.textContent=v}
+function set(id,v){document.getElementById(id).textContent=v}
 function renderKPIs(d){
   const t=aggTot(d);
   const dayMechMap={};d.forEach(r=>{if(!dayMechMap[r.date])dayMechMap[r.date]=new Set();dayMechMap[r.date].add(r.user_id);});
@@ -1152,6 +1279,12 @@ function renderKPIs(d){
   const regPermechEl=document.getElementById('kreg-permech');if(regPermechEl)regPermechEl.textContent=regPerMech;
   set('kidle', t.n_idle ? Math.round(t.sum_idle/t.n_idle)+' min' : '—');
   set('kshift', t.n_shift ? Math.round(t.sum_shift/t.n_shift)+' min' : '—');
+  // MTTR KPI
+  const _c=document.getElementById('fc').value,_cl=document.getElementById('fcl').value;
+  const _uids=[...new Set(d.map(r=>r.user_id))];
+  const _mttr=computeMTTR(_uids,_c||null,_cl||null);
+  if(_mttr!==null){set('kmttr',_mttr+' days');set('kmttrsub','avg days before bike returns · higher = better');}
+  else{set('kmttr','—');set('kmttrsub','no return data in this filter');}
 }
 function renderRNT(d){
   const t=aggTot(d);
@@ -1180,22 +1313,24 @@ function renderCmp(){
   set('cmpctx','— '+ctx);
   const grp={};
   d.forEach(r=>{
-    const key=r[gk];if(!grp[key])grp[key]={key,tasks:0,qp:0,qt:0,ff:0,srep:0,nrep:0,rold:0,rtot:0,mechdays:new Set()};
-    const o=grp[key];o.tasks+=r.tasks;o.qp+=r.qc_pass;o.qt+=r.qc_total;o.ff+=r.fully_fixed;
+    const key=r[gk];if(!grp[key])grp[key]={key,tasks:0,qp:0,qt:0,ff:0,srep:0,nrep:0,rold:0,rtot:0,mechdays:new Set(),uids:new Set()};
+    const o=grp[key];o.tasks+=r.tasks;o.qp+=r.qc_pass;o.qt+=r.qc_total;o.ff+=r.fully_fixed;o.uids.add(r.user_id);
     if(r.repair_tasks){o.srep+=r.avg_repair_time*r.repair_tasks;o.nrep+=r.repair_tasks}
     o.rold+=r.rnt_14_28+r.rnt_28_90+r.rnt_90p;
     o.rtot+=r.rnt_0_1+r.rnt_1_5+r.rnt_5_7+r.rnt_7_14+r.rnt_14_28+r.rnt_28_90+r.rnt_90p;
     o.mechdays.add(r.user_id+'|'+r.date);
   });
-  let arr=Object.values(grp).map(o=>({...o,
-    qc_rate:o.qt?Math.round(100*o.qp/o.qt):0,fix_rate:o.tasks?Math.round(100*o.ff/o.tasks):0,
+  let arr=Object.values(grp).map(o=>{
+    const mttr=computeMTTR([...o.uids]||[],c||null,cl||null);
+    return {...o,qc_rate:o.qt?Math.round(100*o.qp/o.qt):0,fix_rate:o.tasks?Math.round(100*o.ff/o.tasks):0,
     avg_repair_time:o.nrep?Math.round(o.srep/o.nrep):0,backlog_pct:o.rtot?Math.round(100*o.rold/o.rtot):0,
-    avg_tpd:o.mechdays.size?+(o.tasks/o.mechdays.size).toFixed(1):0
-  }));
+    avg_tpd:o.mechdays.size?+(o.tasks/o.mechdays.size).toFixed(1):0,mttr:mttr||0};
+  });
   const asc=met==='avg_repair_time';
+  if(met==='mttr')arr=arr.filter(o=>o.mttr>0);
   arr.sort((a,b)=>asc?a[met]-b[met]:b[met]-a[met]);arr=arr.slice(0,12);
-  const max=Math.max(...arr.map(o=>o[met]),1);
-  const u={tasks:'',qc_rate:'%',fix_rate:'%',avg_repair_time:'m',backlog_pct:'%',avg_tpd:''}[met]||'';
+  const max=Math.max(...arr.map(o=>o[met]||0),1);
+  const u={tasks:'',qc_rate:'%',fix_rate:'%',avg_repair_time:'m',backlog_pct:'%',avg_tpd:'',mttr:'d'}[met]||'';
   document.getElementById('cmplist').innerHTML=arr.map((o,i)=>`
     <div class="crow"><div class="crank">${i+1}</div><div class="cname">${o.key}</div>
     <div class="cbg"><div class="cfill" style="width:${max?(100*o[met]/max):0}%"></div></div>
@@ -1338,7 +1473,8 @@ function renderLB(){
   else if(met==='backlog'){arr=arr.filter(o=>o.rnt_old>=3).map(o=>({...o,_v:o.rnt_old})).sort((a,b)=>b._v-a._v);sk='_v';col='var(--pnk)'}
   else if(met==='qc'){arr=arr.filter(o=>o.qt>=5).sort((a,b)=>b.qc_rate-a.qc_rate);sk='qc_rate';col='var(--acc)';unit='%'}
   else if(met==='speed'){arr=arr.filter(o=>o.repair_tasks>=5).sort((a,b)=>a.avg_repair_time-b.avg_repair_time);sk='avg_repair_time';col='var(--pur)';unit='m'}
-  arr=arr.slice(0,10);const max=Math.max(...arr.map(o=>o[sk]),1);
+  else if(met==='mttr'){arr=arr.filter(o=>o.mttr!==null).sort((a,b)=>b.mttr-a.mttr);sk='mttr';col='var(--pur)';unit='d'}
+  arr=arr.slice(0,10);const max=Math.max(...arr.map(o=>o[sk]||0),1);
   document.getElementById('lb').innerHTML=arr.map((o,i)=>{
     const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1);
     const pct=met==='speed'?Math.max(5,100-(o[sk]/max)*100+5):(100*o[sk]/max);
@@ -1365,6 +1501,7 @@ function renderAL(){
     if(A.qc_cluster.on&&m.qf>=A.qc_cluster.v)alerts.push({t:'d',i:'⚠️',msg:`<b>${mt}</b> — ${m.qf} QC fails in window`,uid:m.user_id});
     if(A.cherry.on&&m.rnt_total>=10){const cb=clBL[m.cluster];const clp=cb.tot?(100*cb.old/cb.tot):0;if(clp>=10&&m.backlog_pct<(clp*A.cherry.v/100))alerts.push({t:'w',i:'🍒',msg:`<b>${mt}</b> — Cherry-pick: ${m.backlog_pct}% old (cluster ${Math.round(clp)}%)`,uid:m.user_id})}
     if(A.no_old.on&&m.rnt_total>=10&&m.rnt_old===0){const cb=clBL[m.cluster];const clp=cb.tot?(100*cb.old/cb.tot):0;if(clp>=10)alerts.push({t:'w',i:'🚫',msg:`<b>${mt}</b> — Zero old bikes (cluster ${Math.round(clp)}%)`,uid:m.user_id})}
+    if(A.low_mttr&&A.low_mttr.on&&m.mttr!==null&&m.mttr<A.low_mttr.v)alerts.push({t:'d',i:'🔄',msg:`<b>${mt}</b> — MTTR ${m.mttr}d (bikes returning fast, target ${A.low_mttr.v}d+)`,uid:m.user_id});
   });
   if(A.inactive.on&&lastD){
     agg.forEach(m=>{
@@ -1394,11 +1531,12 @@ function renderTable(){
       <td style="color:#34d399;font-weight:600">${m.live_repair||0}</td>
       <td style="color:var(--pnk);font-weight:600">${(m.repair_tasks-(m.live_repair||0))}</td>
       <td>${m.avg_repair_time}m</td>
+      <td>${m.mttr!==null?`<span class="pill ${m.mttr>=20?'g':m.mttr>=10?'w':'d'}">${m.mttr}d</span>`:'<span style="color:var(--mut)">–</span>'}</td>
       <td>${m.qc_rate!==null?`<span class="pill ${qC}">${m.qc_rate}%</span>`:'<span style="color:var(--mut)">–</span>'}</td>
       <td>${m.fix_rate!==null?`<span class="pill ${fC}">${m.fix_rate}%</span>`:'<span style="color:var(--mut)">–</span>'}</td>
       <td>${m.backlog_pct!==null?`<span class="pill ${bC}">${m.backlog_pct}%</span>`:'<span style="color:var(--mut)">–</span>'}</td>
       <td>${tenureTag(m.tenure)}</td><td>${prod}</td></tr>`;
-  }).join('')||`<tr><td colspan="12" class="empty">No results</td></tr>`;
+  }).join('')||`<tr><td colspan="13" class="empty">No results</td></tr>`;
 }
 function srt(c){if(SC===c)SD*=-1;else{SC=c;SD=-1}renderTable()}
 function setG(g,e){G=g;['gd','gw','gm'].forEach(id=>document.getElementById(id).classList.remove('on'));e.target.classList.add('on');renderTrend(gf())}
@@ -1463,11 +1601,12 @@ function closeDetail(){
   if(dChart){dChart.destroy();dChart=null}
 }
 function switchTab(t){
-  ['ov','bk'].forEach(x=>{
-    document.getElementById('tab-'+x).classList.toggle('on',x===t);
-    document.getElementById('panel-'+x).classList.toggle('on',x===t);
+  ['ov','bk','q'].forEach(x=>{
+    const tb=document.getElementById('tab-'+x);if(tb)tb.classList.toggle('on',x===t);
+    const pn=document.getElementById('panel-'+x);if(pn)pn.classList.toggle('on',x===t);
   });
   if(t==='bk'){window._bikeTasks=null;loadBikeDataForMech();}
+  if(t==='q'){renderDetailQuality();}
 }
 function getMechAggForRange(){
   const f=document.getElementById('df-from').value,t=document.getElementById('df-to').value;
@@ -1504,6 +1643,10 @@ async function renderDetailOverview(){
   document.getElementById('d-k8').textContent=agg.avg_tpd;
   document.getElementById('d-k8n').textContent=days?+(agg.non_repair_tasks/days).toFixed(1):0;
   document.getElementById('d-k4b').textContent=days;
+  // MTTR for this mechanic
+  const myMTTR=computeMTTR([CURRENT_UID]);
+  if(myMTTR!==null){set('d-mttr',myMTTR+' days');set('d-mttrsub','days · higher = better quality');}
+  else{set('d-mttr','—');set('d-mttrsub','no return data yet');}
   const dLive=agg.live_repair||0,dReg=agg.tasks-dLive;
   const dLivePct=agg.tasks?Math.round(100*dLive/agg.tasks):0;
   document.getElementById('d-klive').textContent=dLive.toLocaleString();
@@ -1519,7 +1662,7 @@ async function renderDetailOverview(){
   const avgShift=shiftRows.length?Math.round(shiftRows.reduce((s,r)=>s+r.shift_dur_min,0)/shiftRows.length):null;
   document.getElementById('d-kshift').textContent=avgShift?avgShift+' min':'—';
   document.getElementById('d-k9').textContent='…';
-  // d-k10 removed
+  document.getElementById('d-k10').textContent='…';
   document.getElementById('d-k11').textContent='…';
   document.getElementById('d-kidle').textContent='…';
   if(document.getElementById('d-klivetime'))document.getElementById('d-klivetime').textContent='…';
@@ -1578,7 +1721,7 @@ async function renderDetailOverview(){
     const avgIdle  = idleMinutes.length  ? Math.round(idleMinutes.reduce((a,b)=>a+b,0)  / idleMinutes.length)  : null;
     const avgShiftR = shiftDurMinutes.length ? Math.round(shiftDurMinutes.reduce((a,b)=>a+b,0) / shiftDurMinutes.length) : null;
     document.getElementById('d-k9').textContent  = avgRepMin  ? avgRepMin+' min'  : '—';
-    // d-k10 removed
+    document.getElementById('d-k10').textContent = avgNonMin  ? avgNonMin+' min'  : '—';
     document.getElementById('d-k11').textContent = maxRepMin  ? maxRepMin+' min'  : '—';
     document.getElementById('d-kidle').textContent  = avgIdle  ? avgIdle+' min'  : '—';
     document.getElementById('d-kshift').textContent = avgShiftR ? avgShiftR+' min' : '—';
@@ -1615,6 +1758,7 @@ function renderPeers(mech){
     {key:'fix_rate',lbl:'Fix Rate',unit:'%',higher:true,f:o=>o.tasks>=5},
     {key:'avg_repair_time',lbl:'Avg Repair Time',unit:'m',higher:false,f:o=>o.repair_tasks>=3},
     {key:'backlog_pct',lbl:'Old Bikes >14d',unit:'%',higher:true,f:o=>o.rnt_total>=5},
+    {key:'mttr',lbl:'MTTR',unit:'d',higher:true,f:o=>o.mttr!==null},
   ];
   const max_tasks=Math.max(mech.avg_tpd,avgOf(clAgg,'avg_tpd'),avgOf(cityAgg,'avg_tpd'),avgOf(allAgg,'avg_tpd'),1);
   document.getElementById('peerbars').innerHTML=`<div style="font-size:11px;color:var(--mut);margin-bottom:10px;font-family:'Space Mono',monospace">Tasks/day visual comparison</div>`+
@@ -1727,6 +1871,155 @@ function renderDetailBikes(){
     </div>
     <div class="day-content ${isOpen}">${bikeArr.map(t=>fmtBike(t)).join('')}</div>`;
   }).join('')||'<div class="empty">No tasks in this range</div>';
+}
+
+// ── NEW: RENDER SPARES (Top 10 with WoW trend) ──────────────
+function renderSpares(){
+  const c=document.getElementById('fc').value,cl=document.getElementById('fcl').value,m=document.getElementById('fm').value;
+  let rows=SPARES_AGG;
+  if(c)rows=rows.filter(r=>mapNCR(r.city||'')===c);
+  if(cl)rows=rows.filter(r=>mapCluster(r.cluster||'')===cl);
+  if(m)rows=rows.filter(r=>String(r.user_id)===m);
+  const card=document.getElementById('sparescard');
+  if(!card)return;
+  if(!rows.length){set('sparesbdg','no data');document.getElementById('spareslist').innerHTML='<div class="empty">No spares data</div>';return;}
+  const allWeeks=[...new Set(rows.map(r=>r.week_start))].sort();
+  const totals={};
+  rows.forEach(r=>{if(!totals[r.spare_name])totals[r.spare_name]=0;totals[r.spare_name]+=(r.count||0);});
+  const top10=Object.entries(totals).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  const maxTotal=top10[0]?top10[0][1]:1;
+  const weekCounts={};
+  rows.forEach(r=>{if(!weekCounts[r.spare_name])weekCounts[r.spare_name]={};weekCounts[r.spare_name][r.week_start]=(weekCounts[r.spare_name][r.week_start]||0)+(r.count||0);});
+  const trendWeeks=allWeeks.slice(-4);
+  const maxWkCnt=Math.max(...top10.map(([name])=>Math.max(...trendWeeks.map(w=>weekCounts[name]?.[w]||0))),1);
+  set('sparesbdg',top10.length+' parts · '+rows.length.toLocaleString()+' records');
+  document.getElementById('spareslist').innerHTML=top10.map(([name,total])=>{
+    const wkBars=trendWeeks.map(w=>{const cnt=weekCounts[name]?.[w]||0;const pct=Math.round(100*cnt/maxWkCnt);const col=pct>66?'var(--acc)':pct>33?'var(--warn)':'var(--mut)';return `<div class="spare-wk" style="background:${col};width:${Math.max(pct,3)}%" title="${w}: ${cnt}"></div>`;}).join('');
+    return `<div class="spare-row"><div class="spare-name" title="${name}">${name}</div><div style="flex:1"><div class="spare-bg"><div class="spare-fill" style="width:${Math.round(100*total/maxTotal)}%">${total}</div></div><div class="spare-weeks">${wkBars}</div></div></div>`;
+  }).join('')||'<div class="empty">No data</div>';
+}
+
+// ── NEW: RENDER GHOST REPAIRS ────────────────────────────────
+function renderGhost(){
+  const c=document.getElementById('fc').value,cl=document.getElementById('fcl').value,m=document.getElementById('fm').value;
+  const f=document.getElementById('ff').value,t=document.getElementById('ft').value;
+  const ghostN=parseInt(document.getElementById('ghost-n')?.value||2);
+  let sig2=BIKE_RETURNS.filter(r=>parseInt(r.prev_is_fully_fixed)===1&&(r.gap_days||0)>0&&(r.gap_days||0)<=ghostN);
+  let sig1=BIKE_RETURNS.filter(r=>parseInt(r.prev_is_fully_fixed)===1&&(r.gap_days||0)===0);
+  const filt=rows=>{
+    if(c)rows=rows.filter(r=>mapNCR(r.city||'')===c);
+    if(cl)rows=rows.filter(r=>mapCluster(r.cluster||'')===cl);
+    if(m)rows=rows.filter(r=>String(r.prev_user_id)===m);
+    if(f)rows=rows.filter(r=>r.prev_task_date>=f);
+    if(t)rows=rows.filter(r=>r.prev_task_date<=t);
+    return rows;
+  };
+  sig1=filt(sig1);sig2=filt(sig2);
+  const total=sig1.length+sig2.length;
+  const ghostbdg=document.getElementById('ghostbdg');if(ghostbdg)ghostbdg.textContent=total+' ghost events';
+  const mechMap={};
+  [...sig1.map(r=>({...r,signal:1})),...sig2.map(r=>({...r,signal:2}))].forEach(r=>{
+    const uid=String(r.prev_user_id);
+    if(!mechMap[uid])mechMap[uid]={name:r.prev_username||uid,count:0,sig1:0,sig2:0,uid:r.prev_user_id};
+    mechMap[uid].count++;if(r.signal===1)mechMap[uid].sig1++;else mechMap[uid].sig2++;
+  });
+  const top=Object.values(mechMap).sort((a,b)=>b.count-a.count).slice(0,10);
+  const ghostlist=document.getElementById('ghostlist');if(!ghostlist)return;
+  if(!top.length){ghostlist.innerHTML='<div class="empty">✅ No ghost repairs detected</div>';return;}
+  ghostlist.innerHTML=top.map(o=>`
+    <div class="ghost-row" onclick="openMech(${o.uid})" style="cursor:pointer">
+      <div><div style="font-weight:600;font-size:13px">${o.name}</div>
+      <div style="font-size:10px;color:var(--mut);margin-top:2px;font-family:'Space Mono',monospace">
+        ${o.sig1>0?`<span style="color:var(--dng)">S1: ${o.sig1} same-day double fix</span>  `:''}
+        ${o.sig2>0?`<span style="color:var(--warn)">S2: ${o.sig2} quick return ≤${ghostN}d</span>`:''}
+      </div></div>
+      <div style="font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:var(--dng)">${o.count} 🚨</div>
+    </div>`).join('');
+}
+
+// ── NEW: QUALITY INTEL TAB ───────────────────────────────────
+function renderDetailQuality(){
+  if(!CURRENT_UID)return;
+  renderDetailMTTR();renderDetailGhost();renderDetailCherry();renderDetailSpares();
+}
+function renderDetailMTTR(){
+  const myReturns=BIKE_RETURNS.filter(r=>String(r.prev_user_id)===String(CURRENT_UID));
+  const bdg=document.getElementById('d-mttr-bdg');
+  if(!myReturns.length){
+    if(bdg)bdg.textContent='no data';
+    const el=document.getElementById('d-mttr-bikes');if(el)el.innerHTML='<div class="empty">No bikes returned after your repairs (within 60 days)</div>';return;
+  }
+  const myMTTR=myReturns.reduce((s,r)=>s+(r.gap_days||0),0)/myReturns.length;
+  const mRaw=RAW.find(r=>r.user_id===CURRENT_UID);
+  const clMTTR=computeMTTR(RAW.filter(r=>r.cluster===mRaw?.cluster&&r.user_id!==CURRENT_UID).map(r=>r.user_id));
+  const ciMTTR=computeMTTR(RAW.filter(r=>r.city===mRaw?.city&&r.user_id!==CURRENT_UID).map(r=>r.user_id));
+  const allMTTR=computeMTTR(RAW.filter(r=>r.user_id!==CURRENT_UID).map(r=>r.user_id));
+  const mClass=myMTTR>=20?'good':myMTTR>=10?'warn':'bad';
+  const valEl=document.getElementById('d-mttr-val');
+  if(valEl){valEl.textContent=Math.round(myMTTR*10)/10+' days';valEl.className='mttr-badge '+mClass;}
+  set('d-mttr-cl',clMTTR!==null?clMTTR+'d':'—');
+  set('d-mttr-ci',ciMTTR!==null?ciMTTR+'d':'—');
+  set('d-mttr-all',allMTTR!==null?allMTTR+'d':'—');
+  if(bdg)bdg.textContent=myReturns.length+' return events';
+  const sorted=[...myReturns].sort((a,b)=>(a.gap_days||0)-(b.gap_days||0)).slice(0,20);
+  const el=document.getElementById('d-mttr-bikes');
+  if(el)el.innerHTML=sorted.map(r=>{
+    const gc=(r.gap_days||0)<=3?'fast':(r.gap_days||0)<=14?'ok':'good';
+    const ff=parseInt(r.prev_is_fully_fixed)===1?'<span style="color:var(--dng);font-size:10px;font-family:Space Mono,monospace">✓ was marked fixed</span>':'';
+    return `<div class="mttr-bike-row"><div><span class="mttr-bike-name">${r.bike_name}</span><span style="color:var(--mut);font-size:10px;margin-left:8px">${r.prev_task_date} → ${r.next_task_date}</span>${ff?'<br>'+ff:''}</div><div class="mttr-gap ${gc}">${r.gap_days}d later</div></div>`;
+  }).join('');
+}
+function renderDetailGhost(){
+  const ghostN=2;
+  const sig1=BIKE_RETURNS.filter(r=>String(r.prev_user_id)===String(CURRENT_UID)&&parseInt(r.prev_is_fully_fixed)===1&&(r.gap_days||0)===0);
+  const sig2=BIKE_RETURNS.filter(r=>String(r.prev_user_id)===String(CURRENT_UID)&&parseInt(r.prev_is_fully_fixed)===1&&(r.gap_days||0)>0&&(r.gap_days||0)<=ghostN);
+  const total=sig1.length+sig2.length;
+  set('d-ghost-bdg',total>0?total+' 🚨':'✅ clean');
+  const el=document.getElementById('d-ghost-list');if(!el)return;
+  if(!total){el.innerHTML='<div class="empty">✅ No ghost repairs detected</div>';return;}
+  const all=[...sig1.map(r=>({...r,signal:'S1'})),...sig2.map(r=>({...r,signal:'S2'}))].sort((a,b)=>new Date(b.prev_task_date)-new Date(a.prev_task_date));
+  el.innerHTML=all.map(r=>`
+    <div class="ghost-row"><div><span class="ghost-bike">${r.bike_name}</span>
+    <span style="color:var(--mut);font-size:10px;margin-left:8px;font-family:'Space Mono',monospace">${r.prev_task_date}</span>
+    <div style="font-size:10px;color:var(--mut);margin-top:2px">${r.signal==='S1'?'Same day double repair':'Returned '+r.gap_days+'d after marking fully fixed'}</div></div>
+    <span style="font-size:10px;padding:2px 7px;border-radius:6px;font-family:'Space Mono',monospace;background:rgba(239,68,68,.15);color:var(--dng)">${r.signal}</span></div>`).join('');
+}
+function renderDetailCherry(){
+  const myIssues=ISSUE_AGG.filter(r=>String(r.user_id)===String(CURRENT_UID));
+  if(!myIssues.length){set('d-cherry-bdg','no data');const el=document.getElementById('d-cherry-list');if(el)el.innerHTML='<div class="empty">No issue data</div>';return;}
+  const issueMap={};
+  myIssues.forEach(r=>{
+    if(!issueMap[r.issue_name])issueMap[r.issue_name]={name:r.issue_name,count:0,wt_sum:0,fleet_med:parseFloat(r.fleet_median_sec)||0};
+    issueMap[r.issue_name].count+=parseInt(r.task_count)||0;
+    issueMap[r.issue_name].wt_sum+=(parseFloat(r.avg_time_sec)||0)*(parseInt(r.task_count)||0);
+    issueMap[r.issue_name].fleet_med=parseFloat(r.fleet_median_sec)||0;
+  });
+  const issues=Object.values(issueMap).map(o=>({...o,avg_time:o.count?Math.round(o.wt_sum/o.count):0,ratio:o.fleet_med>0?(o.count?o.wt_sum/o.count/o.fleet_med:0):null})).sort((a,b)=>b.count-a.count).slice(0,15);
+  const flagged=issues.filter(o=>o.ratio!==null&&o.ratio>=2.5&&o.count>=5).length;
+  set('d-cherry-bdg',flagged>0?flagged+' flagged 🚩':'✅ clean');
+  const el=document.getElementById('d-cherry-list');if(!el)return;
+  el.innerHTML=issues.map(o=>{
+    const flag=o.ratio!==null&&o.ratio>=2.5&&o.count>=5;
+    const avgMin=Math.round(o.avg_time/60),medMin=Math.round(o.fleet_med/60);
+    return `<div class="cherry-row"><div style="flex:1"><span style="font-weight:600">${o.name}</span>${flag?'<span style="margin-left:6px;font-size:10px;color:var(--warn)">🚩 TIME PADDING</span>':''}<div style="font-size:10px;color:var(--mut);margin-top:2px;font-family:Space Mono,monospace">${o.count} tasks · avg ${avgMin}min · fleet ${medMin}min${o.ratio!==null?` · <span style="color:${o.ratio>=2.5?'var(--dng)':'var(--acc)'}">${o.ratio.toFixed(1)}× median</span>`:''}</div></div><span class="issue-badge">${o.count}</span></div>`;
+  }).join('')||'<div class="empty">No data</div>';
+}
+function renderDetailSpares(){
+  const mySpares=SPARES_AGG.filter(r=>String(r.user_id)===String(CURRENT_UID));
+  if(!mySpares.length){set('d-spares-bdg','no data');const el=document.getElementById('d-spares-list');if(el)el.innerHTML='<div class="empty">No spares data</div>';return;}
+  const totals={},weekCounts={};
+  mySpares.forEach(r=>{if(!totals[r.spare_name])totals[r.spare_name]=0;totals[r.spare_name]+=(r.count||0);if(!weekCounts[r.spare_name])weekCounts[r.spare_name]={};weekCounts[r.spare_name][r.week_start]=(weekCounts[r.spare_name][r.week_start]||0)+(r.count||0);});
+  const top10=Object.entries(totals).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  const maxTotal=top10[0]?top10[0][1]:1;
+  const allWeeks=[...new Set(mySpares.map(r=>r.week_start))].sort();
+  const trendWeeks=allWeeks.slice(-4);
+  const maxWkCnt=Math.max(...top10.map(([name])=>Math.max(...trendWeeks.map(w=>weekCounts[name]?.[w]||0))),1);
+  set('d-spares-bdg',top10.length+' parts');
+  const el=document.getElementById('d-spares-list');if(!el)return;
+  el.innerHTML=top10.map(([name,total])=>{
+    const wkBars=trendWeeks.map(w=>{const cnt=weekCounts[name]?.[w]||0;const pct=Math.round(100*cnt/maxWkCnt);const col=pct>66?'var(--acc)':pct>33?'var(--warn)':'var(--mut)';return `<div class="spare-wk" style="background:${col};width:${Math.max(pct,3)}%" title="${w}: ${cnt}"></div>`;}).join('');
+    return `<div class="spare-row"><div class="spare-name" title="${name}">${name}</div><div style="flex:1"><div class="spare-bg"><div class="spare-fill" style="width:${Math.round(100*total/maxTotal)}%">${total}</div></div><div class="spare-weeks">${wkBars}</div></div></div>`;
+  }).join('')||'<div class="empty">No data</div>';
 }
 function showToast(msg){
   let t=document.getElementById('toast');
