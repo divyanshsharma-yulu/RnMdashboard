@@ -1236,7 +1236,7 @@ function render(){
   renderSpares();renderGhost();
   updateBC();
 }
-function set(id,v){document.getElementById(id).textContent=v}
+function set(id,v){const el=document.getElementById(id);if(el)el.textContent=v}
 function renderKPIs(d){
   const t=aggTot(d);
   const dayMechMap={};d.forEach(r=>{if(!dayMechMap[r.date])dayMechMap[r.date]=new Set();dayMechMap[r.date].add(r.user_id);});
