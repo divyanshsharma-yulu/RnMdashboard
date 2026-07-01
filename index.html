@@ -276,28 +276,20 @@ td{padding:8px 11px;white-space:nowrap}
 <div id="auth-wall">
   <div class="aw-box">
     <div class="aw-logo">yulu</div>
-    <div class="aw-sub">R&amp;M Dashboard · Sign in with your @yulu.bike email</div>
-    <div class="aw-step active" id="step-email">
-      <label class="aw-label">Work Email</label>
-      <input class="aw-input" type="email" id="aw-email" placeholder="yourname@yulu.bike" autocomplete="email" onkeydown="if(event.key==='Enter')sendOTP()">
-      <button class="aw-btn" id="aw-send-btn" onclick="sendOTP()">SEND OTP →</button>
-      <div class="aw-err" id="aw-err1"></div>
+    <div class="aw-sub">R&amp;M Mechanic Dashboard</div>
+    <div style="font-size:12px;color:#6b7fa3;margin-bottom:28px;line-height:1.6;padding:10px 12px;background:rgba(14,165,233,.08);border-radius:8px;border:1px solid rgba(14,165,233,.15)">
+      🔒 Restricted to <b style="color:#f0f4ff">@yulu.bike</b> accounts only
     </div>
-    <div class="aw-step" id="step-otp">
-      <div style="font-size:13px;color:#6b7fa3;margin-bottom:20px;line-height:1.6">Code sent to<br><strong id="aw-sent-to" style="color:#f0f4ff"></strong></div>
-      <label class="aw-label">Enter OTP Code</label>
-      <div class="otp-wrap">
-        <input class="otp-d" type="number" id="o0" oninput="otpInput(0)" onkeydown="otpKey(0,event)">
-        <input class="otp-d" type="number" id="o1" oninput="otpInput(1)" onkeydown="otpKey(1,event)">
-        <input class="otp-d" type="number" id="o2" oninput="otpInput(2)" onkeydown="otpKey(2,event)">
-        <input class="otp-d" type="number" id="o3" oninput="otpInput(3)" onkeydown="otpKey(3,event)">
-        <input class="otp-d" type="number" id="o4" oninput="otpInput(4)" onkeydown="otpKey(4,event)">
-        <input class="otp-d" type="number" id="o5" oninput="otpInput(5)" onkeydown="otpKey(5,event)">
-      </div>
-      <button class="aw-btn" id="aw-verify-btn" onclick="verifyOTP()">VERIFY & ENTER →</button>
-      <button class="aw-btn sec" onclick="backToEmail()">← Different email</button>
-      <div class="aw-err" id="aw-err2"></div>
-      <div class="aw-hint">Didn't get it? <span onclick="resendOTP()">Resend</span></div>
+    <button class="aw-btn" id="aw-google-btn" onclick="signInWithGoogle()">
+      <span style="display:flex;align-items:center;justify-content:center;gap:10px">
+        <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20H24v8h11.3C33.6 33 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.7 1.1 7.8 2.9l5.7-5.7C34 6.5 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20c11 0 19.7-8 19.7-20 0-1.3-.1-2.7-.1-4z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.5 15.1 18.9 12 24 12c3 0 5.7 1.1 7.8 2.9l5.7-5.7C34 6.5 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-1.9 13.5-5l-6.2-5.2C29.3 35.3 26.8 36 24 36c-5.2 0-9.6-3-11.3-7.4l-6.6 4.9C9.5 39.6 16.3 44 24 44z"/><path fill="#1976D2" d="M43.6 20H24v8h11.3c-.9 2.4-2.5 4.4-4.6 5.8l6.2 5.2C40.9 35.5 44 30.2 44 24c0-1.3-.1-2.7-.4-4z"/></svg>
+        Sign in with Google
+      </span>
+    </button>
+    <div class="aw-err" id="aw-err1"></div>
+    <div style="font-size:11px;color:#6b7fa3;text-align:center;margin-top:16px;line-height:1.6">
+      Use your <b>@yulu.bike</b> Google account.<br>
+      Access will be denied for other domains.
     </div>
   </div>
 </div>
@@ -667,68 +659,67 @@ td{padding:8px 11px;white-space:nowrap}
 
 <script>
 // ============================================================
-//  SUPABASE AUTH
+//  SUPABASE AUTH — Google OAuth
 // ============================================================
 const _sb = supabase.createClient(
   'https://ajlingowsubkqduglbtn.supabase.co',
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFqbGluZ293c3Via3FkdWdsYnRuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgwNzAwNDgsImV4cCI6MjA5MzY0NjA0OH0.GFinoyc-4FK96qt_4Wka9UAmtZVM6RgNNZ6XBNfcUM8'
 );
-function awErr(s,m){const e=document.getElementById('aw-err'+s);e.textContent=m;e.classList.add('show')}
-function awClear(s){document.getElementById('aw-err'+s).classList.remove('show')}
-async function sendOTP(){
-  const email=document.getElementById('aw-email').value.trim().toLowerCase();awClear(1);
-  if(!email){awErr(1,'Enter your email.');return}
-  if(!email.endsWith('@yulu.bike')){awErr(1,'Only @yulu.bike emails allowed.');return}
-  const btn=document.getElementById('aw-send-btn');btn.disabled=true;btn.textContent='SENDING...';
-  const{error}=await _sb.auth.signInWithOtp({email,options:{shouldCreateUser:true}});
-  btn.disabled=false;btn.textContent='SEND OTP →';
-  if(error){awErr(1,error.message);return}
-  document.getElementById('aw-sent-to').textContent=email;
-  document.getElementById('step-email').classList.remove('active');
-  document.getElementById('step-otp').classList.add('active');
-  document.getElementById('o0').focus();
+const ALLOWED_DOMAIN = 'yulu.bike';
+
+function awErr(s,m){const e=document.getElementById('aw-err'+s);if(e){e.textContent=m;e.classList.add('show');}}
+
+async function signInWithGoogle(){
+  const btn=document.getElementById('aw-google-btn');
+  btn.disabled=true;btn.innerHTML='<span style="opacity:.6">Redirecting to Google...</span>';
+  const{error}=await _sb.auth.signInWithOAuth({
+    provider:'google',
+    options:{
+      redirectTo: window.location.href,
+      queryParams:{hd: ALLOWED_DOMAIN}  // hint Google to show only yulu.bike accounts
+    }
+  });
+  if(error){
+    awErr(1,'❌ '+error.message);
+    btn.disabled=false;
+    btn.innerHTML='<span style="display:flex;align-items:center;justify-content:center;gap:10px"><svg width="18" height="18" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20H24v8h11.3C33.6 33 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.7 1.1 7.8 2.9l5.7-5.7C34 6.5 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20c11 0 19.7-8 19.7-20 0-1.3-.1-2.7-.1-4z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.5 15.1 18.9 12 24 12c3 0 5.7 1.1 7.8 2.9l5.7-5.7C34 6.5 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-1.9 13.5-5l-6.2-5.2C29.3 35.3 26.8 36 24 36c-5.2 0-9.6-3-11.3-7.4l-6.6 4.9C9.5 39.6 16.3 44 24 44z"/><path fill="#1976D2" d="M43.6 20H24v8h11.3c-.9 2.4-2.5 4.4-4.6 5.8l6.2 5.2C40.9 35.5 44 30.2 44 24c0-1.3-.1-2.7-.4-4z"/></svg>Sign in with Google</span>';
+  }
 }
-async function resendOTP(){
-  const email=document.getElementById('aw-email').value.trim().toLowerCase();
-  await _sb.auth.signInWithOtp({email,options:{shouldCreateUser:true}});awClear(2);
-}
-function backToEmail(){
-  document.getElementById('step-otp').classList.remove('active');
-  document.getElementById('step-email').classList.add('active');
-  awClear(1);awClear(2);for(let i=0;i<6;i++)document.getElementById('o'+i).value='';
-}
-function otpInput(i){
-  const el=document.getElementById('o'+i);el.value=el.value.replace(/\D/g,'').slice(-1);
-  if(el.value&&i<5)document.getElementById('o'+(i+1)).focus();
-  const code=Array.from({length:6},(_,j)=>document.getElementById('o'+j).value).join('');
-  if(code.length===6)verifyOTP();
-}
-function otpKey(i,e){if(e.key==='Backspace'&&!document.getElementById('o'+i).value&&i>0)document.getElementById('o'+(i-1)).focus();}
-async function verifyOTP(){
-  const email=document.getElementById('aw-email').value.trim().toLowerCase();
-  const token=Array.from({length:6},(_,i)=>document.getElementById('o'+i).value).join('');
-  awClear(2);if(token.length<6){awErr(2,'Enter all 6 digits.');return}
-  const btn=document.getElementById('aw-verify-btn');btn.disabled=true;btn.textContent='VERIFYING...';
-  const{data,error}=await _sb.auth.verifyOtp({email,token,type:'email'});
-  btn.disabled=false;btn.textContent='VERIFY & ENTER →';
-  if(error){awErr(2,'✗ '+error.message);return}
-  unlockDashboard(data.user);
-}
+
 function unlockDashboard(user){
+  // Enforce @yulu.bike domain — block anyone else even if OAuth succeeds
+  if(!user.email||!user.email.endsWith('@'+ALLOWED_DOMAIN)){
+    _sb.auth.signOut();
+    awErr(1,'⛔ Access restricted to @'+ALLOWED_DOMAIN+' accounts only.');
+    return;
+  }
   document.getElementById('auth-wall').classList.add('hide');
   const el=document.getElementById('hdr-email');if(el)el.textContent=user.email;
   init();
 }
+
 async function doSignOut(){
   await _sb.auth.signOut();
   document.getElementById('auth-wall').classList.remove('hide');
-  ['step-otp'].forEach(id=>document.getElementById(id).classList.remove('active'));
-  document.getElementById('step-email').classList.add('active');
-  for(let i=0;i<6;i++)document.getElementById('o'+i).value='';
-  document.getElementById('aw-email').value='';
-  document.getElementById('hdr-email').textContent='';
+  const el=document.getElementById('hdr-email');if(el)el.textContent='';
 }
-(async()=>{const{data:{session}}=await _sb.auth.getSession();if(session)unlockDashboard(session.user);})();
+
+// On page load — check if returning from Google OAuth redirect
+(async()=>{
+  const{data:{session},error}=await _sb.auth.getSession();
+  if(session&&session.user){
+    unlockDashboard(session.user);
+  }
+  // Also listen for auth state changes (handles redirect callback)
+  _sb.auth.onAuthStateChange((event,session)=>{
+    if(event==='SIGNED_IN'&&session?.user){
+      unlockDashboard(session.user);
+    }
+    if(event==='SIGNED_OUT'){
+      document.getElementById('auth-wall').classList.remove('hide');
+    }
+  });
+})();
 
 // ============================================================
 //  CONSTANTS & STATE
@@ -776,6 +767,9 @@ async function sbFetch(table,select,filters){
 
 // ============================================================
 //  CITY / CLUSTER MAPPING
+//  spares_agg / bike_returns / issue_agg store RAW city ("GGN","NOI","DEL")
+//  mech_agg  => already mapped via mapNCR before storing in RAW[]
+//  FILTER FIX: always apply mapNCR() to row city before comparing
 // ============================================================
 function mapNCR(city){
   if(!city)return'';
@@ -789,6 +783,7 @@ function mapCluster(cl){
   if(/^south\s*delhi\s*[23]/i.test(c))return'South Delhi';
   return c;
 }
+// THE KEY FIX: use this everywhere for agg-table city comparisons
 function cityMatch(rowCity,filterCity){
   if(!filterCity)return true;
   return mapNCR(rowCity||'')===filterCity;
@@ -797,6 +792,7 @@ function clusterMatch(rowCluster,filterCluster){
   if(!filterCluster)return true;
   return mapCluster(rowCluster||'')===filterCluster;
 }
+// Week key (Monday of the week)
 function weekKey(ds){
   const d=new Date(ds),dy=d.getDay(),di=d.getDate()-dy+(dy===0?-6:1);
   return new Date(d.getFullYear(),d.getMonth(),di).toISOString().slice(0,10);
@@ -832,11 +828,11 @@ function normMechRow(r){
 }
 
 // ============================================================
-//  MTTR HELPERS
+//  MTTR HELPERS — use cityMatch so city filter works on bike_returns
 // ============================================================
 function computeMTTR(uids,cityFilter,clusterFilter){
   const s=new Set(uids.map(String));
-  let rows=BIKE_RETURNS.filter(r=>s.has(String(r.prev_user_id))&&(r.gap_days||0)>0);
+  let rows=BIKE_RETURNS.filter(r=>s.has(String(r.prev_user_id)));
   if(cityFilter)rows=rows.filter(r=>cityMatch(r.city,cityFilter));
   if(clusterFilter)rows=rows.filter(r=>clusterMatch(r.cluster,clusterFilter));
   if(!rows.length)return null;
@@ -849,7 +845,7 @@ function computeMTTRByMech(uids,cityFilter,clusterFilter){
   if(clusterFilter)rows=rows.filter(r=>clusterMatch(r.cluster,clusterFilter));
   const s=new Set(uids.map(String));
   rows.forEach(r=>{
-    const uid=String(r.prev_user_id);if(!s.has(uid)||(r.gap_days||0)===0)return;
+    const uid=String(r.prev_user_id);if(!s.has(uid))return;
     if(!map[uid])map[uid]={sum:0,n:0};
     map[uid].sum+=r.gap_days||0;map[uid].n++;
   });
@@ -876,12 +872,14 @@ async function loadLiveData(){
     const mf=['primary_role=eq.Maintenance',f?`task_date=gte.${f}`:'',t?`task_date=lte.${t}`:''].filter(Boolean).join('&');
     const rows=await sbFetch('mech_agg','*',mf);
     RAW.length=0;rows.forEach(r=>RAW.push(normMechRow(r)));
+    // Fill missing city/cluster from latest row per user
     const latestByUser={};
     RAW.forEach(r=>{if(!latestByUser[r.user_id]||r.date>latestByUser[r.user_id].date)latestByUser[r.user_id]=r;});
     RAW.forEach(r=>{
       const l=latestByUser[r.user_id];
       if(!r.city&&l)r.city=l.city;if(!r.cluster&&l)r.cluster=l.cluster;
     });
+    // City dropdown
     const cs=document.getElementById('fc'),pv=cs.value;
     cs.innerHTML='<option value="">All Cities</option>';
     [...new Set(RAW.map(r=>r.city))].filter(Boolean).sort().forEach(c=>{
@@ -891,6 +889,7 @@ async function loadLiveData(){
     const dates=RAW.map(r=>r.date).sort();
     if(dates.length)document.getElementById('dataBadge').textContent=dates[0].slice(0,7)+' → '+dates[dates.length-1].slice(0,7);
 
+    // Enrich time data
     document.getElementById('loadingMsg').textContent='Loading task times...';
     try{
       const allUids=[...new Set(RAW.map(r=>r.user_id))];const CHUNK=50;
@@ -931,6 +930,7 @@ async function loadLiveData(){
       });
     }catch(e){console.warn('Time enrichment:',e.message);}
 
+    // Other profiles
     document.getElementById('loadingMsg').textContent='Loading other profiles...';
     try{
       const of=['primary_role=not.in.(Maintenance,Refurb Mechanic)','primary_role=not.is.null',f?`task_date=gte.${f}`:'',t?`task_date=lte.${t}`:''].filter(Boolean).join('&');
@@ -944,6 +944,7 @@ async function loadLiveData(){
       OTHER.length=0;Object.values(om).forEach(r=>OTHER.push({city:mapNCR(r.city),cluster:'',primary_role:r.primary_role,date:r.date,tasks:r.tasks,repair_tasks:r.repair_tasks}));
     }catch(e){console.warn('Other profiles:',e.message);}
 
+    // Quality data — bike_returns, issue_agg, spares_agg
     document.getElementById('loadingMsg').textContent='Loading quality data...';
     try{
       const[brR,iaR,saR]=await Promise.all([
@@ -994,6 +995,7 @@ function aggMech(data){
     o.bc_Dex+=r.bc_Dex;o.bc_Express+=r.bc_Express;o.bc_Miracle+=r.bc_Miracle;o.bc_Wynn+=r.bc_Wynn;
     o.days.add(r.date);
   });
+  // ✅ FIXED: Compute MTTR BEFORE the return (was dead code after return previously)
   const allUids=Object.values(m).map(o=>o.user_id);
   const mttrMap=computeMTTRByMech(allUids);
   Object.values(m).forEach(o=>{o.mttr=mttrMap[String(o.user_id)]??null;});
@@ -1069,6 +1071,8 @@ function gfOther(){
     if(f&&r.date<f)return false;if(t&&r.date>t)return false;return true;
   });
 }
+// ✅ Central filter for agg tables (bike_returns / spares_agg / issue_agg)
+// Uses cityMatch() which handles BOTH raw (GGN/NOI/DEL) and mapped (NCR) values
 function filterAgg(rows,{dateField='week_start',city,cluster,mechId,dateFrom,dateTo}={}){
   const c=city!==undefined?city:document.getElementById('fc').value;
   const cl=cluster!==undefined?cluster:document.getElementById('fcl').value;
@@ -1079,7 +1083,7 @@ function filterAgg(rows,{dateField='week_start',city,cluster,mechId,dateFrom,dat
     if(c&&!cityMatch(r.city,c))return false;
     if(cl&&!clusterMatch(r.cluster,cl))return false;
     if(m&&String(r.user_id)!==m)return false;
-    if(f&&r[dateField]<f.slice(0,10))return false;
+    if(f){const fd=new Date(f);fd.setDate(fd.getDate()-6);if(r[dateField]<fd.toISOString().slice(0,10))return false;}
     if(t&&r[dateField]>t.slice(0,10))return false;
     return true;
   });
@@ -1119,6 +1123,7 @@ function renderKPIs(d){
   set('ktpd',tpd);
   set('kidle',t.n_idle?Math.round(t.sum_idle/t.n_idle)+' min':'—');
   set('kshift',t.n_shift?Math.round(t.sum_shift/t.n_shift)+' min':'—');
+  // Live vs Regular
   const lR=t.live_repair,rR=t.tasks-lR,lPct=t.tasks?Math.round(100*lR/t.tasks):0;
   const avgLT=t.nlive?Math.round(t.slive/t.nlive):null,avgRT=t.nreg?Math.round(t.sreg/t.nreg):null;
   set('klive',lR.toLocaleString());set('klivesub',lPct+'% of tasks');
@@ -1129,6 +1134,7 @@ function renderKPIs(d){
   const rbar=document.getElementById('kreg-bar');if(rbar)rbar.style.width=(100-lPct)+'%';
   const rpm=document.getElementById('kreg-permech');if(rpm)rpm.textContent=mechDays?(rR/mechDays).toFixed(1):'—';
   const rt2=document.getElementById('knonlivetime');if(rt2)rt2.textContent=avgRT?avgRT+' min':'—';
+  // MTTR KPI — must use city/cluster filter on bike_returns
   const c=document.getElementById('fc').value,cl=document.getElementById('fcl').value;
   const uids=[...new Set(d.map(r=>r.user_id))];
   const mttr=computeMTTR(uids,c||null,cl||null);
@@ -1383,13 +1389,15 @@ function renderTenure(){
     const dTag=delta===null?'':(m.higher?(+delta>=0?`<span class="delta-up">↑${Math.abs(delta)}%</span>`:`<span class="delta-dn">↓${Math.abs(delta)}%</span>`):(+delta<=0?`<span class="delta-up">↓${Math.abs(delta)}%</span>`:`<span class="delta-dn">↑${Math.abs(delta)}%</span>`));
     return`<tr><td class="tnr-lbl">${m.lbl}</td><td class="tnr-new">${vN}${m.unit}</td><td class="tnr-mod">${vM}${m.unit}</td><td class="tnr-old">${vO}${m.unit}</td><td>${dTag}</td></tr>`;
   }).join('');
-  set('tenure-table',`<table class="tnr-table"><thead><tr><th>Metric</th><th>🔵 New (${counts.New})</th><th>🟡 Mod (${counts.Moderate})</th><th>🟢 Old (${counts.Old})</th><th>Δ New→Old</th></tr></thead><tbody>${rows}</tbody></table>`);
+  document.getElementById('tenure-table').innerHTML=`<table class="tnr-table"><thead><tr><th>Metric</th><th>🔵 New (${counts.New})</th><th>🟡 Mod (${counts.Moderate})</th><th>🟢 Old (${counts.Old})</th><th>Δ New→Old</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
 
 // ============================================================
-//  TOP 10 SPARES
+//  TOP 10 SPARES — REDESIGNED
+//  ✅ Uses filterAgg() with cityMatch for correct city handling
 // ============================================================
 function renderSpares(){
+  // Apply city/cluster/date filter — handles raw GGN/NOI/DEL correctly
   const rows=filterAgg(SPARES_AGG,{dateField:'week_start'});
   const el=document.getElementById('spareslist');if(!el)return;
   if(!rows.length){
@@ -1397,6 +1405,7 @@ function renderSpares(){
     el.innerHTML='<div class="empty">No spares data for this filter. Check that spares_agg is populated and city/date range matches.</div>';
     return;
   }
+  // Build total per spare and counts per week
   const totals={},weekBySpare={};
   rows.forEach(r=>{
     const name=r.spare_name;
@@ -1404,10 +1413,13 @@ function renderSpares(){
     if(!weekBySpare[name])weekBySpare[name]={};
     weekBySpare[name][r.week_start]=(weekBySpare[name][r.week_start]||0)+(r.count||0);
   });
+  // Top 10 by total
   const top10=Object.entries(totals).sort((a,b)=>b[1]-a[1]).slice(0,10);
   const maxTotal=top10[0]?top10[0][1]:1;
+  // Last 4 weeks available in filtered data
   const allWeeks=[...new Set(rows.map(r=>r.week_start))].sort();
   const last4=allWeeks.slice(-4);
+  // Max week count for bar scaling
   const maxWk=Math.max(...top10.flatMap(([n])=>last4.map(w=>weekBySpare[n]?.[w]||0)),1);
   set('sparesbdg',top10.length+' parts · '+rows.length.toLocaleString()+' records');
   el.innerHTML=top10.map(([name,total],idx)=>{
@@ -1421,7 +1433,9 @@ function renderSpares(){
       else if(pct<0)deltaTag=`<span class="spare-delta dn">↓${Math.abs(pct)}%</span>`;
       else deltaTag=`<span class="spare-delta flat">→ same</span>`;
     }else if(last>0){deltaTag=`<span class="spare-delta up">↑ new</span>`;}
+    // Total bar
     const barPct=Math.round(100*total/maxTotal);
+    // Week cells
     const wkCells=wkCounts.map(({w,cnt})=>{
       const pct=Math.round(100*cnt/maxWk);
       const col=pct>66?'var(--acc)':pct>33?'var(--warn)':'var(--mut)';
@@ -1447,13 +1461,15 @@ function renderSpares(){
 }
 
 // ============================================================
-//  GHOST REPAIR
+//  GHOST REPAIR — main page
+//  ✅ Uses cityMatch for bike_returns city comparison
 // ============================================================
 function renderGhost(){
   const c=document.getElementById('fc').value,cl=document.getElementById('fcl').value;
   const m=document.getElementById('fm').value;
   const f=document.getElementById('ff').value,t=document.getElementById('ft').value;
   const N=parseInt(document.getElementById('ghost-n')?.value||2);
+  // Filter bike_returns using cityMatch (handles raw GGN/NOI/DEL)
   let rows=BIKE_RETURNS;
   if(c)rows=rows.filter(r=>cityMatch(r.city,c));
   if(cl)rows=rows.filter(r=>clusterMatch(r.cluster,cl));
@@ -1538,18 +1554,11 @@ function openDetail(uid){
   CURRENT_UID=uid;
   document.getElementById('app').classList.add('hide');document.getElementById('detail').classList.add('show');
   const df=document.getElementById('df-from'),dt=document.getElementById('df-to');
-  // FIX 5: Always sync dates from main page on open (removed one-time init guard)
-  df.value=document.getElementById('ff').value;dt.value=document.getElementById('ft').value;
+  if(!df.dataset.init){df.value=document.getElementById('ff').value;dt.value=document.getElementById('ft').value;df.dataset.init='1';}
+  // Sync ghost filter defaults
   const dgf=document.getElementById('dg-from'),dgt=document.getElementById('dg-to');
   dgf.value=df.value;dgt.value=dt.value;
   window.scrollTo(0,0);
-  // FIX 7: Populate same-cluster mechanic dropdown
-  const _curMech=RAW.find(r=>r.user_id===uid);
-  const _selEl=document.getElementById('det-mech-sel');
-  if(_selEl&&_curMech){
-    const _clMechs=[...new Map(RAW.filter(r=>r.cluster===_curMech.cluster).map(r=>[r.user_id,r.username])).entries()].sort((a,b)=>a[1].localeCompare(b[1]));
-    _selEl.innerHTML='<option value="">— Select —</option>'+_clMechs.map(([id,name])=>`<option value="${id}"${id===uid?' selected':''}>${name}</option>`).join('');
-  }
   switchTab('ov');
   renderDetail();
 }
@@ -1560,8 +1569,6 @@ function closeDetail(){
   if(mttrChart){mttrChart.destroy();mttrChart=null;}
   if(ghostChart){ghostChart.destroy();ghostChart=null;}
 }
-// FIX 8: switchMech function
-function switchMech(uid){if(!uid)return;openDetail(parseInt(uid));}
 function switchTab(t){
   ['ov','bk','q'].forEach(x=>{
     document.getElementById('tab-'+x)?.classList.toggle('on',x===t);
@@ -1590,14 +1597,8 @@ function renderDetail(){
   if(!m){closeDetail();return;}
   document.getElementById('dname').innerHTML=`${m.username} ${tenureTag(m.tenure)}`;
   document.getElementById('dmeta').innerHTML=`${m.city} · ${m.cluster} · 📍 ${m.yc||'—'} · ${m.party} · Joined ${m.tenure_days>=0?m.tenure_days+'d ago':'?'}`;
-  // FIX 4: Refresh whichever tab is active, not always Overview
-  const activeTab=getActiveTab();
-  if(activeTab==='ov')renderDetailOverview();
-  else if(activeTab==='bk')loadBikeDataForMech();
-  else if(activeTab==='q')renderDetailQuality();
-  else renderDetailOverview();
+  renderDetailOverview();
 }
-function getActiveTab(){return['ov','bk','q'].find(t=>document.getElementById('panel-'+t)?.classList.contains('on'))||'ov';}
 async function renderDetailOverview(){
   const f=document.getElementById('df-from').value,t=document.getElementById('df-to').value;
   const agg=getMechAgg();
@@ -1611,8 +1612,10 @@ async function renderDetailOverview(){
   set('d-k6',(100-fixPct)+'%');set('d-k6s',agg.not_fixed+' tasks');
   set('d-k7',agg.qc_rate!==null?agg.qc_rate+'%':'—');set('d-k7s',agg.qp+' pass · '+agg.qf+' fail');
   set('d-k8',agg.avg_tpd);
+  // MTTR — always all-time, no date filter
   const myMTTR=computeMTTR([CURRENT_UID]);
   set('d-mttr',myMTTR!==null?myMTTR+'d':'—');set('d-mttrsub','all-time · higher = better');
+  // Live vs Regular
   const dL=agg.live_repair||0,dR=agg.tasks-dL,lPct=agg.tasks?Math.round(100*dL/agg.tasks):0;
   set('d-klive',dL.toLocaleString());set('d-klivesub',lPct+'% of tasks');
   const dlb=document.getElementById('d-klive-bar');if(dlb)dlb.style.width=lPct+'%';
@@ -1761,8 +1764,8 @@ function renderDetailQuality(){
 
 // ── MTTR with weekly trend chart ─────────────────────────────
 function renderDetailMTTR(){
-  // FIX 3: Exclude gap_days=0 from myRet
-  const myRet=BIKE_RETURNS.filter(r=>String(r.prev_user_id)===String(CURRENT_UID)&&(r.gap_days||0)>0);
+  // All-time — no date filter
+  const myRet=BIKE_RETURNS.filter(r=>String(r.prev_user_id)===String(CURRENT_UID));
   const bdg=document.getElementById('d-mttr-bdg');
   if(bdg)bdg.textContent=myRet.length+' return events (all-time)';
   if(!myRet.length){
@@ -1781,9 +1784,10 @@ function renderDetailMTTR(){
   set('d-mttr-cl',clMTTR!==null?clMTTR+'d':'—');
   set('d-mttr-ci',ciMTTR!==null?ciMTTR+'d':'—');
   set('d-mttr-all',allMTTR!==null?allMTTR+'d':'—');
+  // Weekly trend: group by week of prev_task_date
   const myWkMap={};
   myRet.forEach(r=>{const wk=weekKey(r.prev_task_date);if(!myWkMap[wk])myWkMap[wk]={s:0,n:0};myWkMap[wk].s+=r.gap_days||0;myWkMap[wk].n++;});
-  const fleetRet=BIKE_RETURNS.filter(r=>String(r.prev_user_id)!==String(CURRENT_UID)&&(r.gap_days||0)>0);
+  const fleetRet=BIKE_RETURNS.filter(r=>String(r.prev_user_id)!==String(CURRENT_UID));
   const fWkMap={};
   fleetRet.forEach(r=>{const wk=weekKey(r.prev_task_date);if(!fWkMap[wk])fWkMap[wk]={s:0,n:0};fWkMap[wk].s+=r.gap_days||0;fWkMap[wk].n++;});
   const weeks=[...new Set(Object.keys(myWkMap))].sort().slice(-12);
@@ -1795,6 +1799,7 @@ function renderDetailMTTR(){
     {label:'Your MTTR',data:weeks.map(w=>myWkMap[w]?+(myWkMap[w].s/myWkMap[w].n).toFixed(1):null),borderColor:'#a78bfa',backgroundColor:'rgba(167,139,250,.1)',fill:true,tension:0.4,pointRadius:4,borderWidth:2,spanGaps:true},
     {label:'Fleet avg',data:weeks.map(w=>fWkMap[w]?+(fWkMap[w].s/fWkMap[w].n).toFixed(1):null),borderColor:'#6b7fa3',backgroundColor:'transparent',tension:0.4,pointRadius:2,borderWidth:1.5,borderDash:[4,4],spanGaps:true}
   ]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{display:true,labels:{color:tc,font:{size:10},boxWidth:12}}},scales:{x:{ticks:{color:tc,font:{size:9}},grid:{color:gc}},y:{ticks:{color:tc,font:{size:9}},grid:{color:gc},title:{display:true,text:'avg days',color:tc,font:{size:9}}}}}});
+  // Bike list — fastest first (most suspicious)
   const el=document.getElementById('d-mttr-bikes');if(!el)return;
   const sorted=[...myRet].sort((a,b)=>(a.gap_days||0)-(b.gap_days||0)).slice(0,20);
   el.innerHTML=sorted.map(r=>{
@@ -1808,7 +1813,7 @@ function renderDetailMTTR(){
   }).join('');
 }
 
-// ── Ghost in Detail ────────────────────────────────────────────
+// ── Ghost in Detail with date filter + trend chart ────────────
 function renderDetailGhost(){
   if(!CURRENT_UID)return;
   const N=2;
@@ -1822,6 +1827,7 @@ function renderDetailGhost(){
   const total=sig1.length+sig2.length;
   const rangeLabel=(gf||gt)?`${gf||'all'} → ${gt||'all'}`:'all-time';
   set('d-ghost-bdg',total>0?total+' 🚨 ('+rangeLabel+')':'✅ clean ('+rangeLabel+')');
+  // Weekly trend chart
   const wkMap={};
   [...sig1,...sig2].forEach(r=>{const wk=weekKey(r.prev_task_date);wkMap[wk]=(wkMap[wk]||0)+1;});
   const gWeeks=Object.keys(wkMap).sort().slice(-12);
@@ -1864,7 +1870,7 @@ function renderDetailCherry(){
   }).join('')||'<div class="empty">No data</div>';
 }
 
-// ── My Spares ─────────────────────────────────────────────────
+// ── My Spares (detail) — same design as main spares ───────────
 function renderDetailSpares(){
   const mySpares=SPARES_AGG.filter(r=>String(r.user_id)===String(CURRENT_UID));
   if(!mySpares.length){set('d-spares-bdg','no data');const el=document.getElementById('d-spares-list');if(el)el.innerHTML='<div class="empty">No spares data</div>';return;}
