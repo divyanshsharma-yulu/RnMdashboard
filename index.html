@@ -675,7 +675,11 @@ async function signInWithGoogle(){
   const{error}=await _sb.auth.signInWithOAuth({
     provider:'google',
     options:{
-      redirectTo: window.location.href,
+      // Use a clean URL with no hash/query — window.location.href can carry
+      // a leftover #access_token=... fragment from a prior sign-in attempt,
+      // which Supabase then appends its own hash onto, producing an
+      // unparseable stacked fragment and a silent login failure.
+      redirectTo: window.location.origin + window.location.pathname,
       queryParams:{hd: ALLOWED_DOMAIN}  // hint Google to show only yulu.bike accounts
     }
   });
@@ -716,6 +720,12 @@ function unlockDashboard(user){
   markLoginNow();
   document.getElementById('auth-wall').classList.add('hide');
   const el=document.getElementById('hdr-email');if(el)el.textContent=user.email;
+  // Strip any leftover token hash from the URL now that the session is
+  // established — prevents it from being reused/stacked on a future
+  // sign-in attempt (see redirectTo comment above).
+  if(window.location.hash){
+    history.replaceState(null,'',window.location.origin+window.location.pathname);
+  }
   init();
 }
 
@@ -762,6 +772,12 @@ async function doSignOut(){
     }else{
       unlockDashboard(session.user);
     }
+  }
+  // Self-heal: if a stacked/corrupted hash from a pre-fix login attempt is
+  // still sitting in the address bar (e.g. "##access_token=...#access_token=...")
+  // wipe it now so it can never interfere with a future sign-in click.
+  if(window.location.hash){
+    history.replaceState(null,'',window.location.origin+window.location.pathname);
   }
   // Also listen for auth state changes (handles redirect callback)
   _sb.auth.onAuthStateChange((event,session)=>{
