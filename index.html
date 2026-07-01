@@ -686,13 +686,34 @@ async function signInWithGoogle(){
   }
 }
 
+// Daily re-auth: users must sign in again if their last login was >24h ago,
+// even if the underlying Supabase session/refresh token is still valid.
+const LOGIN_TS_KEY='rnm_last_login_ts';
+const REAUTH_MS=24*60*60*1000; // 24 hours
+
+function markLoginNow(){
+  try{localStorage.setItem(LOGIN_TS_KEY,String(Date.now()));}catch(e){}
+}
+function loginExpired(){
+  try{
+    const ts=parseInt(localStorage.getItem(LOGIN_TS_KEY)||'0',10);
+    if(!ts) return true; // no record — treat as expired, force fresh login
+    return (Date.now()-ts)>REAUTH_MS;
+  }catch(e){return false;} // if storage is unavailable, don't block access
+}
+function clearLoginTs(){
+  try{localStorage.removeItem(LOGIN_TS_KEY);}catch(e){}
+}
+
 function unlockDashboard(user){
   // Enforce @yulu.bike domain — block anyone else even if OAuth succeeds
   if(!user.email||!user.email.endsWith('@'+ALLOWED_DOMAIN)){
     _sb.auth.signOut();
+    clearLoginTs();
     awErr(1,'⛔ Access restricted to @'+ALLOWED_DOMAIN+' accounts only.');
     return;
   }
+  markLoginNow();
   document.getElementById('auth-wall').classList.add('hide');
   const el=document.getElementById('hdr-email');if(el)el.textContent=user.email;
   init();
@@ -700,15 +721,47 @@ function unlockDashboard(user){
 
 async function doSignOut(){
   await _sb.auth.signOut();
+  clearLoginTs();
   document.getElementById('auth-wall').classList.remove('hide');
   const el=document.getElementById('hdr-email');if(el)el.textContent='';
 }
 
+// Surface any OAuth error Supabase/Google appends to the redirect URL.
+// Previously these were silently swallowed — the page would just revert
+// to the plain login screen with zero explanation. This makes the actual
+// failure reason visible so we can diagnose per-user login issues.
+(function(){
+  try{
+    const url=new URL(window.location.href);
+    const hp=new URLSearchParams(url.hash.startsWith('#')?url.hash.slice(1):'');
+    const err = url.searchParams.get('error_description') || url.searchParams.get('error')
+             || hp.get('error_description') || hp.get('error');
+    if(err){
+      awErr(1,'❌ OAuth error: '+decodeURIComponent(err.replace(/\+/g,' ')));
+      // Clean the error params out of the URL so a refresh doesn't re-show it
+      history.replaceState(null,'',url.origin+url.pathname);
+    }
+  }catch(e){/* ignore */}
+})();
+
 // On page load — check if returning from Google OAuth redirect
 (async()=>{
   const{data:{session},error}=await _sb.auth.getSession();
+  if(error){
+    // getSession()/exchangeCodeForSession() failed — surface it instead of
+    // silently sitting at the login wall with no explanation.
+    awErr(1,'❌ Session error: '+error.message);
+  }
   if(session&&session.user){
-    unlockDashboard(session.user);
+    if(loginExpired()){
+      // Session token still valid, but it's been >24h since last login —
+      // force sign-out and show the auth wall again.
+      await _sb.auth.signOut();
+      clearLoginTs();
+      document.getElementById('auth-wall').classList.remove('hide');
+    }else{
+      unlockDashboard(session.user);
+    }
   }
   // Also listen for auth state changes (handles redirect callback)
   _sb.auth.onAuthStateChange((event,session)=>{
@@ -716,6 +769,7 @@ async function doSignOut(){
       unlockDashboard(session.user);
     }
     if(event==='SIGNED_OUT'){
+      clearLoginTs();
       document.getElementById('auth-wall').classList.remove('hide');
     }
   });
