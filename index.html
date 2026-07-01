@@ -701,7 +701,13 @@ function markLoginNow(){
 function loginExpired(){
   try{
     const ts=parseInt(localStorage.getItem(LOGIN_TS_KEY)||'0',10);
-    if(!ts) return true; // no record — treat as expired, force fresh login
+    // No record yet = first login on this device/browser, or first run after
+    // this feature was added. Treat as fresh/valid rather than "expired" —
+    // markLoginNow() will set the timestamp once unlockDashboard() runs.
+    // (Previously this returned true here, which caused every first-ever
+    // login to be immediately signed back out before markLoginNow() could
+    // ever fire — a permanent login deadlock.)
+    if(!ts) return false;
     return (Date.now()-ts)>REAUTH_MS;
   }catch(e){return false;} // if storage is unavailable, don't block access
 }
